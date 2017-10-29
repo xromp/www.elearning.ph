@@ -18,3 +18,8 @@ Route::get('/', function () {
 // questions
 Route::get('/question/view','QuestionController@index');
 Route::get('/question/askquestion','QuestionController@index');
+
+// api
+Route::get('/api/question/get','QuestionController@get');
+Route::post('/api/question/create','QuestionController@create');
+

@@ -2,8 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Question;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use DB;
+
+use App\Question;
+use App\Question_Choices;
+use App\Answer;
+
+// use App\Collection_line;
 
 class QuestionController extends Controller
 {
@@ -17,69 +26,115 @@ class QuestionController extends Controller
         return view('question.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function get(Request $request)
     {
-        //
+        $formData = array(
+            'limit'=>$request->input('limit'),
+            'category'=>$request->input('collectionid'),
+            'type'=>$request->input('orno'),
+        );
+
+        $question = DB::table('question')
+            ->select(
+                'questionid',
+                'question_code',
+                'description',
+                'title',
+                'created_at',
+                'updated_at',
+                'created_by'
+            );
+
+        if ($formData['limit']) {
+            $question->take($formData['limit']);
+        }
+        $question= $question->orderBy('created_at','desc')->get();
+
+        $result = json_decode($question, true);
+        foreach ($result as $key => $question) {
+            $result[$key]['category'] = 'Coding';
+            $result[$key]['type'] = 'Composite';
+            $result[$key]['is_self'] = true;
+            $result[$key]['created_by_name'] = 'Rommel';
+            $result[$key]['no_of_answers'] = 100;
+        }
+            
+        
+        return response()-> json([
+            'status'=>200,
+            'data'=>$result,
+            'message'=>''
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        //  
-    }
+        $validator = Validator::make($request->all(),[
+            'type_code'=> 'required',
+            'category_code'=> 'required',
+            'title'=> 'required',
+            'description'=> 'required',
+            'answer'=> 'required'
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Question $question)
-    {
-        //
-    }
+        if ($validator-> fails()) {
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'Unable to save.'
+            ]);
+        }
+        
+        $data = array();
+        $data['type_code'] = $request-> input('type_code');
+        $data['category_code'] = $request-> input('category_code');
+        $data['title'] = $request-> input('title');
+        $data['choiceList'] = $request-> input('choiceList');
+        $data['description'] = $request-> input('description');
+        $data['createdBy'] = $request-> input('createdBy');
+        
+        $transaction = DB::transaction(function($data) use($data){
+            $question = new Question;
+            $questionCode = 'Q10101-001';// generate realtime ans_code
+            
+            $question->question_code = $questionCode;
+            $question->type_code = $data['type_code'];
+            $question->category_code = $data['category_code'];
+            $question->title = $data['title'];
+            $question->description = $data['description'];
+            $question->created_by = 1;
+            $question->created_at = date('Y-m-d H:i:s');
+            $question->updated_at = date('Y-m-d H:i:s');
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Question $question)
-    {
-        //
-    }
+            $question->save();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Question $question)
-    {
-        //
-    }
+            if ($question->id && $questionCode) {
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Question $question)
-    {
-        //
+                // multiple choice
+                if($data['type_code'] == 'MULTIPLE_CHOICE') {
+                    foreach ($data['choiceList'] as $key => $choices) {
+                        $questionChoices = new Question_Choices;
+
+                        $questionChoices->question_code = $questionCode;
+                        $questionChoices->choice = $choices['choice_code'];
+                        $questionChoices->choice_desc = $choices['choice_desc'];
+                        $questionChoices->is_correct = $choices['is_correct'];
+
+                        $questionChoices->save();
+                    }
+                }
+
+            } else {
+                throw new \Exception("Error Processing Request");
+            }
+
+            return response()->json([
+                'status' => 200,
+                'data' => 'null',
+                'message' => 'Successfully saved.'
+            ]);
+        });
+
+        return $transaction;
     }
 }
