@@ -22,7 +22,9 @@ Route::get('/question/answerquestion/{questionid}','QuestionController@index');
 
 // api
 Route::get('/api/question/get','QuestionController@get');
-Route::get('/api/question/studentget','QuestionController@questionStudentGet');
+
+Route::get('/api/question/categories','QuestionController@getCategories');
+ 
 Route::post('/api/question/create','QuestionController@create');
 
 // stock market

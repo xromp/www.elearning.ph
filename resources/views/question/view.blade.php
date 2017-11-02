@@ -14,11 +14,11 @@
             <div class="list-group" ng-repeat="question in qc.questionList">
                 <a href="\question\answerquestion\<%question.question_code%>" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" ng-bind="question.title"></h5>
-                        <small><% (question.is_self) == true ? "You posted this question ": "Asked " %><time am-time-ago="question.created_at"></time></small>
+                        <h5 class="mb-1" ng-bind="question.title"><%question.question_code%>asdg</h5>
+                        <small>You posted this question <time am-time-ago="questions.created_at"></time></small>
                     </div>
 
-                    <small>This question was answered by <%question.no_of_answers%> student(s)</small>                          
+                    <small>This question was answered by 1 student(s)</small>                          
                     <div>
                         <span class="badge badge-default" ng-bind="question.category"></span>
                         <span class="badge badge-default" ng-bind="question.type"></span>
