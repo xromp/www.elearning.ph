@@ -9,10 +9,10 @@ class Student extends Model
 	protected $table = "students";
 
 	protected $fillable = [
-		'studID', 'fName', 'lName', 'mName'
+		'fName', 'lName', 'mName'
 	];
 
-	protected $primaryKey = 'studID';
+	protected $primaryKey = 'student_id';
 
     // public function account()
     // {
@@ -21,7 +21,7 @@ class Student extends Model
 
     public function questions()
     {
-    	return $this->hasMany('App\Question', 'studID');
+    	return $this->hasMany('App\Question', 'student_id');
     }
 
     // public function logs()
@@ -32,14 +32,14 @@ class Student extends Model
     //dynamic details
     public function scopePerStudent($query, $id)
     {
-    	return $query->where('studID', $id);
+    	return $query->where('student_id', $id);
     }
 
     public function questionsCount()
 	{
 	  return $this->questions()
-	    ->selectRaw('studID, count(*) as count')
-	    ->groupBy('studID');
+	    ->selectRaw('student_id, count(*) as count')
+	    ->groupBy('student_id');
 	}
 }
 

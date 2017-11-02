@@ -9,10 +9,10 @@ class Question extends Model
 {
 
     // protected $table = 'question';
-    protected $table = 'question';
+    protected $table = 'questions';
 
     protected $fillable = [
-    	'question', 'title', 'category_id', 'type', 'isVerified', 'question_code', 'studID', 'created_at', 'updated_at'
+    	'description', 'title', 'category_id', 'type', 'is_verified', 'question_code', 'student_id', 'created_at', 'updated_at'
     ];
     
 	protected $primaryKey 	= 'question_id';
@@ -24,7 +24,7 @@ class Question extends Model
 
     public function students()
     {
-    	return $this->hasMany('App\student', 'studID');
+    	return $this->hasMany('App\student', 'student_id');
     }
 
     // public function multiple_Choice2()

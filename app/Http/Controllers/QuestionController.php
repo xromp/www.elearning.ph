@@ -10,7 +10,6 @@ use DB;
 
 use App\Student;
 use App\Question;
-use App\Student;
 use App\Question_Choices;
 use App\Answer;
 use App\Category;
@@ -148,10 +147,9 @@ class QuestionController extends Controller
  
         $data['createdBy'] = $request-> input('createdBy');
 
-
-        $transaction = DB::transaction(function($data) use($data){
+        // $transaction = DB::transaction(function($data) use($data){
  
-        $data['student_id'] = $request-> input('student_id');
+        // $data['student_id'] = $request-> input('student_id');
         
         $transaction = DB::transaction(function($data) use($data){
             $question = new Question;
@@ -166,7 +164,6 @@ class QuestionController extends Controller
             $question->created_at = date('Y-m-d H:i:s');
             $question->updated_at = date('Y-m-d H:i:s');
  
-
             $question = new question;
             $questionCode = 'Q10101-005';// generate realtime ans_code
             $question->question = $data['description'];
@@ -178,9 +175,6 @@ class QuestionController extends Controller
             $question->studID = 1;
             $question->save();
  
-            if ($question->question_id && $questionCode) {
- 
-            
             if ($question->id && $questionCode) {
 
             //     // multiple choice
