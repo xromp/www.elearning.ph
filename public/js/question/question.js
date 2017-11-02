@@ -8,6 +8,7 @@
 
         QuestionCtrl.$inject = ['QuestionSrvcs'];
         function QuestionCtrl(QuestionSrvcs){
+
             var vm = this;
 
             // vm.questionList = [
@@ -15,11 +16,14 @@
             //     {title:'How to be you po', noOfAnswers:10, status:'', isSelf:false, createdById:'1', createdByName:'Rom', createdAt:new Date('10/28/2017 10:00:01'), category:'Composite', type:'Multiple Choice'},
             //     {title:'How to be you po', noOfAnswers:10, status:'', isSelf:true, createdById:'1', createdByName:'Rom', createdAt:new Date('10/27/2017 14:00:01'), category:'Composite', type:'Coding'}
             // ];
+
             var data = {};
+
             QuestionSrvcs.get(data)
             .then (function (response) {
               if (response.data.status == 200) {
-                vm.questionList = response.data.data;
+                vm.questionList = response.data.data[0].questions;
+                console.log(vm.questionList)
               }
             },function(){ alert("Bad Request!")})
 
@@ -34,16 +38,27 @@
         AskQuestionCtrl.$inject = ['QuestionSrvcs'];
         function AskQuestionCtrl(QuestionSrvcs){
             var vm = this;
+
+           
             vm.questionDetails = {
-                category_code:'COMPOSITE',
-                type_code:'MULTIPLE_CHOICE'
+                category_code: 1,
+                type_code:'3'
             };
 
-            vm.categoryList = [
-                {category_id:'1', category_code:'COMPOSITE', desc:'Composite'},
-                {category_id:'2', category_code:'ADAPTER', desc:'Adapter'},
-                {category_id:'3', category_code:'DECORATOR', desc:'Decorator'}
-            ];
+          
+            // vm.categoryList = [
+            //     {category_id:'1', category_code:'COMPOSITE', desc:'Composite'},
+            //     {category_id:'2', category_code:'ADAPTER', desc:'Adapter'},
+            //     {category_id:'3', category_code:'DECORATOR', desc:'Decorator'}
+            // ];
+
+            QuestionSrvcs.getCategories()
+            .then (function (response)  {
+                if (response.data.status == 200) {
+                    vm.categoryList = response.data.data;
+                    console.log(vm.categoryList);
+                }
+            }, function() { alert("Bad Request!")})
 
             vm.typeList = [
                 {type_id:'1', type_code:'MULTIPLE_CHOICE', desc:'Multiple Choice'},
@@ -64,7 +79,6 @@
                 if (data.typeId == '1') {
                     vm.questionDetails.answer = 1;
                 }
-
             };
 
             vm.submit = function(data) {
@@ -113,6 +127,14 @@
                     url: '/api/question/get',
                     headers: {'Content-Type': 'application/json'}
                   })
+                },
+                getCategories: function() {
+                    return $http({
+                        method:'GET',
+                        data:null,
+                        url: '/api/question/categories',
+                        headers: {'Content-Type': 'application/json'}
+                    })
                 }
             };
         }
