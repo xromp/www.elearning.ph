@@ -102,6 +102,7 @@
             var vm = this;
 
             vm.questionDetails = {
+                question_code:'Q10101-001', 
                 title:'How to be you po', 
                 desc:'<div><!--block-->sdfsdfs<br><br></div><pre><!--block-->var sdfasd</pre>', 
                 status:'', 
@@ -141,10 +142,10 @@
 
                 // todo: load notif
                 if (vm.questionDetails.student_info.is_self) {
-                    Notification.info({message: 'You are viewing your own question.', positionY: 'bottom', positionX: 'right'});                
+                    // Notification.info({message: 'You are viewing your own question.', positionY: 'bottom', positionX: 'right'});                
                 }
                 if (vm.questionDetails.student_info.has_answered) {
-                    Notification.warning({message: 'You\'ve already answered this question.', positionY: 'bottom', positionX: 'right'});                
+                    // Notification.warning({message: 'You\'ve already answered this question.', positionY: 'bottom', positionX: 'right'});                
                 }
 
             }();
@@ -159,14 +160,11 @@
                         controller:'ModalInfoInstanceCtrl',
                         templateUrl:'question.question-rating-modal',
                         controllerAs: 'vm',
-                        // resolve :{
-                        //   formData: function () {
-                        //     return {
-                        //     //   title: 'Create People',
-                        //     //   message: response.data.message
-                        //     };
-                        //   }
-                        // }
+                        resolve :{
+                          formData: function () {
+                            return dataCopy;
+                          }
+                        }
                       });
       
                     //   modalInstance.result.then(function (){
@@ -179,6 +177,33 @@
                 } else {
                     alert('Unable to submit.')
                 }
+            }
+        }
+
+        ModalInfoInstanceCtrl.$inject = ['$uibModalInstance', 'formData', 'QuestionSrvcs'];
+        function ModalInfoInstanceCtrl ($uibModalInstance, formData, QuestionSrvcs) {
+            var vm = this;
+            vm.formData = formData;
+
+            vm.close = function() {
+                $uibModalInstance.close();
+            };
+    
+            vm.skipSubmit = function(data) {
+                var formData = angular.toJson(data);
+                vm.submit(formData);
+                $uibModalInstance.dismiss('cancel');
+            };
+
+            vm.rateSubmit = function(data){
+                QuestionSrvcs.updateRatings(data,response=>{
+                    console.log('updated!');
+                    $uibModalInstance.dismiss('cancel');
+                })
+            };
+
+            vm.submit = function(data){
+                return console.log("saved!");
             }
         }
 
@@ -208,22 +233,15 @@
                     url: '/api/question/get',
                     headers: {'Content-Type': 'application/json'}
                   })
+                },
+                updateRatings: function(data) {
+                    return $http({
+                        method:'POST',
+                        url:'/api/question/updateRating',
+                        data:data,
+                        headers: {'Content-Type': 'application/json'}
+                    })
                 }
             };
         }
-        
-
-        ModalInfoInstanceCtrl.$inject = ['$uibModalInstance'];
-        function ModalInfoInstanceCtrl ($uibModalInstance) {
-          var vm = this;
-          vm.formData = 'formData';
-          vm.ok = function() {
-            $uibModalInstance.close();
-          };
-  
-          vm.cancel = function() {
-            $uibModalInstance.dismiss('cancel');
-          };
-        }
-
 })();

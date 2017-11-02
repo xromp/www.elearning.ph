@@ -20,13 +20,28 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.css">
 
     <!-- custom -->
-    <!-- <link data-require="bootstrap@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" /> -->
+    <!-- <link data-require="bootstrap@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="{{URL::to('css/angular-ui-notification.css')}}">
     <link rel="stylesheet" href="{{URL::to('assets/css/open-iconic-bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{URL::to('assets/plugin/codemirror/lib/codemirror.css')}}">
 
     <style>
+        .fade.in {
+            opacity: 1;
+        }
+
+        .modal.in .modal-dialog {
+        -webkit-transform: translate(0, 0);
+            -o-transform: translate(0, 0);
+                transform: translate(0, 0);
+        }
+
+        .modal-backdrop.in {
+            filter: alpha(opacity=50);
+            opacity: .5;
+        }
+        
         #mainDivLogin{
             margin-top: 10px;
             width: 450px;

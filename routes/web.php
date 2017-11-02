@@ -25,3 +25,9 @@ Route::get('/api/question/get','QuestionController@get');
 Route::get('/api/question/studentget','QuestionController@questionStudentGet');
 Route::post('/api/question/create','QuestionController@create');
 
+// stock market
+Route::get('/stockmarket/view','StockMarketController@index');
+Route::get('/stockmarket/category/{categorycode}','StockMarketController@index');
+
+// api
+Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategory');

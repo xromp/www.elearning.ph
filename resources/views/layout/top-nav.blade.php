@@ -1,4 +1,4 @@
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top">
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top" ng-controller="TopNavCtrl as tc">
     <a class="navbar-brand" href="">CQV E-Learning</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon border border-primary"></span>
@@ -6,10 +6,10 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link"  href="/question/view">Questions </a>
+                <a class="nav-link" ng-click="tc.routeTo('/question/view')">Questions </a>
             </li>
-            <li class="nav-item" id="stockmarket">
-                <a class="nav-link"  href="">Stock Market    <span class="sr-only">(current)</span></a>
+            <li class="nav-item">
+                <a class="nav-link" ng-click="tc.routeTo('/stockmarket/view')">Stock Market    <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"  href="">Leaderboards </a>
@@ -40,9 +40,5 @@
                 <img src="/assets/png/account-logout-2x.png">
             </a>
         </div>
-    <!--                <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>-->
     </div>
 </nav>
