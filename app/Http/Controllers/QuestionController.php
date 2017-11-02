@@ -36,19 +36,6 @@ class QuestionController extends Controller
             'type'=>$request->input('orno'),
         );
 
- 
-        // $question = DB::table('question')
-        //     ->select(
-        //         'questionid',
-        //         'question_code',
-        //         'description',
-        //         'title',
-        //         'created_at',
-        //         'updated_at',
-        //         'created_by'
-        //     );
-
-        $questions = new question;
         $student = student::with(['questions'=>function($query){
                         return $query->orderBy('created_at','desc')->get();
                     },
@@ -57,11 +44,6 @@ class QuestionController extends Controller
                     // ->perStudent(2)
                     ->get();
         // $student->is_self = 'true';
-
-        // $student = student::with(['questions'])->toSql();
-
-        // $student = student::with('questions', 'questions.answers')->perStudent(1)->get();
-        // return $student;
 
         // if ($formData['limit']) {
         //     $question->take($formData['limit']);
@@ -77,47 +59,13 @@ class QuestionController extends Controller
         //     $result[$key]['created_by_name'] = 'Rommel';
         //     $result[$key]['no_of_answers'] = 100;
         // }
- 
-        $question = DB::table('questions')
-            ->select(
-                'question_id',
-                'question_code',
-                'description',
-                'title',
-                'created_at',
-                'updated_at',
-                'student_id'
-            );
 
-        if ($formData['limit']) {
-            $question->take($formData['limit']);
-        }
-        $question= $question->orderBy('created_at','desc')->get();
-
-        $result = json_decode($question, true);
-        foreach ($result as $key => $question) {
-            $result[$key]['category'] = 'Coding';
-            $result[$key]['type'] = 'Composite';
-            $result[$key]['is_self'] = false;
-            $result[$key]['created_by_name'] = 'Rommel';
-            $result[$key]['no_of_answers'] = 100;
-        }
-            
-
-        
-        // return response()-> json([
-        //     'status'=>200,
-        //     'data'=>$result,
-        //     'message'=>''
-        // ]);
 
         return response()-> json([
             'status'=>200,
             'data'=>$student,
             'message'=>''
         ]);
-
-        // return $student;
     }
 
     public function create(Request $request)
@@ -153,33 +101,22 @@ class QuestionController extends Controller
         
         $transaction = DB::transaction(function($data) use($data){
             $question = new Question;
-            $questionCode = 'Q10101-001';// generate realtime ans_code
-            
-            $question->question_code = $questionCode;
-            $question->type_code = $data['type_code'];
-            $question->category_code = $data['category_code'];
-            $question->title = $data['title'];
+            $questionCode = 'Q0103-001';// generate realtime ans_code
             $question->description = $data['description'];
-            $question->student_id = 1;
-            $question->created_at = date('Y-m-d H:i:s');
-            $question->updated_at = date('Y-m-d H:i:s');
- 
-            $question = new question;
-            $questionCode = 'Q10101-005';// generate realtime ans_code
-            $question->question = $data['description'];
             $question->title = $data['title'];
-            $question->category_id = $data['category_code'];
-            $question->type = $data['type_code'];
-            $question->isVerified = 0;
+            $question->category_code = $data['category_code'];
+            $question->type_code = $data['type_code'];
+            $question->is_verified = 0;
             $question->question_code = $questionCode;
-            $question->studID = 1;
+            $question->student_id = 1;
+
             $question->save();
  
-            if ($question->id && $questionCode) {
+            if ($question->question_id && $questionCode) {
 
             //     // multiple choice
-                if($data['type_code'] == 1) {
-                // if($data['type_code'] == 'MULTIPLE_CHOICE') {
+                // if($data['type_code'] == 1) {
+                if($data['type_code'] == 'MULTIPLE_CHOICE') {
                     foreach ($data['choiceList'] as $key => $choices) {
                         $questionChoices = new Question_Choices;
                         $questionChoices->question_code = $questionCode;
@@ -207,6 +144,33 @@ class QuestionController extends Controller
         });
 
         return $transaction;
+    }
+
+    public function getCategories(Request $request)
+    {
+        $categories = Category::all();
+        // echo "erikon";
+        return response()->json([
+            'status' => 200,
+            'data' => $categories,
+            'message' => 'Successfully loaded.'
+        ]);
+    }
+
+    public function getQuestions()
+    {
+        $questions = question::with(['students',
+                     'multiple_Choice'=>function($q){
+                        $q->select('multiple_choice_id', 'question_code', 'choice', 'choice_desc')->get();
+                     }])
+                    ->where('question_code', 'Q0103-002')
+                    ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $questions,
+            'message' => 'Successfully loaded.'
+        ]);
     }
 
 

@@ -43,10 +43,11 @@
 
            
             vm.questionDetails = {
-                category_code: 1,
-                type_code:'3'
+                category_code: "ADAPTER",
+                type_code:'IDENTIFICATION'
             };
 
+            console.log( vm.questionDetails);
           
             // vm.categoryList = [
             //     {category_id:'1', category_code:'COMPOSITE', desc:'Composite'},
@@ -113,13 +114,12 @@
 
         AnswerQuestionCtrl.$inject = ['QuestionSrvcs', '$stateParams', '$sce', 'Notification', '$uibModal'];
         function AnswerQuestionCtrl(QuestionSrvcs, $stateParams, $sce, Notification, $uibModal){
-            var vm = this;
+            var vm = this; 
 
             vm.questionDetails = {
                 title:'How to be you po', 
                 desc:'<div><!--block-->sdfsdfs<br><br></div><pre><!--block-->var sdfasd</pre>', 
-                status:'', 
-                student_name:'Rom',
+                status:'',
                 created_at:new Date('10/28/2017 14:00:01'), 
                 category_code:'COMPOSITE', 
                 category_desc:'Composite', 
@@ -130,12 +130,12 @@
                     {'choice_id':1, choice_code:'a', choice_desc:'one'},
                     {'choice_id':2, choice_code:'b', choice_desc:'two'},
                     {'choice_id':3, choice_code:'c', choice_desc:'three'},
-                    {'choice_id':4, choice_code:'d', choice_desc:'four'}    
+                    {'choice_id':4, choice_code:'d', choice_desc:'four'}
                 ],
                 student_info: {
                     student_id:'1',                 
                     name:'Rom',
-                    is_self:false,
+                    is_self:true,
                     has_answered:true,
                     students_answered: {
                         count:50,

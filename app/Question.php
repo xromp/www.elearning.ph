@@ -19,14 +19,18 @@ class Question extends Model
 
 	public function multiple_Choice()
     {
-    	return $this->hasMany('App\Question_Choices', 'question_id');
+    	return $this->hasMany('App\Question_Choices', 'question_code', 'question_code');
     }
 
     public function students()
     {
-    	return $this->hasMany('App\student', 'student_id');
+    	return $this->belongsTo('App\student', 'student_id');
     }
 
+    public function category()
+    {
+        return $this->hasOne('App\category', 'category_id');
+    }
     // public function multiple_Choice2()
     // {
     // 	return $this->hasMany('App\Question_Choices', 'question_id');

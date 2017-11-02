@@ -24,6 +24,8 @@ Route::get('/question/answerquestion/{questionid}','QuestionController@index');
 Route::get('/api/question/get','QuestionController@get');
 
 Route::get('/api/question/categories','QuestionController@getCategories');
+Route::get('/api/question/getQuestions','QuestionController@getQuestions');
  
 Route::post('/api/question/create','QuestionController@create');
+
 
