@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-sm-8 blog-main">
             <div class="list-group" ng-repeat="question in qc.questionList">
-                <a href="" class="list-group-item list-group-item-action flex-column align-items-start">
+                <a href="\question\answerquestion\<%question.question_code%>" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1" ng-bind="question.title"></h5>
                         <small><% (question.is_self) == true ? "You posted this question ": "Asked " %><time am-time-ago="question.created_at"></time></small>

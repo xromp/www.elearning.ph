@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use DB;
 
 use App\Question;
+use App\Student;
 use App\Question_Choices;
 use App\Answer;
 
@@ -34,15 +35,15 @@ class QuestionController extends Controller
             'type'=>$request->input('orno'),
         );
 
-        $question = DB::table('question')
+        $question = DB::table('questions')
             ->select(
-                'questionid',
+                'question_id',
                 'question_code',
                 'description',
                 'title',
                 'created_at',
                 'updated_at',
-                'created_by'
+                'student_id'
             );
 
         if ($formData['limit']) {
@@ -54,7 +55,7 @@ class QuestionController extends Controller
         foreach ($result as $key => $question) {
             $result[$key]['category'] = 'Coding';
             $result[$key]['type'] = 'Composite';
-            $result[$key]['is_self'] = true;
+            $result[$key]['is_self'] = false;
             $result[$key]['created_by_name'] = 'Rommel';
             $result[$key]['no_of_answers'] = 100;
         }
@@ -84,14 +85,14 @@ class QuestionController extends Controller
                 'message'=>'Unable to save.'
             ]);
         }
-        
+
         $data = array();
         $data['type_code'] = $request-> input('type_code');
         $data['category_code'] = $request-> input('category_code');
         $data['title'] = $request-> input('title');
         $data['choiceList'] = $request-> input('choiceList');
         $data['description'] = $request-> input('description');
-        $data['createdBy'] = $request-> input('createdBy');
+        $data['student_id'] = $request-> input('student_id');
         
         $transaction = DB::transaction(function($data) use($data){
             $question = new Question;
@@ -102,12 +103,12 @@ class QuestionController extends Controller
             $question->category_code = $data['category_code'];
             $question->title = $data['title'];
             $question->description = $data['description'];
-            $question->created_by = 1;
+            $question->student_id = 1;
             $question->created_at = date('Y-m-d H:i:s');
             $question->updated_at = date('Y-m-d H:i:s');
 
             $question->save();
-
+            
             if ($question->id && $questionCode) {
 
                 // multiple choice
@@ -136,5 +137,12 @@ class QuestionController extends Controller
         });
 
         return $transaction;
+    }
+
+    public function questionStudentGet(){
+        $student = student::with('questions')
+            ->get();
+
+        return $student;
     }
 }

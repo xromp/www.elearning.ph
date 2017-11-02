@@ -18,8 +18,10 @@ Route::get('/', function () {
 // questions
 Route::get('/question/view','QuestionController@index');
 Route::get('/question/askquestion','QuestionController@index');
+Route::get('/question/answerquestion/{questionid}','QuestionController@index');
 
 // api
 Route::get('/api/question/get','QuestionController@get');
+Route::get('/api/question/studentget','QuestionController@questionStudentGet');
 Route::post('/api/question/create','QuestionController@create');
 

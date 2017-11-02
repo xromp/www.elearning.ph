@@ -4,9 +4,14 @@
 <script type="text/ng-template" id="question.view">
 	@include('question.view')
 </script>
-
 <script type="text/ng-template" id="question.ask-question">
 	@include('question.ask-question')
+</script>
+<script type="text/ng-template" id="question.answer-question">
+	@include('question.answer-question')
+</script>
+<script type="text/ng-template" id="question.question-rating-modal">
+	@include('question.question-rating-modal')
 </script>
 @endsection
 
