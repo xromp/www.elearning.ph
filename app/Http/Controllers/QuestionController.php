@@ -10,6 +10,7 @@ use DB;
 
 use App\Student;
 use App\Question;
+use App\Student;
 use App\Question_Choices;
 use App\Answer;
 use App\Category;
@@ -36,6 +37,7 @@ class QuestionController extends Controller
             'type'=>$request->input('orno'),
         );
 
+ 
         // $question = DB::table('question')
         //     ->select(
         //         'questionid',
@@ -76,6 +78,33 @@ class QuestionController extends Controller
         //     $result[$key]['created_by_name'] = 'Rommel';
         //     $result[$key]['no_of_answers'] = 100;
         // }
+ 
+        $question = DB::table('questions')
+            ->select(
+                'question_id',
+                'question_code',
+                'description',
+                'title',
+                'created_at',
+                'updated_at',
+                'student_id'
+            );
+
+        if ($formData['limit']) {
+            $question->take($formData['limit']);
+        }
+        $question= $question->orderBy('created_at','desc')->get();
+
+        $result = json_decode($question, true);
+        foreach ($result as $key => $question) {
+            $result[$key]['category'] = 'Coding';
+            $result[$key]['type'] = 'Composite';
+            $result[$key]['is_self'] = false;
+            $result[$key]['created_by_name'] = 'Rommel';
+            $result[$key]['no_of_answers'] = 100;
+        }
+            
+
         
         // return response()-> json([
         //     'status'=>200,
@@ -109,17 +138,34 @@ class QuestionController extends Controller
                 'message'=>'Unable to save.'
             ]);
         }
-        
+
         $data = array();
         $data['type_code'] = $request-> input('type_code');
         $data['category_code'] = $request-> input('category_code');
         $data['title'] = $request-> input('title');
         $data['choiceList'] = $request-> input('choiceList');
         $data['description'] = $request-> input('description');
+ 
         $data['createdBy'] = $request-> input('createdBy');
 
 
         $transaction = DB::transaction(function($data) use($data){
+ 
+        $data['student_id'] = $request-> input('student_id');
+        
+        $transaction = DB::transaction(function($data) use($data){
+            $question = new Question;
+            $questionCode = 'Q10101-001';// generate realtime ans_code
+            
+            $question->question_code = $questionCode;
+            $question->type_code = $data['type_code'];
+            $question->category_code = $data['category_code'];
+            $question->title = $data['title'];
+            $question->description = $data['description'];
+            $question->student_id = 1;
+            $question->created_at = date('Y-m-d H:i:s');
+            $question->updated_at = date('Y-m-d H:i:s');
+ 
 
             $question = new question;
             $questionCode = 'Q10101-005';// generate realtime ans_code
@@ -131,8 +177,11 @@ class QuestionController extends Controller
             $question->question_code = $questionCode;
             $question->studID = 1;
             $question->save();
-
+ 
             if ($question->question_id && $questionCode) {
+ 
+            
+            if ($question->id && $questionCode) {
 
             //     // multiple choice
                 if($data['type_code'] == 1) {
@@ -166,14 +215,5 @@ class QuestionController extends Controller
         return $transaction;
     }
 
-    public function getCategories()
-    {
-        $categories = category::all();
 
-        return response()->json([
-            'status' => 200,
-            'data' => $categories,
-            'message' => 'Successfully saved.'
-        ]);
-    }
 }

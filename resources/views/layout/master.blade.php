@@ -20,7 +20,9 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.css">
 
     <!-- custom -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <!-- <link data-require="bootstrap@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" /> -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{URL::to('css/angular-ui-notification.css')}}">
     <link rel="stylesheet" href="{{URL::to('assets/css/open-iconic-bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{URL::to('assets/plugin/codemirror/lib/codemirror.css')}}">
 
@@ -90,6 +92,9 @@
 
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular/angular.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-router/release/angular-ui-router.min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-sanitize/angular-sanitize.min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js')}}"></script>
+    <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-notification/dist/angular-ui-notification.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-trix/dist/angular-trix.min.js')}}"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>

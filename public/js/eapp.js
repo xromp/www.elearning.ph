@@ -1,7 +1,7 @@
 (function(){
     'use strict';
     angular
-        .module('eApp',['ui.router', 'angularMoment', 'angularTrix'])
+        .module('eApp',['ui.router', 'ui-notification', 'ngSanitize', 'ui.bootstrap', 'angularMoment', 'angularTrix'])
         .config(Config)
         
         Config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$interpolateProvider']
@@ -22,6 +22,11 @@
                 url: '/question/askquestion',
                 controller: 'AskQuestionCtrl as aqc',
                 templateUrl: 'question.ask-question'
+            })
+            .state('question-answer', {
+                url: '/question/answerquestion/:questionid',
+                controller: 'AnswerQuestionCtrl as ansqc',
+                templateUrl: 'question.answer-question'
             })
 
             $urlRouterProvider.otherwise('/home');
