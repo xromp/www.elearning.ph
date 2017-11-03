@@ -12,7 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return redirect('login');
 });
 
 // questions
@@ -38,3 +39,13 @@ Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategor
 
 // api
 Route::post('/api/v1/answer/save','AnswerController@save');
+
+//login
+Route::get('/login','AccountController@index');
+Route::post('/auth','AccountController@auth');
+Route::get('/logout','AccountController@logout');
+
+//for checking purposes only
+Route::get('/sess','QuestionController@sess'); //show specific value of a session
+Route::get('/sess_flush','QuestionController@sess_flush'); //remove specific session
+

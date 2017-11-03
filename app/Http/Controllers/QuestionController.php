@@ -24,9 +24,19 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('question.index');
+        $request->session()->get('elearning_sess_accountId');
+        $name = $request->session()->get('elearning_sess_name');
+
+        if($request->session()->get('elearning_sess_accountId'))
+        {
+            return view('question.index', ['name'=>$name]);
+        }
+        else
+        {
+            return redirect('login');
+        }
     }
 
     public function get(Request $request)
@@ -240,7 +250,24 @@ class QuestionController extends Controller
             'message' => 'Successfully loaded.'
         ]);
     }
+
     public function isEmpty($question){
         return (!isset($question) || trim($question)===''|| $question ==='undefined');
+    }
+
+
+    //for checking purposes only
+    public function sess(Request $request)
+    {
+        echo "email = ".$request->session()->get('elearning_sess_accountId');
+        echo "<br>";
+        echo "sess = ".$request->session()->get('elearning_sess_email');
+    }
+
+    public function sess_flush(Request $request)
+    {
+        echo "sess = ".$request->session()->forget('sess_email');
+        echo "<br>";
+        echo "sess = ".$request->session()->forget('sess_accountId');
     }
 }

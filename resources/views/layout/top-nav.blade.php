@@ -20,7 +20,7 @@
         </ul>
 
         <div>
-            <a class="nav-link"></a>
+            <a class="nav-link"> Hi Name </a>
         </div>
 
         <div id="iconHeaderMargin">
@@ -36,7 +36,7 @@
         </div>
 
         <div id="iconHeaderMargin">
-            <a href="" data-toggle="tooltip" data-placement="bottom" title="Logout">
+            <a ng-click="tc.routeTo('/logout')" data-placement="bottom" title="Logout">
                 <img src="/assets/png/account-logout-2x.png">
             </a>
         </div>

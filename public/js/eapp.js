@@ -41,6 +41,11 @@
                 controller: 'StockMarketCategoryCtrl as scc',
                 templateUrl: 'stock-market.view-category'
             })
+            .state('login-view', {
+                url: '/login',
+                // controller: 'LoginCtrl as lc',
+                // templateUrl: 'login'
+            })
 
             $urlRouterProvider.otherwise('/home');
         }
