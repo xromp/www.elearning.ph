@@ -26,7 +26,7 @@
                 templateUrl: 'question.ask-question'
             })
             .state('question-answer', {
-                url: '/question/answerquestion/:questionid',
+                url: '/question/answerquestion/:questionCode',
                 controller: 'AnswerQuestionCtrl as ansqc',
                 templateUrl: 'question.answer-question'
             })

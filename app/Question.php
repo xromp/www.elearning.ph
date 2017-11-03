@@ -24,7 +24,12 @@ class Question extends Model
 
     public function students()
     {
-    	return $this->belongsTo('App\student', 'student_id');
+    	return $this->hasOne('App\Student', 'student_id');
+    }
+
+    public function answer_one()
+    {
+    	return $this->hasOne('App\Answer', 'question_code', 'question_code');
     }
 
     public function category()
@@ -41,7 +46,10 @@ class Question extends Model
 	  return $this->multiple_Choice()
 	    ->selectRaw('question_id, count(*) as count')
 	    ->groupBy('question_id');
-	}
+    }
+    public function is_selft(){
+        return true;
+    }
  //    public function questionsCount()
 	// {
 	//   	return $this->selectRaw('studID, count(*) as aggregate')

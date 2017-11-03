@@ -11,20 +11,25 @@
                     <span class="badge badge-default" ng-bind="ansqc.questionDetails.category_desc"></span>
                     <span class="badge badge-default" ng-bind="ansqc.questionDetails.type_desc"></span>
                 </div>
-                <br/>
+                <br/> 
             </div>
         </div>
         <div class="form-group" ng-class="{'text-danger': ansqc.frmQuestion.desc.$invalid && ansqc.frmQuestion.withError }">
             <label>Question</label>
             <div>
-                <trix-editor id="quesion" ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content disabled" ng-model="ansqc.questionDetails.desc" angular-trix trix-initialize="trixInitialize(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);"></trix-editor>
+                <trix-editor id="quesion" ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content disabled" ng-model="ansqc.questionDetails.description" angular-trix trix-initialize="trixInitialize(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);"></trix-editor>
             </div>
         </div>
 
         <!-- Type of answer -->
         <div class="form-group" ng-if="ansqc.questionDetails.type_code == 'MULTIPLE_CHOICE'">
             <fieldset class="form-group">
-                <legend class="col-form-legend">Select the correct answer to the question.</legend>
+                <legend class="col-form-legend">
+                    <%ansqc.questionDetails.student_info.is_self ?
+                    'Question\'s choices' :
+                    'Select the correct answer to the question'
+                    %>
+                </legend>
                 <div class="col-sm-10">
 
                     <div class="form-check" ng-repeat="choice in ansqc.questionDetails.choiceList">
