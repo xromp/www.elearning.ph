@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use DB;
 
@@ -32,38 +33,86 @@ class QuestionController extends Controller
     {
         $formData = array(
             'limit'=>$request->input('limit'),
+            'questionCode'=>$request->input('questionCode'),
             'category'=>$request->input('collectionid'),
             'type'=>$request->input('orno'),
         );
 
-        $student = student::with(['questions'=>function($query){
-                        return $query->orderBy('created_at','desc')->get();
-                    },
-                    'questions.multiple_Choice'
-                    ])
-                    // ->perStudent(2)
+        $question = DB::table('questions as q')
+            -> select(
+                'q.question_code',
+                'q.title',
+                'q.description', 
+                'c.category_code',
+                'c.description as category_desc',
+                't.type_code',
+                't.description as type_desc',
+                'q.student_id',
+                DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name'),
+                'a.no_of_answers',
+                'ans_multiple.answer',
+                'q.created_at')
+            -> leftJoin( DB::raw( "(SELECT answers.question_code, COUNT( answers.question_code ) as no_of_answers FROM answers GROUP BY answers.question_code) as a"), 'a.question_code', '=', 'q.question_code' )
+            -> leftjoin('answers as ans','ans.question_code','=','q.question_code')
+            -> leftjoin('answer_multiple_choices as ans_multiple','ans_multiple.answer_id','=','ans.answer_id')
+            -> leftjoin('categories as c','c.category_code','=','q.category_code')
+            -> leftjoin('types as t','t.type_code','=','q.type_code')
+            -> leftjoin('students as s','s.student_id','=','q.student_id');
+
+        if (!$this->isEmpty($formData['questionCode'])) {
+            $question->where('q.question_code',$formData['questionCode']);
+        }
+        if ($formData['limit']) {
+            $question->take($formData['limit']);
+        }
+        $question= $question->latest()->get();
+        
+        $result = array();
+
+        $questionCopy = json_decode($question, true);
+        foreach ($questionCopy as $key => $value) {
+            $hasAnswered = DB::table('answers')
+                ->where('question_code',$value['question_code'])
+                ->where('student_id',$value['student_id'])
+                ->count();
+
+            $hasAnswered = ($hasAnswered >= 1);
+
+            $value['student_info'] = array(
+                'student_id'=>$value['student_id'],
+                'name'=>$value['student_name'],
+                'is_self'=>false,
+                'has_answered'=>$hasAnswered
+            );
+
+            $value['students_answered'] = collect([
+                array('student_id'=>1, 'name'=>'Rom', 'answer'=>'a', 'is_correct'=>false, 'answered_at'=> 'new Date()'),
+                array('student_id'=>2, 'name'=>'Mark', 'answer'=>'b', 'is_correct'=>false, 'answered_at'=> 'new Date()')
+            ]);
+
+
+            if ($value['student_info']['has_answered']){
+                $value['answer'] = $value['answer'];            
+            }
+
+            if ($value['type_code'] == 'MULTIPLE_CHOICE'){
+                $multipleChoice = DB::table('multiple_choices')
+                    ->select('question_code','choice_code','choice_desc')
+                    ->where('question_code',$value['question_code'])
                     ->get();
-        // $student->is_self = 'true';
+                
+                $value['choiceList'] =  $multipleChoice;
+            }
+            
 
-        // if ($formData['limit']) {
-        //     $question->take($formData['limit']);
-        // }
-
-        // $questions = $questions->orderBy('created_at','desc')->get();
-
-        // $result = json_decode($questions, true);
-        // foreach ($result as $key => $question) {
-        //     $result[$key]['category'] = 'Coding';
-        //     $result[$key]['type'] = 'Composite';
-        //     $result[$key]['is_self'] = true;
-        //     $result[$key]['created_by_name'] = 'Rommel';
-        //     $result[$key]['no_of_answers'] = 100;
-        // }
+            array_push($result,$value);
+        }
 
 
         return response()-> json([
             'status'=>200,
-            'data'=>$student,
+            'count'=>count($result),
+            'data'=>$result,
             'message'=>''
         ]);
     }
@@ -71,6 +120,7 @@ class QuestionController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(),[
+            'question_code'=> 'required',
             'type_code'=> 'required',
             'category_code'=> 'required',
             'title'=> 'required',
@@ -87,13 +137,28 @@ class QuestionController extends Controller
         }
 
         $data = array();
+        $data['question_code'] = $request-> input('question_code');
         $data['type_code'] = $request-> input('type_code');
         $data['category_code'] = $request-> input('category_code');
         $data['title'] = $request-> input('title');
         $data['choiceList'] = $request-> input('choiceList');
         $data['description'] = $request-> input('description');
+        $data['student_id'] = 1;
  
         $data['createdBy'] = $request-> input('createdBy');
+
+        $hasAnswered = DB::table('answers')
+            ->where('question_code',$data['question_code'])
+            ->where('student_id',$data['student_id'])
+            ->count();
+
+        if ($hasAnswered >= 1){
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'You\'ve already answered this question.'
+            ]);
+        };
 
         // $transaction = DB::transaction(function($data) use($data){
  
@@ -172,6 +237,7 @@ class QuestionController extends Controller
             'message' => 'Successfully loaded.'
         ]);
     }
-
-
+    public function isEmpty($question){
+        return (!isset($question) || trim($question)===''|| $question ==='undefined');
+    }
 }

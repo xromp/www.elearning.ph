@@ -18,10 +18,10 @@
                         <small>You posted this question <time am-time-ago="questions.created_at"></time></small>
                     </div>
 
-                    <small>This question was answered by 1 student(s)</small>                          
+                    <small>This question was answered by <%question.no_of_answers || '0'%> student(s)</small>                          
                     <div>
-                        <span class="badge badge-default" ng-bind="question.category"></span>
-                        <span class="badge badge-default" ng-bind="question.type"></span>
+                        <span class="badge badge-default" ng-bind="question.category_desc"></span>
+                        <span class="badge badge-default" ng-bind="question.type_desc"></span>
                     </div>
                 </a>
                 <br/>

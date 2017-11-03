@@ -63,7 +63,6 @@
         <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-primary" ng-click="aqc.submit(aqc.questionDetails)">
-                <!--  ng-disabled="aqc.frmQuestion.$invalid" -->
                     Submit Question
                 </button>
             </div>
