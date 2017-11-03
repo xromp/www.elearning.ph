@@ -29,7 +29,7 @@ class Question extends Model
 
     public function category()
     {
-        return $this->hasOne('App\category', 'category_id');
+        return $this->hasOne('App\category', 'category_code', 'category_code');
     }
     // public function multiple_Choice2()
     // {

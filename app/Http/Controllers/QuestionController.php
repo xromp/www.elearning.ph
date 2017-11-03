@@ -159,13 +159,16 @@ class QuestionController extends Controller
 
     public function getQuestions()
     {
-        $questions = question::with(['students',
-                     'multiple_Choice'=>function($q){
-                        $q->select('multiple_choice_id', 'question_code', 'choice', 'choice_desc')->get();
-                     }])
+        $questions = question::with([
+                    'students',
+                    'category', 
+                    'multiple_Choice'=>function($q){
+                        $q->select('multiple_choice_id', 'question_code', 'choice', 'choice_desc')
+                        ->get();
+                    }])
+                    ->select('question_id', 'question_code', 'category_code', 'type_code', 'title', 'description', 'student_id')
                     ->where('question_code', 'Q0103-002')
                     ->get();
-
         return response()->json([
             'status' => 200,
             'data' => $questions,

@@ -10,4 +10,8 @@ class Category extends Model
     // protected $fillable 	= array();
 	protected $primaryKey 	= 'category_id';
 
+	public function questionCategory()
+	{
+		return $this->belongsTo('App\Question', 'category_id', 'category_code');
+	}
 }
