@@ -34,7 +34,6 @@ Route::get('/stockmarket/category/{categorycode}','StockMarketController@index')
 // api
 Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategory');
 
-
 // answer
 
 // api
@@ -49,3 +48,8 @@ Route::get('/logout','AccountController@logout');
 Route::get('/sess','QuestionController@sess'); //show specific value of a session
 Route::get('/sess_flush','QuestionController@sess_flush'); //remove specific session
 
+// Category
+
+// Category api
+Route::get('/api/v1/category/get','CategoryController@get');
+Route::get('/api/v1/category/getWithAnswer','CategoryController@getWithAnswer');

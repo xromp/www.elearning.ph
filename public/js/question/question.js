@@ -48,7 +48,7 @@
             //     {category_id:'3', category_code:'DECORATOR', desc:'Decorator'}
             // ];
 
-            QuestionSrvcs.getCategories()
+            QuestionSrvcs.getCategory()
             .then (function (response)  {
                 if (response.data.status == 200) {
                     vm.categoryList = response.data.data;
@@ -123,7 +123,7 @@
             //     answer:'B',
             //     choiceList : [
             //         {'choice_id':1, choice_code:'a', choice_desc:'one'},
-            //         {'choice_id':2, choice_code:'b', choice_desc:'two'},
+            //         {'choice_id':2 choice_code:'b', choice_desc:'two'},
             //         {'choice_id':3, choice_code:'c', choice_desc:'three'},
             //         {'choice_id':4, choice_code:'d', choice_desc:'four'}
             //     ],
@@ -272,11 +272,11 @@
                         headers: {'Content-Type': 'application/json'}
                     })
                 },
-                getCategories: function() {
+                getCategory: function() {
                     return $http({
                         method:'GET',
                         data:null,
-                        url: '/api/question/categories',
+                        url: '/api/v1/category/get',
                         
                     })
                 }

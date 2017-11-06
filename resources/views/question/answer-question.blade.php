@@ -48,7 +48,7 @@
         </div>
 
         <div class="form-group" ng-if="ansqc.questionDetails.type_code == 'CODING'">
-        <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small class="trix-content ng-valid ng-isolate-scope ng-not-empty ng-dirty ng-valid-parse ng-touched"></label>
+        <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small></label>
             <!-- https://github.com/sachinchoolur/angular-trix -->
             <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content" ng-model="ansqc.questionDetails.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
         </div>

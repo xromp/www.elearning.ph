@@ -29,8 +29,8 @@ class AccountController extends Controller
 
     	$account = new Account;
     	$accountData = $account->auth($email, $pword);
-    
-    	if($accountData)
+
+		if($accountData)
     	{
     		$student = Student::where('student_id', $accountData->account_id)->first();
     		$request->session()->put('elearning_sess_accountId', $accountData->account_id);

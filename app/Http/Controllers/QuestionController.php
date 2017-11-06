@@ -130,12 +130,10 @@ class QuestionController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'question_code'=> 'required',
             'type_code'=> 'required',
             'category_code'=> 'required',
             'title'=> 'required',
-            'description'=> 'required',
-            'answer'=> 'required'
+            'description'=> 'required'
         ]);
 
         if ($validator-> fails()) {
@@ -147,7 +145,7 @@ class QuestionController extends Controller
         }
 
         $data = array();
-        $data['question_code'] = $request-> input('question_code');
+        $data['question_code'] = 'Q0103-004';
         $data['type_code'] = $request-> input('type_code');
         $data['category_code'] = $request-> input('category_code');
         $data['title'] = $request-> input('title');
@@ -176,7 +174,7 @@ class QuestionController extends Controller
         
         $transaction = DB::transaction(function($data) use($data){
             $question = new Question;
-            $questionCode = 'Q0103-001';// generate realtime ans_code
+            $questionCode = $data['question_code'];// generate realtime ans_code
             $question->description = $data['description'];
             $question->title = $data['title'];
             $question->category_code = $data['category_code'];
