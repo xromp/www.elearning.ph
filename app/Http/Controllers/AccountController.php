@@ -33,9 +33,10 @@ class AccountController extends Controller
 		if($accountData)
     	{
     		$student = Student::where('student_id', $accountData->account_id)->first();
-    		$request->session()->put('elearning_sess_accountId', $accountData->account_id);
-    		$request->session()->put('elearning_sess_email', $email);
-    		$request->session()->put('elearning_sess_name', $student->fName);
+			$request->session()->put('elearning_sess_accountId', $accountData->account_id);
+			$request->session()->put('student_id', $accountData->account_id);
+    		$request->session()->put('email', $email);
+    		$request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
     		return redirect('question/view');
     	}
     	else
@@ -46,8 +47,7 @@ class AccountController extends Controller
 
     public function logout(Request $request)
     {
-        $request->session()->forget('elearning_sess_accountId');
-        $request->session()->forget('elearning_sess_email');
+        $request->session()->flush();
         return redirect('login');
     }
 

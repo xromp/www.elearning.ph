@@ -23,7 +23,7 @@
         <div class="form-group" ng-class="{'text-danger': aqc.frmQuestion.type.$invalid && aqc.frmQuestion.withError }">
             <label>Type of Question</label>
             <select name="type" class="form-control" ng-model="aqc.questionDetails.type_code" ng-init="aqc.changeType(aqc.questionDetails)" ng-change="aqc.changeType(aqc.questionDetails)" required>
-                <option ng-repeat="type in aqc.typeList" ng-bind="type.desc" ng-value="type.type_code"></option>
+                <option ng-repeat="type in aqc.typeList" ng-bind="type.description" ng-value="type.type_code"></option>
             </select>
             <small class="text-danger" ng-show="aqc.frmQuestion.type.$invalid && aqc.frmQuestion.withError">Type of Question is required field.</small>
         </div>

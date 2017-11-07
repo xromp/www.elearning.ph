@@ -12,7 +12,7 @@ class isLoggedOn
      */
     public function handle($request, Closure $next)
     {
-        if ($request->session()->get('elearning_sess_accountId') === null) {
+        if ($request->session()->get('account_id') === null) {
             return redirect('/login');
         }
         return $next($request);

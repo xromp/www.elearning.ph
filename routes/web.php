@@ -53,3 +53,8 @@ Route::get('/sess_flush','QuestionController@sess_flush'); //remove specific ses
 // Category api
 Route::get('/api/v1/category/get','CategoryController@get');
 Route::get('/api/v1/category/getWithAnswer','CategoryController@getWithAnswer');
+
+// Type
+
+// Type api
+Route::get('/api/v1/type/get','TypeController@get');

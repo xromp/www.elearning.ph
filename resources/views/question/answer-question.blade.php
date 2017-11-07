@@ -61,7 +61,7 @@
 
         <div class="form-group row">
             <div class="col-sm-10">            
-                <button type="submit" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-if="!ansqc.questionDetails.student_info.is_self" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
+                <button type="submit" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-show="!ansqc.questionDetails.student_info.is_self && !ansqc.questionDetails.student_info.has_answered" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
                 <table class="table table-sm table-responsive" ng-if="ansqc.questionDetails.student_info.is_self">
                     <thead>
                         <tr>
