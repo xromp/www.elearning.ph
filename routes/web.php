@@ -47,7 +47,18 @@ Route::get('/logout','AccountController@logout');
 Route::get('/sess','QuestionController@sess'); //show specific value of a session
 Route::get('/sess_flush','QuestionController@sess_flush'); //remove specific session
 
+ 
 //for profile 
 Route::get('/profile/index','ProfileController@index'); //show specific value of a session
 Route::get('/profile/{id}','ProfileController@viewOtherProfile'); //show specific value of a session
 
+ 
+
+// Category api
+Route::get('/api/v1/category/get','CategoryController@get');
+Route::get('/api/v1/category/getWithAnswer','CategoryController@getWithAnswer');
+
+// Type
+
+// Type api
+Route::get('/api/v1/type/get','TypeController@get');

@@ -49,14 +49,40 @@ class AnswerController extends Controller
             $data['question_code'] = $request-> input('question_code');
             $data['category_code'] = $request-> input('category_code');
             $data['type_code'] = $request-> input('type_code');
+            $data['student_id'] = $request-> input('student_id');
             $data['rating'] = $request-> input('rating');
             $data['answer'] = $request-> input('answer');
+            $data['session']['student_id'] = $request->session()->get('student_id');
+
+            $hasAnswered = DB::table('answers')
+                ->where('question_code',$data['question_code'])
+                ->where('student_id',$data['session']['student_id'])
+                ->count();
+            
+            $isSelf = ($request->session()->get('student_id') == $data['student_id']);
+
+            if( $hasAnswered >= 1 ) {
+                return response()->json([
+                    'status' => 200,
+                    'data' => 'null',
+                    'message' => 'You have already answered this question.'
+                ]);
+            }
+
+            if($isSelf) {
+                return response()->json([
+                    'status' => 200,
+                    'data' => 'null',
+                    'message' => 'You are not allowed to answer your own question.'
+                ]);
+            }
             
             $transaction = DB::transaction(function($data) use($data){
                 $answer = new Answer;
-                $data['student_id'] = 1;//session
+                $data['student_id'] = $data['session']['student_id'];//session
                 $answer->question_code = $data['question_code'];
                 $answer->student_id = $data['student_id'];
+                $answer->answer = $data['answer'];
 
                 if (!$this->isEmpty($data['rating'])) {
                     $answer->rating = $data['rating'];
@@ -64,27 +90,11 @@ class AnswerController extends Controller
 
                 $answer->save();
      
-                if ($answer->answer_id) {
-    
-                    if($data['type_code'] == 'MULTIPLE_CHOICE') {
-                        $answer_choices = new Answer_Multiple_Choice;
-
-                        $answer_choices->answer_id = $answer->answer_id;
-                        $answer_choices->answer = $data['answer'];
-
-                        $answer_choices->save();
-                    }
-    
-                } else {
-                    throw new \Exception("Error Processing Request");
-                }
-    
                 return response()->json([
                     'status' => 200,
                     'data' => 'null',
                     'message' => 'Successfully saved.'
                 ]);
-    
             });
     
             return $transaction;

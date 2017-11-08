@@ -60,11 +60,11 @@ class QuestionController extends Controller
                 'q.student_id',
                 DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name'),
                 'a.no_of_answers',
-                'ans_multiple.answer',
+                'ans.answer',
+                DB::raw('ans.student_id as student_answered'),
                 'q.created_at')
             -> leftJoin( DB::raw( "(SELECT answers.question_code, COUNT( answers.question_code ) as no_of_answers FROM answers GROUP BY answers.question_code) as a"), 'a.question_code', '=', 'q.question_code' )
             -> leftjoin('answers as ans','ans.question_code','=','q.question_code')
-            -> leftjoin('answer_multiple_choices as ans_multiple','ans_multiple.answer_id','=','ans.answer_id')
             -> leftjoin('categories as c','c.category_code','=','q.category_code')
             -> leftjoin('types as t','t.type_code','=','q.type_code')
             -> leftjoin('students as s','s.student_id','=','q.student_id');
@@ -83,15 +83,15 @@ class QuestionController extends Controller
         foreach ($questionCopy as $key => $value) {
             $hasAnswered = DB::table('answers')
                 ->where('question_code',$value['question_code'])
-                ->where('student_id',$value['student_id'])
+                ->where('student_id',$value['student_answered'])
                 ->count();
-
+            $isSelf = ($request->session()->get('student_id') == $value['student_id']);
             $hasAnswered = ($hasAnswered >= 1);
 
             $value['student_info'] = array(
                 'student_id'=>$value['student_id'],
                 'name'=>$value['student_name'],
-                'is_self'=>false,
+                'is_self'=>$isSelf,
                 'has_answered'=>$hasAnswered
             );
 
@@ -128,12 +128,10 @@ class QuestionController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'question_code'=> 'required',
             'type_code'=> 'required',
             'category_code'=> 'required',
             'title'=> 'required',
-            'description'=> 'required',
-            'answer'=> 'required'
+            'description'=> 'required'
         ]);
 
         if ($validator-> fails()) {
@@ -145,16 +143,16 @@ class QuestionController extends Controller
         }
 
         $data = array();
-        $data['question_code'] = $request-> input('question_code');
+
         $data['type_code'] = $request-> input('type_code');
         $data['category_code'] = $request-> input('category_code');
         $data['title'] = $request-> input('title');
         $data['choiceList'] = $request-> input('choiceList');
         $data['description'] = $request-> input('description');
-        $data['student_id'] = 1;
- 
+        $data['student_id'] = $request->session()->get('student_id');
         $data['createdBy'] = $request-> input('createdBy');
-
+        $data['question_code'] = $this->generateQuestionCode($data['category_code'],$data['type_code']);
+        
         $hasAnswered = DB::table('answers')
             ->where('question_code',$data['question_code'])
             ->where('student_id',$data['student_id'])
@@ -174,14 +172,14 @@ class QuestionController extends Controller
         
         $transaction = DB::transaction(function($data) use($data){
             $question = new Question;
-            $questionCode = 'Q0103-001';// generate realtime ans_code
+            $questionCode = $data['question_code'];// generate realtime ans_code
             $question->description = $data['description'];
             $question->title = $data['title'];
             $question->category_code = $data['category_code'];
             $question->type_code = $data['type_code'];
             $question->is_verified = 0;
             $question->question_code = $questionCode;
-            $question->student_id = 1;
+            $question->student_id = $data['student_id'];
 
             $question->save();
  
@@ -251,6 +249,30 @@ class QuestionController extends Controller
 
     public function isEmpty($question){
         return (!isset($question) || trim($question)===''|| $question ==='undefined');
+    }
+
+    public function generateQuestionCode($categoryCode, $typeCode){
+        // Q0101-0001
+        $category = DB::table('categories')
+            ->where('category_code',$categoryCode)
+            ->first();
+
+        $type = DB::table('types')
+            ->where('type_code',$typeCode)
+            ->first();
+        
+        $counter = DB::table('questions')
+            ->where('category_code',$categoryCode)
+            ->where('type_code',$typeCode)
+            ->count();
+
+        $category_id = sprintf('%02d', $category->category_id);
+        $type_id = sprintf('%02d', $type->type_id);
+        $counter = $counter+1;
+        $counter = sprintf('%04d', $counter);
+        
+        $question = 'Q'.$category_id.$type_id.'-'.$counter;
+        return $question;
     }
 
 

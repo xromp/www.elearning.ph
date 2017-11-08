@@ -37,18 +37,10 @@
            
             vm.questionDetails = {
                 category_code: "ADAPTER",
-                type_code:'IDENTIFICATION'
+                type_code:'CODING'
             };
 
-            console.log( vm.questionDetails);
-          
-            // vm.categoryList = [
-            //     {category_id:'1', category_code:'COMPOSITE', desc:'Composite'},
-            //     {category_id:'2', category_code:'ADAPTER', desc:'Adapter'},
-            //     {category_id:'3', category_code:'DECORATOR', desc:'Decorator'}
-            // ];
-
-            QuestionSrvcs.getCategories()
+            QuestionSrvcs.getCategory()
             .then (function (response)  {
                 if (response.data.status == 200) {
                     vm.categoryList = response.data.data;
@@ -56,11 +48,13 @@
                 }
             }, function() { alert("Bad Request!")})
 
-            vm.typeList = [
-                {type_id:'1', type_code:'MULTIPLE_CHOICE', desc:'Multiple Choice'},
-                {type_id:'2', type_code:'CODING', desc:'Coding'},
-                {type_id:'3', type_code:'IDENTIFICATION', desc:'Identification'}
-            ];
+            QuestionSrvcs.getType()
+            .then (function (response)  {
+                if (response.data.status == 200) {
+                    vm.typeList = response.data.data;
+                    console.log(vm.typeList);
+                }
+            }, function() { alert("Bad Request!")})
 
             vm.questionDetails.choiceList = [
                 {'choice_id':1, choice_code:'a', choice_desc:''},
@@ -110,39 +104,6 @@
             var vm = this; 
 
             vm.questionDetails = {};
-            // vm.questionDetails = {
-            //     question_code:'Q10101-001', 
-            //     title:'How to be you po', 
-            //     desc:'<div><!--block-->sdfsdfs<br><br></div><pre><!--block-->var sdfasd</pre>', 
-            //     status:'',
-            //     created_at:new Date('10/28/2017 14:00:01'), 
-            //     category_code:'COMPOSITE', 
-            //     category_desc:'Composite', 
-            //     type_code:'IDENTIFICATION',
-            //     type_desc:'Multiple Choice',
-            //     answer:'B',
-            //     choiceList : [
-            //         {'choice_id':1, choice_code:'a', choice_desc:'one'},
-            //         {'choice_id':2, choice_code:'b', choice_desc:'two'},
-            //         {'choice_id':3, choice_code:'c', choice_desc:'three'},
-            //         {'choice_id':4, choice_code:'d', choice_desc:'four'}
-            //     ],
-            //     student_info: {
-            //         student_id:'1',                 
-            //         name:'Rom',
-            //         is_self:true,
-            //         has_answered:true,
-            //         students_answered: {
-            //             count:50,
-            //             correct_ans_count:10,
-            //             list : [
-            //                 {'student_id':1, 'name':'Rom', 'answer':'a', is_correct:false, 'answered_at': new Date()},
-            //                 {'student_id':2, 'name':'Mark', 'answer':'b', is_correct:false, 'answered_at': new Date()},
-            //                 {'student_id':3, 'name':'John', 'answer':'a', is_correct:true, 'answered_at': new Date()},
-            //             ]
-            //         }                
-            //     }
-            // };
             
             vm.onload = function(){
 
@@ -272,11 +233,19 @@
                         headers: {'Content-Type': 'application/json'}
                     })
                 },
-                getCategories: function() {
+                getCategory: function() {
                     return $http({
                         method:'GET',
                         data:null,
-                        url: '/api/question/categories',
+                        url: '/api/v1/category/get',
+                        
+                    })
+                },
+                getType: function() {
+                    return $http({
+                        method:'GET',
+                        data:null,
+                        url: '/api/v1/type/get',
                         
                     })
                 }

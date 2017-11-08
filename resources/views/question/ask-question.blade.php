@@ -3,7 +3,7 @@
         <div class="form-group" ng-class="{'text-danger': aqc.frmQuestion.category.$invalid && aqc.frmQuestion.withError }">
             <label>Question Category</label>
             <select name="category" class="form-control is-valid" ng-model="aqc.questionDetails.category_code" required>
-                <option ng-repeat="category in aqc.categoryList" ng-bind="category.desc" ng-value="category.category_code"></option>
+                <option ng-repeat="category in aqc.categoryList" ng-bind="category.description" ng-value="category.category_code"></option>
             </select>
             <small class="text-danger" ng-show="aqc.frmQuestion.category.$invalid && aqc.frmQuestion.withError">Category is required field.</small>
         </div>
@@ -23,7 +23,7 @@
         <div class="form-group" ng-class="{'text-danger': aqc.frmQuestion.type.$invalid && aqc.frmQuestion.withError }">
             <label>Type of Question</label>
             <select name="type" class="form-control" ng-model="aqc.questionDetails.type_code" ng-init="aqc.changeType(aqc.questionDetails)" ng-change="aqc.changeType(aqc.questionDetails)" required>
-                <option ng-repeat="type in aqc.typeList" ng-bind="type.desc" ng-value="type.type_code"></option>
+                <option ng-repeat="type in aqc.typeList" ng-bind="type.description" ng-value="type.type_code"></option>
             </select>
             <small class="text-danger" ng-show="aqc.frmQuestion.type.$invalid && aqc.frmQuestion.withError">Type of Question is required field.</small>
         </div>
@@ -49,7 +49,7 @@
         </div>
 
         <div class="form-group" ng-if="aqc.questionDetails.type_code == 'CODING'">
-        <label>Type the code below.</label>
+        <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small></label>
             <!-- https://github.com/sachinchoolur/angular-trix -->
             <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content" ng-model="aqc.questionDetails.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
         </div>
