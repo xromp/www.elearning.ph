@@ -12,14 +12,13 @@
     <div class="row">
         <div class="col-sm-8 blog-main">
             <div class="list-group" ng-repeat="question in qc.questionList">
-            <%question.question_code%>
                 <a href="\question\answerquestion\<%question.question_code%>" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" ng-bind="question.title"><%question.question_code%>asdg</h5>
+                        <h5 class="mb-1"><i class="fa fa-check-circle-o" aria-hidden="true" ng-show="question.student_info.has_answered"></i> <%question.title%></h5>
                         <small ng-show="question.student_info.is_self">You posted this question <time am-time-ago="question.created_at"></time></small>
                         <small ng-hide="question.student_info.is_self">Asked this question <time am-time-ago="question.created_at"></time></small>
                     </div>
-
+                    <%question.question_code%>                    
                     <small>This question was answered by <%question.no_of_answers || '0'%> student(s)</small>                          
                     <div>
                         <span class="badge badge-default" ng-bind="question.category_desc"></span>

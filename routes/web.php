@@ -22,14 +22,14 @@ Route::get('/question/askquestion','QuestionController@index');
 Route::get('/question/answerquestion/{questionid}','QuestionController@index');
 
 // api
-Route::get('/api/question/get','QuestionController@get');
-Route::get('/api/question/categories','QuestionController@getCategories');
-Route::get('/api/question/getQuestions','QuestionController@getQuestions');
-Route::post('/api/question/create','QuestionController@create');
+Route::get('/api/v1/question/get','QuestionController@get');
+Route::get('/api/v1/question/categories','QuestionController@getCategories');
+Route::get('/api/v1/question/getQuestions','QuestionController@getQuestions');
+Route::post('/api/v1/question/create','QuestionController@create');
 
 // stock market
 Route::get('/stockmarket/view','StockMarketController@index');
-Route::get('/stockmarket/category/{categorycode}','StockMarketController@index');
+Route::get('/stockmarket/category/{categoryCode}','StockMarketController@index');
 
 // api
 Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategory');

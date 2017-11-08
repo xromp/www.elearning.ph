@@ -44,7 +44,7 @@ class QuestionController extends Controller
         $formData = array(
             'limit'=>$request->input('limit'),
             'questionCode'=>$request->input('questionCode'),
-            'category'=>$request->input('collectionid'),
+            'categoryCode'=>$request->input('categoryCode'),
             'type'=>$request->input('orno'),
         );
 
@@ -72,10 +72,15 @@ class QuestionController extends Controller
         if (!$this->isEmpty($formData['questionCode'])) {
             $question->where('q.question_code',$formData['questionCode']);
         }
+        if (!$this->isEmpty($formData['categoryCode'])) {
+            $question->where('q.category_code',$formData['categoryCode']);
+        }
         if ($formData['limit']) {
             $question->take($formData['limit']);
         }
-        $question= $question->latest()->get();
+        $question= $question
+        ->latest()
+        ->get();
         
         $result = array();
 
@@ -113,8 +118,6 @@ class QuestionController extends Controller
                 
                 $value['choiceList'] =  $multipleChoice;
             }
-            
-
             array_push($result,$value);
         }
 

@@ -37,7 +37,7 @@
                 templateUrl: 'stock-market.view'
             })
             .state('stockmarket-viewCategory', {
-                url: '/stockmarket/category/:categorycode',
+                url: '/stockmarket/category/:categoryCode',
                 controller: 'StockMarketCategoryCtrl as scc',
                 templateUrl: 'stock-market.view-category'
             })

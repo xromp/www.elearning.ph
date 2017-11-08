@@ -7,8 +7,8 @@
                 <small></small>
             </div>                    
             <div>
-                <span class="badge badge-default ">Answered: <%category.answer_count%></span>
-                <span class="badge badge-default">Unanswered:<%category.unanswer_count%></span>
+                <span class="badge badge-default ">Answered: <%category.no_answered%></span>
+                <span class="badge badge-default">Unanswered:<%category.no_unanswered%></span>
             </div>
         </a>
         <br>
