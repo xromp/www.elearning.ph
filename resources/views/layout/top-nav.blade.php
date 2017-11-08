@@ -20,11 +20,13 @@
         </ul>
 
         <div>
-            <a class="nav-link"> Hi Name </a>
+            <a class="nav-link"> Hi @if(!empty(Session::get('elearning_sess_name')))
+                                    {{ Session::get('elearning_sess_name') }} 
+                                    @endif </a>
         </div>
 
         <div id="iconHeaderMargin">
-            <a href="" data-toggle="tooltip" data-placement="bottom" title="Profile">
+            <a ng-click="tc.routeTo('/profile/index')" href="" data-toggle="tooltip" data-placement="bottom" title="Profile">
                 <img src="/assets/png/person-3x.png">
             </a>
         </div>

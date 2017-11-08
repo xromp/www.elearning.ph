@@ -46,6 +46,16 @@
                 // controller: 'LoginCtrl as lc',
                 // templateUrl: 'login'
             })
+            .state('profile', {
+                url: '/profile/:id',
+                controller: 'ProfileCtrl as pc',
+                templateUrl: 'profile.view'
+            })
+
+            .state('profile2', {
+                url: '/profile2/:id',
+                templateUrl: 'profile.view2'
+            })
 
             $urlRouterProvider.otherwise('/home');
         }

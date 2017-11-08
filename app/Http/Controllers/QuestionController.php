@@ -114,10 +114,8 @@ class QuestionController extends Controller
                 $value['choiceList'] =  $multipleChoice;
             }
             
-
             array_push($result,$value);
         }
-
 
         return response()-> json([
             'status'=>200,
@@ -270,4 +268,23 @@ class QuestionController extends Controller
         echo "<br>";
         echo "sess = ".$request->session()->forget('sess_accountId');
     }
+
+    // public function QuestionsPosted()
+    // {
+    //     $questions = question::with([
+    //                 'students',
+    //                 'category', 
+    //                 'multiple_Choice'=>function($q){
+    //                     $q->select('multiple_choice_id', 'question_code', 'choice', 'choice_desc')
+    //                     ->get();
+    //                 }])
+    //                 ->select('question_id', 'question_code', 'category_code', 'type_code', 'title', 'description', 'student_id')
+    //                 ->where('question_code', 'Q0103-002')
+    //                 ->get();
+    //     return response()->json([
+    //         'status' => 200,
+    //         'data' => $questions,
+    //         'message' => 'Successfully loaded.'
+    //     ]);
+    // }
 }
