@@ -118,10 +118,6 @@ class QuestionController extends Controller
                 
                 $value['choiceList'] =  $multipleChoice;
             }
-<<<<<<< HEAD
-=======
-            
->>>>>>> e4d59fafde0f1180740fb3d4c9c9210f59d1b273
             array_push($result,$value);
         }
 
