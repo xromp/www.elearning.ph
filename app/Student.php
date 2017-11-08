@@ -37,7 +37,7 @@ class Student extends Model
 
     public function questionsCount()
 	{
-	  return $this->questions()
+	   return $this->questions()
 	    ->selectRaw('student_id, count(*) as count')
 	    ->groupBy('student_id');
 	}

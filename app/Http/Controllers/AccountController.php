@@ -17,8 +17,9 @@ class AccountController extends Controller
  //    	}
  //    }
 
-    public function index()
+    public function index(Request $request)
     {
+    	echo $request->session()->get('elearning_sess_email');
     	return view('login');
     }
 
@@ -51,4 +52,16 @@ class AccountController extends Controller
         return redirect('login');
     }
 
+    public function store(Request $request)
+    {
+        // $avoCareer = new AvoCareer;  
+        // $avoCareer->resume_link  = $request->resume_link;
+        // $avoCareer->save();
+        // $fileName = $avoCareer->id . '.' .
+        $filename = $request->session()->get('elearning_sess_email');
+     	echo "extension = ".  $request->file('resume_link')->getClientOriginalExtension();
+        $request->file('resume_link')->move(base_path() . '/public/uploads/profile', $filename.".png");
+        // $avoCareer->resume_link  = $fileName;
+        // return redirect('careers');
+    }
 }
