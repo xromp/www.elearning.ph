@@ -18,7 +18,7 @@
                 <a class="nav-link"  href="#">Rewards</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"  href="#">Forum</a>
+                <a class="nav-link" ng-click="tc.routeTo('/forums/index')"  href="#">Forums</a>
             </li>
         </ul>
 

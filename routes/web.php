@@ -67,6 +67,8 @@ Route::post('/api/v1/leaderboard/find','LeaderboardController@Find');
 
 //forums
 Route::get('/forums/index','ForumsController@Index');
+Route::get('/api/v1/forums/list','ForumsController@Forums');
+Route::get('/api/v1/forums/comments','ForumsController@Comments');
 
 //Posted Question API
 Route::get('/api/v1/profile/user','ProfileController@User'); 
