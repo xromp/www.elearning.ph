@@ -96,4 +96,8 @@ class AccountController extends Controller
         // $avoCareer->resume_link  = $fileName;
         // return redirect('careers');
     }
+
+    public function bcrypt(){
+        echo bcrypt('123');
+    }
 }
