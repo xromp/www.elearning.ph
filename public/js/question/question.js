@@ -6,6 +6,7 @@
         .controller('AskQuestionCtrl',AskQuestionCtrl)
         .controller('AnswerQuestionCtrl',AnswerQuestionCtrl)
         .controller('ModalInfoInstanceCtrl',ModalInfoInstanceCtrl)
+        .controller('ModalRateInstanceCtrl',ModalRateInstanceCtrl)
         .factory('QuestionSrvcs',QuestionSrvcs)
 
         QuestionCtrl.$inject = ['QuestionSrvcs'];
@@ -21,6 +22,11 @@
                 console.log(vm.questionList)
               }
             },function(){ alert("Bad Request!")})
+            vm.totalItems = 30;
+            vm.currentPage = 4;
+            vm.maxSize = 3;
+            vm.bigTotalItems = 175;
+            vm.bigCurrentPage = 1;
 
             vm.leaderBoardList = [
                 {uid:'1', name:'John Doe', points:'30'},
@@ -30,8 +36,8 @@
             ];
         }
 
-        AskQuestionCtrl.$inject = ['QuestionSrvcs'];
-        function AskQuestionCtrl(QuestionSrvcs){
+        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal'];
+        function AskQuestionCtrl(QuestionSrvcs, $uibModal){
             var vm = this;
 
            
@@ -39,6 +45,8 @@
                 category_code: "ADAPTER",
                 type_code:'CODING'
             };
+
+            vm.defaultQuestionDet = angular.copy(vm.questionDetails);
 
             QuestionSrvcs.getCategory()
             .then (function (response)  {
@@ -90,7 +98,20 @@
                     var formData = angular.toJson(dataCopy);
                     QuestionSrvcs.save(formData)
                     .then(function(response){
-                        console.log(response.data);
+                        var modalInstance = $uibModal.open({
+                            controller:'ModalInfoInstanceCtrl',
+                            templateUrl:'shared.modal.info',
+                            controllerAs: 'vm',
+                            resolve :{
+                              formData: function () {
+                                return {
+                                    title:'Question Creation',
+                                    message:response.data.message
+                                };
+                              }
+                            }
+                        });
+                        vm.questionDetails = angular.copy(vm.defaultQuestionDet);
                     });
                 } else {
                     vm.frmQuestion.withError = true;
@@ -115,12 +136,24 @@
                     QuestionSrvcs.get(data)
                     .then(function(response){
                         vm.questionDetails = response.data.data[0];
-                        console.log(vm.questionDetails.student_info.is_self);
 
-                         // todo: load notif
+                        if((vm.questionDetails.student_info.is_self || 
+                            vm.questionDetails.student_info.has_answered) &&
+                            vm.questionDetails.type_code == 'MULTIPLE_CHOICE'){
+
+                            vm.questionDetails.answer = vm.questionDetails.answer[0];
+                        }
+                        console.log(vm.questionDetails);
+
+                        if (!vm.questionDetails){
+                            alert('No record(s) found.');
+                        }
+
+                        // todo: load notif
                         if (vm.questionDetails.student_info.is_self) {
                             Notification.info({message: 'You are viewing your own question.', positionY: 'bottom', positionX: 'right'});                
                         }
+
                         if (vm.questionDetails.student_info.has_answered) {
                             Notification.warning({message: 'You\'ve already answered this question.', positionY: 'bottom', positionX: 'right'});                
                         }
@@ -132,7 +165,8 @@
                 
                 // question description
                 $( "#trix-toolbar-1" ).hide();
-            }();
+            };
+            vm.onload();
 
             vm.submit = function(data){
                 console.log(data);
@@ -141,7 +175,7 @@
 
                     var formData = angular.toJson(dataCopy)
                     var modalInstance = $uibModal.open({
-                        controller:'ModalInfoInstanceCtrl',
+                        controller:'ModalRateInstanceCtrl',
                         templateUrl:'question.question-rating-modal',
                         controllerAs: 'vm',
                         resolve :{
@@ -162,10 +196,53 @@
                     alert('Unable to submit.')
                 }
             }
+            
+            vm.action = function(data,actiontype){
+                var formData = angular.copy(data);
+                formData.action = actiontype;
+
+                var formDataCopy = angular.toJson(formData);
+                QuestionSrvcs.action(formDataCopy)
+                .then(function(response){
+                    vm.response = response.data.data;
+                    vm.onload();
+                    var modalInstance = $uibModal.open({
+                        controller:'ModalInfoInstanceCtrl',
+                        templateUrl:'shared.modal.info',
+                        controllerAs: 'vm',
+                        resolve :{
+                          formData: function () {
+                            return {
+                                title:'Questions for approval',
+                                message:response.data.message
+                            };
+                          }
+                        }
+                    });
+                },function(error){alert('Something went wrong.')});
+            }
+
+            vm.decline = function(data){
+                console.log(data);
+            }
         }
 
-        ModalInfoInstanceCtrl.$inject = ['$uibModalInstance', 'formData', 'QuestionSrvcs'];
-        function ModalInfoInstanceCtrl ($uibModalInstance, formData, QuestionSrvcs) {
+        ModalInfoInstanceCtrl.$inject = ['$uibModalInstance', 'formData'];
+        function ModalInfoInstanceCtrl ($uibModalInstance, formData) {
+            var vm = this;
+            vm.formData = formData;
+            vm.ok = function() {
+                $uibModalInstance.close();
+            };
+            
+            vm.close = function() {
+                $uibModalInstance.close();
+            };
+        }
+
+
+        ModalRateInstanceCtrl.$inject = ['$uibModalInstance', 'formData', 'QuestionSrvcs'];
+        function ModalRateInstanceCtrl ($uibModalInstance, formData, QuestionSrvcs) {
             var vm = this;
             vm.formData = formData;
 
@@ -187,10 +264,12 @@
             vm.submit = function(data){
                 if (data.answer) {
                     var formData = angular.toJson(data);
-
                     QuestionSrvcs.saveAnswer(formData)
                     .then(function(response){
-                        console.log(response);
+                        vm.response = response.data;
+                        if (vm.response.status == 200){
+                            vm.close();
+                        }
                     })
                 } else {
                     return alert('Something went wrong.');
@@ -247,6 +326,13 @@
                         data:null,
                         url: '/api/v1/type/get',
                         
+                    })
+                },
+                action: function(data) {
+                    return $http({
+                        method:'POST',
+                        data:data,
+                        url:'/api/v1/question/action'
                     })
                 }
             };

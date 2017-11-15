@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question_Choices extends Model
 {
-    protected $table = 'multiple_choice';
+    protected $table = 'multiple_choices';
 
     protected $primaryKey 	= 'multiple_choice_id';
 

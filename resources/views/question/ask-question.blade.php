@@ -48,7 +48,7 @@
             </fieldset>
         </div>
 
-        <div class="form-group" ng-if="aqc.questionDetails.type_code == 'CODING'">
+        <div class="form-group" ng-if="aqc.questionDetails.type_code == 'CODINGXXX'">
         <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small></label>
             <!-- https://github.com/sachinchoolur/angular-trix -->
             <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content" ng-model="aqc.questionDetails.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>

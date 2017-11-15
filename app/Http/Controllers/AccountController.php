@@ -36,7 +36,8 @@ class AccountController extends Controller
     		$student = Student::where('student_id', $accountData->account_id)->first();
 			$request->session()->put('elearning_sess_accountId', $accountData->account_id);
 			$request->session()->put('student_id', $accountData->account_id);
-    		$request->session()->put('email', $email);
+            $request->session()->put('email', $email);
+            $request->session()->put('account_type', $accountData->accountTypeID);
     		$request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
     		return redirect('question/view');
     	}
