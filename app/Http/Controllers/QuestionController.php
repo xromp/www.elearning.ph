@@ -386,6 +386,32 @@ class QuestionController extends Controller
         echo "sess = ".$request->session()->forget('sess_accountId');
     }
 
+    public function leaderboard()
+    {
+        $students = DB::table('students')->get();
+
+        foreach($students as $key=>$student)
+        {
+            $data[$key]['student_id'] = $student->student_id;
+            $data[$key]['fName'] = $student->fName;
+            $data[$key]['mName'] = $student->mName;
+            $data[$key]['lName'] = $student->lName;
+            $data[$key]['name'] = $student->lName.", ".$student->fName." ".$student->mName;
+            $data[$key]['hashedID'] = $this->GetRandom(10).$student->student_id.$this->GetRandom(10);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $data,
+            'message' => 'Successfully loaded.'
+        ]);
+    }
+
+    public function GetRandom($keyLength)
+    {
+        return str_random($keyLength);
+    }
+
     // public function QuestionsPosted()
     // {
     //     $questions = question::with([

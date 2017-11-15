@@ -14,9 +14,14 @@ class Account extends Model
         'password', '_token',
     ];
 
-	public function auth($email, $pword)
+	// public function auth($email, $pword)
+	// {
+	// 	return $this->where('email', $email)->where('pword', $pword)->first();
+	// }
+
+	public function auth($email)
 	{
-		return $this->where('email', $email)->where('pword', $pword)->first();
+		return $this->where('email', $email)->first();
 	}
 
 	public function student()

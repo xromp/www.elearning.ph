@@ -12,17 +12,18 @@
                 <a class="nav-link" ng-click="tc.routeTo('/stockmarket/view')">Stock Market    <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"  href="">Leaderboards </a>
+                <a class="nav-link" ng-click="tc.routeTo('/leaderboard/index')" href="#">Leaderboards </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"  href="">Rewards</a>
+                <a class="nav-link"  href="#">Rewards</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"  href="#">Forum</a>
             </li>
         </ul>
 
         <div>
-            <a class="nav-link"> Hi @if(!empty(Session::get('elearning_sess_name')))
-                                    {{ Session::get('elearning_sess_name') }} 
-                                    @endif </a>
+            <a class="nav-link"> Hi <% tc.Name %></a>
         </div>
 
         <div id="iconHeaderMargin">

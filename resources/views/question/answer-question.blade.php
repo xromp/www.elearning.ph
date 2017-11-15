@@ -9,7 +9,6 @@
                     <%ansqc.questionDetails.title%>
                     </h5>
                 </div>
-
                 <small><% (ansqc.questionDetails.is_self) == true ? "You posted this question ": "Asked " %><time am-time-ago="ansqc.questionDetails.created_at"></time></small>
                 <div>
                     <span class="badge badge-default" ng-bind="ansqc.questionDetails.category_desc"></span>
