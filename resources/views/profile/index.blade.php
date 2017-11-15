@@ -4,9 +4,6 @@
 <script type="text/ng-template" id="profile.view">
 	@include('profile.view')
 </script> 
-<script type="text/ng-template" id="profile.view2">
-	@include('profile.view2')
-</script> 
 @endsection
 
 @section('scripts')

@@ -18,8 +18,8 @@
                         <small ng-show="question.student_info.is_self">You posted this question <time am-time-ago="question.created_at"></time></small>
                         <small ng-hide="question.student_info.is_self">Asked this question <time am-time-ago="question.created_at"></time></small>
                     </div>
-                    <%question.question_code%>                    
-                    <small>This question was answered by <%question.no_of_answers || '0'%> student(s)</small>                          
+                    <%question.question_code%> 
+                    <small>This question was answered by <%question.no_of_answers || '0'%> student(s)</small>                       
                     <div>
                         <span class="badge badge-default" ng-bind="question.category_desc"></span>
                         <span class="badge badge-default" ng-bind="question.type_desc"></span>
@@ -46,7 +46,7 @@
                     <tbody>
                         <tr ng-repeat="leaderBoard in qc.leaderBoardList | orderBy:'-points'">
                             <td ng-bind="$index+1 + '.'"></td>
-                            <td><a href=""><%leaderBoard.name%></a></td>
+                            <td><a ng-click="qc.routeTo('/profile/'+leaderBoard.hashedID)" href=""><%leaderBoard.name%></a></td>
                             <td ng-bind="leaderBoard.points"></td>
                         </tr>
                     </tbody>

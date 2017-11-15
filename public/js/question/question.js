@@ -8,8 +8,8 @@
         .controller('ModalInfoInstanceCtrl',ModalInfoInstanceCtrl)
         .factory('QuestionSrvcs',QuestionSrvcs)
 
-        QuestionCtrl.$inject = ['QuestionSrvcs'];
-        function QuestionCtrl(QuestionSrvcs){
+        QuestionCtrl.$inject = ['QuestionSrvcs', '$window'];
+        function QuestionCtrl(QuestionSrvcs, $window){
 
             var vm = this;
             var data = {};
@@ -23,11 +23,23 @@
             },function(){ alert("Bad Request!")})
 
             vm.leaderBoardList = [
-                {uid:'1', name:'John Doe', points:'30'},
-                {uid:'2', name:'John Doe2', points:'24'},
-                {uid:'3', name:'John Doe3', points:'51'},
-                {uid:'4', name:'John Doe4', points:'10'}
+                {uid:'1', name:'John Doe', points:'30', hashedID: '9Vyn2EEQhC1ZFKzMYkqzj'},
+                {uid:'2', name:'John Doe2', points:'24', hashedID: 'jJBg8sh3SD251403IGnIa'},
+                {uid:'3', name:'John Doe3', points:'51', hashedID: 'mlhcGVXCMI3d1HhiRS57D'},
+                {uid:'4', name:'John Doe4', points:'10', hashedID: 'CuNHGncUra4RzKVegJs1U'}
             ];
+
+            QuestionSrvcs.leaderBoard().then(function(response){
+                if(response.data.status == 200)
+                {
+                    vm.leaderBoardList = response.data.data;
+                    console.log(response.data);
+                }
+            }, function() { alert('Bad Request!!!') })
+
+             vm.routeTo = function(route){
+                $window.location.href = route;
+            };
         }
 
         AskQuestionCtrl.$inject = ['QuestionSrvcs'];
@@ -97,6 +109,8 @@
                 }
                 
             };
+
+
         }
 
         AnswerQuestionCtrl.$inject = ['QuestionSrvcs', '$stateParams', '$sce', 'Notification', '$uibModal'];
@@ -162,7 +176,18 @@
                     alert('Unable to submit.')
                 }
             }
+
+
         }
+
+         // TopNavCtrl.$inject = ['$window'];
+         //    function TopNavCtrl($window) {
+         //        var vm = this;
+
+         //        vm.routeTo = function(route){
+         //            $window.location.href = route;
+         //        };
+         //    };
 
         ModalInfoInstanceCtrl.$inject = ['$uibModalInstance', 'formData', 'QuestionSrvcs'];
         function ModalInfoInstanceCtrl ($uibModalInstance, formData, QuestionSrvcs) {
@@ -247,6 +272,13 @@
                         data:null,
                         url: '/api/v1/type/get',
                         
+                    })
+                },
+                leaderBoard: function(){
+                    return $http({
+                        method: 'GET',
+                        data: null,
+                        url: '/api/v1/question/leaderBoard'
                     })
                 }
             };

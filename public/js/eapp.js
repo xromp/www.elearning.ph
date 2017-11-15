@@ -51,15 +51,33 @@
                 controller: 'ProfileCtrl as pc',
                 templateUrl: 'profile.view'
             })
-
             .state('profile2', {
                 url: '/profile2/:id',
                 templateUrl: 'profile.view2'
             })
+            .state('leaderboard', {
+                url: '/leaderboard/index',
+                controller: 'LeaderboardCtrl as lbc',
+                templateUrl: 'leaderboard.view'
+            })
+            .state('leaderboard-view', {
+                url: '/leaderboard/:id',
+                controller: 'LeaderboardCtrl as lbc',
+                templateUrl: 'leaderboard.view'
+            })
+            .state('forum-index', {
+                url: '/forums/index',
+                controller: 'ForumCtrl as fc',
+                templateUrl: 'forum.view'
+            })
+            .state('forum-view', {
+                url: '/forums/:id',
+                controller: 'ForumCtrl as fc',
+                templateUrl: 'forum.view'
+            })
 
             $urlRouterProvider.otherwise('/home');
         }
-
 
         TopNavCtrl.$inject = ['$window'];
         function TopNavCtrl($window) {

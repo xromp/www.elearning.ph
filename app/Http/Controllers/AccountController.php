@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Redirect;
 use App\Account;
 use App\Student;
 
+use Hash;
+
 class AccountController extends Controller
 {
 	// public function __construct(Request $request)
@@ -23,22 +25,52 @@ class AccountController extends Controller
     	return view('login');
     }
 
+  //   public function auth(Request $request)
+  //   {
+  //   	$email = $request->input('uname');
+  //   	$pword = $request->input('pword');
+
+  //   	$account = new Account;
+  //   	$accountData = $account->auth($email, $pword);
+
+		// if($accountData)
+  //   	{
+  //   		$student = Student::where('student_id', $accountData->account_id)->first();
+		// 	$request->session()->put('elearning_sess_accountId', $accountData->account_id);
+		// 	$request->session()->put('student_id', $accountData->account_id);
+  //   		$request->session()->put('email', $email);
+  //   		$request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
+  //   		return redirect('question/view');
+  //   	}
+  //   	else
+  //   	{
+		// 	return redirect('login')->with('status', 'Login failed; Invalid email or password');
+  //   	}
+  //   }
+
     public function auth(Request $request)
     {
     	$email = $request->input('uname');
     	$pword = $request->input('pword');
 
     	$account = new Account;
-    	$accountData = $account->auth($email, $pword);
+    	$accountData = $account->auth($email);
 
 		if($accountData)
     	{
-    		$student = Student::where('student_id', $accountData->account_id)->first();
-			$request->session()->put('elearning_sess_accountId', $accountData->account_id);
-			$request->session()->put('student_id', $accountData->account_id);
-    		$request->session()->put('email', $email);
-    		$request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
-    		return redirect('question/view');
+    		if(Hash::check($pword, $accountData->pword)) {
+		        $student = Student::where('student_id', $accountData->account_id)->first();
+				$request->session()->put('elearning_sess_accountId', $accountData->account_id);
+				$request->session()->put('student_id', $accountData->account_id);
+	    		$request->session()->put('email', $email);
+	    		$request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
+	    		return redirect('question/view');
+		    }
+		    else
+		    {
+		    	return redirect('login')->with('status', 'Login failed; Invalid email or password');
+		    }
+    		
     	}
     	else
     	{

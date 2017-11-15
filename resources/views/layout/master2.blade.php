@@ -17,11 +17,12 @@
     <link rel="icon" href="{{URL::to('assets/images/grevhai-logo.ico')}}">    
 
     <!-- editor -->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.css">
+    <link rel="stylesheet" href="{{URL::to('css/trix.css')}}">
 
     <!-- custom -->
     <!-- <link data-require="bootstrap@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{URL::to('css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{URL::to('css/font-awesome.min.css')}}">
     <link rel="stylesheet" href="{{URL::to('css/angular-ui-notification.css')}}">
     <link rel="stylesheet" href="{{URL::to('assets/css/open-iconic-bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{URL::to('assets/plugin/codemirror/lib/codemirror.css')}}">
@@ -105,8 +106,8 @@
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-notification/dist/angular-ui-notification.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-trix/dist/angular-trix.min.js')}}"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
+    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>-->
     
     <script type="text/javascript" src="{{URL::to('js/eapp.js')}}"></script>
     @yield('scripts')
