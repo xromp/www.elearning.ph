@@ -3,7 +3,11 @@
         <div class="row">
             <div class="col-sm-8">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1" ng-bind="ansqc.questionDetails.title"></h5>
+                    <h5 class="mb-1">
+                    <i class="fa fa fa-thumbs-up" aria-hidden="true" style="color:green;" ng-show="ansqc.questionDetails.is_approved"></i>
+                    <i class="fa fa fa-thumbs-down" aria-hidden="true" style="color:red;" ng-show="ansqc.questionDetails.is_approved == 0"></i>
+                    <%ansqc.questionDetails.title%>
+                    </h5>
                 </div>
                 <small><% (ansqc.questionDetails.is_self) == true ? "You posted this question ": "Asked " %><time am-time-ago="ansqc.questionDetails.created_at"></time></small>
                 <div>
@@ -12,7 +16,14 @@
                 </div>
                 <br/> 
             </div>
+            <div class="col-sm-4" ng-if="ansqc.questionDetails.student_info.is_admin">
+                <div class="pull-right">
+                    <button class="btn btn-success" ng-click="ansqc.action(ansqc.questionDetails,'APPROVED')"><i class="fa fa fa-thumbs-up"></i> Approve</button>
+                    <button class="btn btn-danger" ng-click="ansqc.action(ansqc.questionDetails,'DECLINED')"><i class="fa fa fa-thumbs-down"></i> Decline</button>
+                </div>
+            </div>
         </div>
+
         <div class="form-group" ng-class="{'text-danger': ansqc.frmQuestion.desc.$invalid && ansqc.frmQuestion.withError }">
             <label>Question</label>
             <div>

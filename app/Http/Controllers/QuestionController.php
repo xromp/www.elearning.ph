@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Carbon\Carbon;
 use DB;
 
@@ -53,6 +55,7 @@ class QuestionController extends Controller
                 'q.question_code',
                 'q.title',
                 'q.description', 
+                'q.is_approved',
                 'c.category_code',
                 'c.description as category_desc',
                 't.type_code',
@@ -60,11 +63,8 @@ class QuestionController extends Controller
                 'q.student_id',
                 DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name'),
                 'a.no_of_answers',
-                'ans.answer',
-                DB::raw('ans.student_id as student_answered'),
                 'q.created_at')
             -> leftJoin( DB::raw( "(SELECT answers.question_code, COUNT( answers.question_code ) as no_of_answers FROM answers GROUP BY answers.question_code) as a"), 'a.question_code', '=', 'q.question_code' )
-            -> leftjoin('answers as ans','ans.question_code','=','q.question_code')
             -> leftjoin('categories as c','c.category_code','=','q.category_code')
             -> leftjoin('types as t','t.type_code','=','q.type_code')
             -> leftjoin('students as s','s.student_id','=','q.student_id');
@@ -88,16 +88,19 @@ class QuestionController extends Controller
         foreach ($questionCopy as $key => $value) {
             $hasAnswered = DB::table('answers')
                 ->where('question_code',$value['question_code'])
-                ->where('student_id',$value['student_answered'])
+                ->where('student_id',$request->session()->get('student_id'))
                 ->count();
+            
             $isSelf = ($request->session()->get('student_id') == $value['student_id']);
+            $isAdmin = ($request->session()->get('account_type') == 1);
             $hasAnswered = ($hasAnswered >= 1);
 
             $value['student_info'] = array(
-                'student_id'=>$value['student_id'],
-                'name'=>$value['student_name'],
+                'student_id'=>$request->session()->get('student_id'),
+                'name'=>$request->session()->get('fullname'),
                 'is_self'=>$isSelf,
-                'has_answered'=>$hasAnswered
+                'has_answered'=>$hasAnswered,
+                'is_admin'=>$isAdmin
             );
 
             $value['students_answered'] = collect([
@@ -105,9 +108,33 @@ class QuestionController extends Controller
                 array('student_id'=>2, 'name'=>'Mark', 'answer'=>'b', 'is_correct'=>false, 'answered_at'=> 'new Date()')
             ]);
 
-
             if ($value['student_info']['has_answered']){
-                $value['answer'] = $value['answer'];            
+                $studentAnswer = DB::table('answers')
+                    ->where('question_code',$value['question_code'])
+                    ->where('student_id',$request->session()->get('student_id'))
+                    ->get();
+
+                $value['answer'] = array();
+                $studentAnswerCopy = json_decode($studentAnswer, true);
+                // dd($studentAnswerCopy);
+                foreach ($studentAnswerCopy as $key => $student_value)
+                {
+                    array_push($value['answer'],$student_value['answer']);
+                }
+            }
+            if ($value['student_info']['is_self']){
+                $correctAnswer = DB::table('multiple_choices')
+                    ->where('question_code',$value['question_code'])
+                    ->where('is_correct',1)
+                    ->get();
+
+                $value['answer'] = array();
+                $correctAnswerCopy = json_decode($correctAnswer, true);
+                foreach ($correctAnswerCopy as $key => $ans_value)
+                {
+                    array_push($value['answer'],$ans_value['choice_code']);
+                }
+                
             }
 
             if ($value['type_code'] == 'MULTIPLE_CHOICE'){
@@ -127,6 +154,12 @@ class QuestionController extends Controller
             'data'=>$result,
             'message'=>''
         ]);
+    }
+    
+    public function getWithPaginate(Request $request){
+        $users = DB::table('questions')->simplePaginate(10);
+        
+        return $users;
     }
 
     public function create(Request $request)
@@ -181,7 +214,6 @@ class QuestionController extends Controller
             $question->title = $data['title'];
             $question->category_code = $data['category_code'];
             $question->type_code = $data['type_code'];
-            $question->is_verified = 0;
             $question->question_code = $questionCode;
             $question->student_id = $data['student_id'];
 
@@ -195,13 +227,11 @@ class QuestionController extends Controller
                     foreach ($data['choiceList'] as $key => $choices) {
                         $questionChoices = new Question_Choices;
                         $questionChoices->question_code = $questionCode;
-                        $questionChoices->choice = $choices['choice_code'];
+                        $questionChoices->choice_code = $choices['choice_code'];
                         $questionChoices->choice_desc = $choices['choice_desc'];
-                        // $questionChoices->is_correct = $choices['is_correct'];
+                        $questionChoices->is_correct = $choices['is_correct'];
 
                         //sample default values
-                        $questionChoices->question_id = $question->question_id;
-                        $questionChoices->is_correct = 0;
                         $questionChoices->save();
                     }
                 }
@@ -277,6 +307,67 @@ class QuestionController extends Controller
         
         $question = 'Q'.$category_id.$type_id.'-'.$counter;
         return $question;
+    }
+
+    public function action(Request $request){
+        $validator = Validator::make($request->all(),[
+            'question_code'=> 'required',
+            'action'=>'required'
+        ]);
+
+        if ($validator-> fails()) {
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'Unable to save.'
+            ]);
+        }
+
+        $data = array(
+            'questionCode'=>$request->input('question_code'),
+            'action'=>$request->input('action'),
+            'is_approved' => 0,
+        );
+
+        if(!($data['action'] == 'APPROVED'||$data['action'] == 'DECLINED')) {
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'Invalid action.'
+            ]);
+
+        }
+
+        $account_type = $request->session()->get('account_type');
+
+        if($account_type != 1) {
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'You are not authorized to perform this action.'
+            ]);
+        }
+        
+        if ($data['action'] == 'APPROVED') {
+            $data['is_approved'] = 1;
+        }
+
+        $transaction = DB::transaction(function($data) use($data) {
+            
+            DB::table('questions')
+            -> where('question_code',$data['questionCode'])
+            -> update(['is_approved'=>$data['is_approved']]);
+
+            $message = 'Successfully '.strtolower($data['action'].'.');
+
+            return response()->json([
+                'status'=> 200,
+                'data'=>'',
+                'message'=>$message
+            ]);
+        });
+
+        return $transaction;
     }
 
 

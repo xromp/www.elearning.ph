@@ -62,15 +62,15 @@ class AccountController extends Controller
 		        $student = Student::where('student_id', $accountData->account_id)->first();
 				$request->session()->put('elearning_sess_accountId', $accountData->account_id);
 				$request->session()->put('student_id', $accountData->account_id);
-	    		$request->session()->put('email', $email);
+                $request->session()->put('email', $email);
+                $request->session()->put('account_type', $accountData->accountTypeID);
 	    		$request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
 	    		return redirect('question/view');
 		    }
 		    else
 		    {
 		    	return redirect('login')->with('status', 'Login failed; Invalid email or password');
-		    }
-    		
+		    }    		
     	}
     	else
     	{
@@ -95,5 +95,9 @@ class AccountController extends Controller
         $request->file('resume_link')->move(base_path() . '/public/uploads/profile', $filename.".png");
         // $avoCareer->resume_link  = $fileName;
         // return redirect('careers');
+    }
+
+    public function bcrypt(){
+        echo bcrypt('123');
     }
 }

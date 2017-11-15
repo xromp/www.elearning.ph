@@ -16,6 +16,9 @@
             <option>5</option>
         </select>
     </div>
+    <div class="form-group" ng-show="vm.response.message">
+        <div ng-class="{'alert alert-success':vm.response.status == 200,'alert alert-danger':vm.response.status != 200}"  ng-bind="vm.response.message"></div>
+    </div>
 </div>
 
 <div class="modal-footer">

@@ -63,7 +63,7 @@ class AnswerController extends Controller
 
             if( $hasAnswered >= 1 ) {
                 return response()->json([
-                    'status' => 200,
+                    'status' => 403,
                     'data' => 'null',
                     'message' => 'You have already answered this question.'
                 ]);

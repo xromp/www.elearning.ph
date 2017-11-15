@@ -23,9 +23,11 @@ Route::get('/question/answerquestion/{questionid}','QuestionController@index');
 
 // api
 Route::get('/api/v1/question/get','QuestionController@get');
+Route::get('/api/v1/question/getWithPaginate','QuestionController@getWithPaginate');
 Route::get('/api/v1/question/categories','QuestionController@getCategories');
 Route::get('/api/v1/question/getQuestions','QuestionController@getQuestions');
 Route::post('/api/v1/question/create','QuestionController@create');
+Route::post('/api/v1/question/action','QuestionController@action');
 Route::get('/api/v1/question/leaderBoard','QuestionController@leaderBoard');
 
 // stock market
@@ -92,3 +94,5 @@ Route::get('/api/v1/achievements/FirstQuestion','AchievementsController@FirstQue
 Route::post('/api/v1/achievements/Achievements','AchievementsController@Achievements');
 
 Route::get('/sampleTrait','LeaderboardController@Achievements');
+
+Route::get('/accounts','AccountController@bcrypt');
