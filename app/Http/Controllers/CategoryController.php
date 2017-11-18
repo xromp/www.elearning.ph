@@ -58,12 +58,13 @@ class CategoryController extends Controller
         $result = array();
 
         $categories = DB::table('categories as c')
+            ->select('c.category_code','c.description')
             ->leftJoin( DB::raw( "(SELECT q.category_code, COUNT( q.category_code ) as no_of_questions FROM questions as q GROUP BY q.category_code) as q"), 'q.category_code', '=', 'c.category_code' );
 
         if ($data['categoryCode']) {
             $categories->where('c.category_code',$data['categoryCode']);
         }
-
+        // dd($categories->get());
         $categories = $categories->get();
         
         $categoriesCopy = json_decode($categories, true);

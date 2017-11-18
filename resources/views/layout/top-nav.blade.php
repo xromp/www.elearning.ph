@@ -1,5 +1,9 @@
 <nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top" ng-controller="TopNavCtrl as tc">
     <a class="navbar-brand" href="">CQV E-Learning</a>
+    <span class="badge badge-default">
+        <i class="fa fa-user-circle"></i> Admin
+    </span>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon border border-primary"></span>
     </button>

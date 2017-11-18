@@ -49,6 +49,7 @@ class QuestionController extends Controller
             'categoryCode'=>$request->input('categoryCode'),
             'type'=>$request->input('orno'),
         );
+        $isAdmin = ($request->session()->get('account_type') == 1);
 
         $question = DB::table('questions as q')
             -> select(
@@ -75,6 +76,11 @@ class QuestionController extends Controller
         if (!$this->isEmpty($formData['categoryCode'])) {
             $question->where('q.category_code',$formData['categoryCode']);
         }
+
+        if (!$isAdmin){
+            $question->where('q.is_approved',1);
+        }
+
         if ($formData['limit']) {
             $question->take($formData['limit']);
         }
@@ -92,7 +98,6 @@ class QuestionController extends Controller
                 ->count();
             
             $isSelf = ($request->session()->get('student_id') == $value['student_id']);
-            $isAdmin = ($request->session()->get('account_type') == 1);
             $hasAnswered = ($hasAnswered >= 1);
 
             $value['student_info'] = array(
@@ -102,11 +107,21 @@ class QuestionController extends Controller
                 'has_answered'=>$hasAnswered,
                 'is_admin'=>$isAdmin
             );
-
-            $value['students_answered'] = collect([
-                array('student_id'=>1, 'name'=>'Rom', 'answer'=>'a', 'is_correct'=>false, 'answered_at'=> 'new Date()'),
-                array('student_id'=>2, 'name'=>'Mark', 'answer'=>'b', 'is_correct'=>false, 'answered_at'=> 'new Date()')
-            ]);
+            // array('student_id'=>1, 'name'=>'Rom', 'answer'=>'a', 'is_correct'=>false, 'answered_at'=> 'new Date()'),
+            $student_answered = DB::table('answers as a')
+                ->select('a.student_id',
+                    DB::raw('concat(s.lName,",", s.fName," ", s.mName) as name'),
+                    'answer',
+                    'question_code',
+                    'is_correct')
+                ->leftjoin('students as s','s.student_id','=','a.student_id')
+                ->where('a.question_code',$value['question_code'])
+                ->get();
+            
+            $value['students_answered'] = array(
+                'list'=>collect($student_answered),
+                'count'=>$student_answered->count()
+            );
 
             if ($value['student_info']['has_answered']){
                 $studentAnswer = DB::table('answers')
@@ -370,6 +385,72 @@ class QuestionController extends Controller
         return $transaction;
     }
 
+    public function actionAnswer(Request $request){
+        $validator = Validator::make($request->all(),[
+            'question_code'=> 'required',
+            'action'=>'required',
+            'student_id'=>'required'
+        ]);
+
+        if ($validator-> fails()) {
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'Unable to save.'
+            ]);
+        }
+
+        $data = array(
+            'question_code'=>$request->input('question_code'),
+            'action'=>$request->input('action'),
+            'student_id'=>$request->input('student_id'),
+            'is_correct'=>0
+        );
+
+        $currentUser = $request->session()->get('student_id');
+
+        if(!($data['action'] == 'CORRECT'||$data['action'] == 'WRONG')) {
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'Invalid action.'
+            ]);
+        }
+
+        $askQuestion = DB::table('questions')
+            ->where('question_code',$data['question_code'])
+            ->first();
+
+        if  ($currentUser != $askQuestion->student_id){
+            return response()->json([
+                'status'=> 403,
+                'data'=>'',
+                'message'=>'You are not authorized to perform this action'
+            ]);
+        }
+        
+        if ($data['action'] == 'CORRECT') {
+            $data['is_correct'] = 1;
+        }
+
+        $transaction = DB::transaction(function($data) use($data) {
+            
+            DB::table('answers')
+            -> where('question_code',$data['question_code'])
+            -> where('student_id',$data['student_id'])
+            -> update(['is_correct'=>$data['is_correct']]);
+
+            $message = 'Successfully updated';
+
+            return response()->json([
+                'status'=> 200,
+                'data'=>'',
+                'message'=>$message
+            ]);
+        });
+
+        return $transaction;
+    }
 
     //for checking purposes only
     public function sess(Request $request)

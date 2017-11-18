@@ -35,6 +35,7 @@
             // };
 
             vm.onLoad = function(){
+                console.log($stateParams.categoryCode)
                 if ($stateParams.categoryCode) {
                     var data = {
                         categoryCode:$stateParams.categoryCode
@@ -48,7 +49,7 @@
                                 list: response.data.data
                             }    
                         } else {
-                            return alert('Something went wrong.');
+                            return alert('No record(s) found.');
                         }
                     },function(error){alert('Something went wrong.')});
 

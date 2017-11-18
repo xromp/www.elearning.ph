@@ -56,7 +56,17 @@
 
         <div class="form-group" ng-if="aqc.questionDetails.type_code == 'IDENTIFICATION'">
             <label>Enter the answer to the question.</label>
-            <input type="text" class="form-control" name="identificationAnswer" ng-model="aqc.questionDetails.answer" placeholder="Answer to the question">   
+            <div class="form-group" ng-class="{'text-danger': aqc.frmQuestion.identificationAnswer.$invalid && aqc.frmQuestion.withError }" ng-repeat="answer in aqc.identificationAnsList">
+                <div class="input-group">
+                <input type="text" class="form-control col-md-4" name="identificationAnswer" ng-model="answer.answer" placeholder="Answer to the question" required/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-sm btn-success" ng-show="$last" ng-click="aqc.addAnsIdentif()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <button class="btn btn-sm btn-danger" ng-hide="$first || ($last && aqc.identificationAnsList.length > 2)" ng-click="aqc.removeAnsIdentif($index)"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+                <small class="text-danger" ng-show="aqc.frmQuestion.identificationAnswer.$invalid && aqc.frmQuestion.withError">Identification answer(s) is/are required field.</small>
+                
+            </div>
         </div>
         <!-- end Type answ -->        
 
