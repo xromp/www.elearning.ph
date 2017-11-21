@@ -75,6 +75,7 @@ class CategoryController extends Controller
                 )
                 ->leftJoin( DB::raw( '(SELECT question_code,COUNT(question_code) as no_answered from answers group by question_code) as a'), 'a.question_code', '=', 'q.question_code' )
                 ->where('q.category_code',$category['category_code'])
+                ->where('q.is_approved',1)
                 ->get();
                 
             $noAnswered = $answers->where('no_answered','>','0')

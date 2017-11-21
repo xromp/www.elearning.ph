@@ -84,6 +84,24 @@ class AnswerController extends Controller
                 $answer->student_id = $data['student_id'];
                 $answer->answer = $data['answer'];
 
+                if ($data['type_code'] == 'MULTIPLE_CHOICE') {
+                    $correctAns = DB::table('multiple_choices')
+                        ->where('question_code',$data['question_code'])
+                        ->where('choice_code',$data['answer'])
+                        ->where('is_correct',1)
+                        ->get();
+                    
+                    $answer->is_correct =  $correctAns->count();
+                } else if ($data['type_code'] == 'IDENTIFICATION') {
+                    $correctAns = DB::table('multiple_choices')
+                        ->where('question_code',$data['question_code'])
+                        ->where('choice_code',$data['answer'])
+                        ->where('is_correct',1)
+                        ->get();
+                    
+                    $answer->is_correct =  $correctAns->count();
+                }
+
                 if (!$this->isEmpty($data['rating'])) {
                     $answer->rating = $data['rating'];
                 }

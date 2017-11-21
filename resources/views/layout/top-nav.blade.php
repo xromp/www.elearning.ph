@@ -1,9 +1,12 @@
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top" ng-controller="TopNavCtrl as tc">
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top" ng-controller="TopNavCtrl as tc" ng-cloak>
     <a class="navbar-brand" href="">CQV E-Learning</a>
+
+    @if(Session::get('account_type') == 1)
     <span class="badge badge-default">
         <i class="fa fa-user-circle"></i> Admin
-    </span>
-    
+    </span>        
+    @endif
+            
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon border border-primary"></span>
     </button>
@@ -27,7 +30,7 @@
         </ul>
 
         <div>
-            <a class="nav-link"> Hi <% tc.Name %></a>
+            <a class="nav-link"> {{ Session::get('fullname') }} <% tc.Name %></a>
         </div>
 
         <div id="iconHeaderMargin">

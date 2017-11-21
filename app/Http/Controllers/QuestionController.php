@@ -108,7 +108,8 @@ class QuestionController extends Controller
                 'is_admin'=>$isAdmin
             );
             // array('student_id'=>1, 'name'=>'Rom', 'answer'=>'a', 'is_correct'=>false, 'answered_at'=> 'new Date()'),
-            $student_answered = DB::table('answers as a')
+            if ($value['student_info']['is_self'] == true){
+                $student_answered = DB::table('answers as a')
                 ->select('a.student_id',
                     DB::raw('concat(s.lName,",", s.fName," ", s.mName) as name'),
                     'answer',
@@ -117,11 +118,12 @@ class QuestionController extends Controller
                 ->leftjoin('students as s','s.student_id','=','a.student_id')
                 ->where('a.question_code',$value['question_code'])
                 ->get();
+                $value['students_answered'] = array(
+                    'list'=>collect($student_answered),
+                    'count'=>$student_answered->count()
+                );    
+            }
             
-            $value['students_answered'] = array(
-                'list'=>collect($student_answered),
-                'count'=>$student_answered->count()
-            );
 
             if ($value['student_info']['has_answered']){
                 $studentAnswer = DB::table('answers')
@@ -199,6 +201,7 @@ class QuestionController extends Controller
         $data['type_code'] = $request-> input('type_code');
         $data['category_code'] = $request-> input('category_code');
         $data['title'] = $request-> input('title');
+        $data['answer'] = $request-> input('answer');
         $data['choiceList'] = $request-> input('choiceList');
         $data['description'] = $request-> input('description');
         $data['student_id'] = $request->session()->get('student_id');
@@ -245,6 +248,17 @@ class QuestionController extends Controller
                         $questionChoices->choice_code = $choices['choice_code'];
                         $questionChoices->choice_desc = $choices['choice_desc'];
                         $questionChoices->is_correct = $choices['is_correct'];
+
+                        //sample default values
+                        $questionChoices->save();
+                    }
+                } else if($data['type_code'] == 'IDENTIFICATION') {
+                    foreach ($data['answer'] as $key => $choices) {
+                        $questionChoices = new Question_Choices;
+                        $questionChoices->question_code = $questionCode;
+                        $questionChoices->choice_code = $choices;
+                        $questionChoices->choice_desc = $choices;
+                        $questionChoices->is_correct = 1;
 
                         //sample default values
                         $questionChoices->save();
