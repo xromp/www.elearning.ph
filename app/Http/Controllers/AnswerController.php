@@ -76,6 +76,22 @@ class AnswerController extends Controller
                     'message' => 'You are not allowed to answer your own question.'
                 ]);
             }
+            if ($data['type_code'] == 'CODING') {
+                $hasAnsweredCorrectly = DB::table('answers')
+                    ->where('question_code',$data['question_code'])
+                    ->where('is_correct',1)
+                    ->count();
+                
+                if( $hasAnsweredCorrectly >= 1 ) {
+                    return response()->json([
+                        'status' => 403,
+                        'data' => 'null',
+                        'message' => 'This question has been already answered correctly.'
+                    ]);
+                }
+            }
+
+            
             
             $transaction = DB::transaction(function($data) use($data){
                 $answer = new Answer;

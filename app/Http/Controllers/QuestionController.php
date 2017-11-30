@@ -77,9 +77,9 @@ class QuestionController extends Controller
             $question->where('q.category_code',$formData['categoryCode']);
         }
 
-        if (!$isAdmin){
-            $question->where('q.is_approved',1);
-        }
+        // if (!$isAdmin){
+        //     $question->where('q.is_approved',1);
+        // }
 
         if ($formData['limit']) {
             $question->take($formData['limit']);
@@ -92,6 +92,8 @@ class QuestionController extends Controller
 
         $questionCopy = json_decode($question, true);
         foreach ($questionCopy as $key => $value) {
+            $validEntry = true;
+
             $hasAnswered = DB::table('answers')
                 ->where('question_code',$value['question_code'])
                 ->where('student_id',$request->session()->get('student_id'))
@@ -107,7 +109,6 @@ class QuestionController extends Controller
                 'has_answered'=>$hasAnswered,
                 'is_admin'=>$isAdmin
             );
-            // array('student_id'=>1, 'name'=>'Rom', 'answer'=>'a', 'is_correct'=>false, 'answered_at'=> 'new Date()'),
             if ($value['student_info']['is_self'] == true){
                 $student_answered = DB::table('answers as a')
                 ->select('a.student_id',
@@ -161,8 +162,27 @@ class QuestionController extends Controller
                     ->get();
                 
                 $value['choiceList'] =  $multipleChoice;
+            } elseif($value['type_code'] == 'CODING') {
+                $hasAnsweredCorrectly = DB::table('answers')
+                    ->select('question_code','choice_code','choice_desc')
+                    ->where('question_code',$value['question_code'])
+                    ->where('is_correct',1)
+                    ->count();
+                $value['is_answered_correctly'] = ($hasAnsweredCorrectly >= 1);
             }
-            array_push($result,$value);
+
+            if ($value['type_code'] == 'CODING'){
+                $validEntry = !$value['is_answered_correctly'];
+            }
+
+            if ( !($isSelf || $isAdmin) && !$value['is_approved'] ) {
+                $validEntry = false;
+            }
+
+            if ($validEntry) {
+                array_push($result,$value);
+                
+            }
         }
 
         return response()-> json([

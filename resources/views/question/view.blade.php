@@ -15,6 +15,7 @@
                 <a href="\question\answerquestion\<%question.question_code%>" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">
+                            <i class="fa fa-info-circle" aria-hidden="true" ng-show="question.is_approved == null" style="color:yellow;"></i>                        
                             <i class="fa fa-check-circle-o" aria-hidden="true" ng-show="question.student_info.has_answered" style="color:green;"></i> 
                             <i class="fa fa fa-thumbs-up" aria-hidden="true" style="color:green;" ng-show="question.is_approved && question.student_info.is_admin"></i>
                             <i class="fa fa fa-thumbs-down" aria-hidden="true" style="color:red;" ng-show="question.is_approved == 0 && question.student_info.is_admin"></i>
