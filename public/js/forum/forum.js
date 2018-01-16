@@ -10,27 +10,14 @@
             var vm = this;
             // alert($stateParams.id);
             vm.onLoad = function(){
-                alert('forum');
                 
-                $scope.question_ans = true;
-                $scope.posted_questions = true;
-                $scope.answered_questions = false;
-
-                ForumSrvcs.LeaderBoard().then(function(response){
+                ForumSrvcs.get().then(function(response){
                     if(response.data.status == 200)
                     {
-                        vm.leaderBoardList = response.data.data;
+                        vm.forumList = response.data.data;
                         console.log(response.data);
                     }
                 }, function() { alert('Bad Request!!!') })
-
-                //get other user data
-                ForumSrvcs.Users().then (function (response) {
-                    if(response.data.status == 200)
-                    {
-                        vm.UserData = response.data.data;
-                    }
-                }, function (){ alert('Bad Request!!!') })
             }();
 
             
@@ -65,27 +52,10 @@
         ForumSrvcs.$inject = ['$http'];
         function ForumSrvcs ($http){
             return {
-                Users: function(data) {
+                get: function(data) {
                     return $http({
                         method: 'GET',
-                        url: '/api/v1/leaderboard/users',
-                        data: null,
-                        headers: {'Content-Type': 'application/json'}
-                    })
-                },
-                LeaderBoard: function(data) {
-                    return $http({
-                        method: 'GET',
-                        url: '/api/v1/leaderboard/topScorers',
-                        data: null,
-                        headers: {'Content-Type': 'application/json'}
-                    })
-                },
-                FindUsers: function(data){
-                    return $http({
-                        method: 'POST',
-                        url: '/api/v1/leaderboard/find',
-                        data: data,
+                        url: '/api/v1/forum/get',
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

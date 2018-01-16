@@ -52,7 +52,8 @@ class CategoryController extends Controller
     public function getWithAnswer(Request $request) 
     {
         $data = array(
-            'categoryCode'=>$request->input('categoryCode')
+            'categoryCode'=>$request->input('categoryCode'),
+            'orderByNoanswer'=>$request->input('orderByNoAnswer')
         );
 
         $result = array();
@@ -90,8 +91,9 @@ class CategoryController extends Controller
             $data['no_unanswered'] = $noUnanswered;
 
             array_push($result,$data);
+            
         }
-        
+        // dd($result);
 
         return response()->json([
             'status' => 200,

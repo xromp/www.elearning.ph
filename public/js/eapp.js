@@ -66,12 +66,12 @@
                 templateUrl: 'leaderboard.view'
             })
             .state('forum-index', {
-                url: '/forums/index',
+                url: '/forum/index',
                 controller: 'ForumCtrl as fc',
                 templateUrl: 'forum.view'
             })
             .state('forum-view', {
-                url: '/forums/:id',
+                url: '/forum/:id',
                 controller: 'ForumCtrl as fc',
                 templateUrl: 'forum.view'
             })

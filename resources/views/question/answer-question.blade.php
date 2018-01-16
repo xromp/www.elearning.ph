@@ -64,9 +64,8 @@ trix-toolbar { display: none; } */
                 </div>
             </fieldset>
         </div>
-
-        <div class="form-group" ng-if="ansqc.questionDetails.type_code == 'CODING' && !ansqc.questionDetails.student_info.is_self">
-        <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small></label>
+        <div class="form-group" ng-if="ansqc.questionDetails.type_code == 'CODING' && !ansqc.questionDetails.student_info.is_self" ng-hide="ansqc.questionDetails.student_info.answered_correctly">
+            <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small></label>
             <!-- https://github.com/sachinchoolur/angular-trix -->
             <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content" ng-model="ansqc.questionDetails.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
         </div>
@@ -79,18 +78,22 @@ trix-toolbar { display: none; } */
 
         <div class="form-group row">
             <div class="col-sm-10">            
-                <button type="submit" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-show="!ansqc.questionDetails.student_info.is_self && !ansqc.questionDetails.student_info.has_answered" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
+                <button type="submit" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-show="(!ansqc.questionDetails.student_info.is_self && !ansqc.questionDetails.student_info.has_answered)" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
                 
                 <!-- answers with approval -->
-                <div class="row" ng-repeat="student in ansqc.questionDetails.students_answered.list | filter:{is_correct:null}:strict" ng-if="ansqc.questionDetails.type_code == 'CODING' && ansqc.questionDetails.student_info.is_self">
+                <div class="row" ng-repeat="student in ansqc.questionDetails.students_answered.list" ng-if="ansqc.questionDetails.type_code == 'CODING' && (ansqc.questionDetails.student_info.is_self || ansqc.questionDetails.is_answered_correctly)">
                     <div class="col-md-9">
-                        <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content trix_question" ng-model="student.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
+                        <trix-editor ng-class="{' alert alert-success':student.is_correct}" ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content trix_question" ng-model="student.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
+                        <span class="text-success" ng-hide="!student.is_correct"> <%(ansqc.questionDetails.student_info.answered_correctly) ? 'You have ' : student.name + ' has ' %> answered this correctlly. </span>
+                        <br><br>
                     </div>
-                    <div class="col-md-3 pulll-right">
-                        <button class="btn btn-success btn-sm" ng-click="ansqc.actionAnswer(student,'CORRECT')"><i class="fa fa-check-circle"></i> Correct</button>
-                        <button class="btn btn-danger btn-sm" ng-click="ansqc.actionAnswer(student,'WRONG')"><i class="fa fa-times-circle"></i> Wrong</button>
+                    <div class="col-md-3 pulll-right" ng-hide="ansqc.questionDetails.is_answered_correctly">
+                        <button class="btn btn-success btn-sm" ng-click="ansqc.actionAnswer(student,'CORRECT')"><i class="fa fa-check-circle"></i> Mark as correct</button>
+                        <!-- <button class="btn btn-danger btn-sm" ng-click="ansqc.actionAnswer(student,'WRONG')"><i class="fa fa-times-circle"></i> Wrong</button> -->
                     </div>
                 </div>
+                
+                
                 <!-- <table class="table table-sm table-responsive" ng-if="ansqc.questionDetails.student_info.is_self">
                     <thead>
                         <tr>

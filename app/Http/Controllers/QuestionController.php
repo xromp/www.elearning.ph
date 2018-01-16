@@ -109,7 +109,26 @@ class QuestionController extends Controller
                 'has_answered'=>$hasAnswered,
                 'is_admin'=>$isAdmin
             );
-            if ($value['student_info']['is_self'] == true){
+            
+            if ($value['type_code'] == 'MULTIPLE_CHOICE'){
+                $multipleChoice = DB::table('multiple_choices')
+                    ->select('question_code','choice_code','choice_desc')
+                    ->where('question_code',$value['question_code'])
+                    ->get();
+                
+                $value['choiceList'] =  $multipleChoice;
+            } elseif($value['type_code'] == 'CODING') {
+                $hasAnsweredCorrectly = DB::table('answers')
+                    ->select('question_code','choice_code','choice_desc')
+                    ->where('question_code',$value['question_code'])
+                    ->where('is_correct',1)
+                    ->count();
+                $value['is_answered_correctly'] = ($hasAnsweredCorrectly >= 1);
+            }
+
+            if ($value['student_info']['is_self'] == true || ($value['type_code'] == 'CODING' && $value['is_answered_correctly'] && $value['student_info']['has_answered']) ){
+                $isCodingCorrectlyAnswered = ($value['type_code'] == 'CODING' && $value['is_answered_correctly'] && $value['student_info']['has_answered']);
+
                 $student_answered = DB::table('answers as a')
                 ->select('a.student_id',
                     DB::raw('concat(s.lName,",", s.fName," ", s.mName) as name'),
@@ -117,8 +136,23 @@ class QuestionController extends Controller
                     'question_code',
                     'is_correct')
                 ->leftjoin('students as s','s.student_id','=','a.student_id')
-                ->where('a.question_code',$value['question_code'])
-                ->get();
+                ->where('a.question_code',$value['question_code']);
+
+                if ($isCodingCorrectlyAnswered) {
+                    $student_answered->where('a.is_correct',true);
+                }
+                $student_answeredCopy = $student_answered;
+                $student_answered = $student_answered->get();
+                
+                if ($isCodingCorrectlyAnswered) {
+                    $student_answeredCopy = $student_answeredCopy->first();
+                    // check if current you user answer this correctly
+                    if ($student_answeredCopy->student_id == $request->session()->get('student_id')) {
+                        $value['student_info']['answered_correctly'] = true;
+                    }
+                                    
+                }
+
                 $value['students_answered'] = array(
                     'list'=>collect($student_answered),
                     'count'=>$student_answered->count()
@@ -140,6 +174,7 @@ class QuestionController extends Controller
                     array_push($value['answer'],$student_value['answer']);
                 }
             }
+
             if ($value['student_info']['is_self']){
                 $correctAnswer = DB::table('multiple_choices')
                     ->where('question_code',$value['question_code'])
@@ -155,24 +190,8 @@ class QuestionController extends Controller
                 
             }
 
-            if ($value['type_code'] == 'MULTIPLE_CHOICE'){
-                $multipleChoice = DB::table('multiple_choices')
-                    ->select('question_code','choice_code','choice_desc')
-                    ->where('question_code',$value['question_code'])
-                    ->get();
-                
-                $value['choiceList'] =  $multipleChoice;
-            } elseif($value['type_code'] == 'CODING') {
-                $hasAnsweredCorrectly = DB::table('answers')
-                    ->select('question_code','choice_code','choice_desc')
-                    ->where('question_code',$value['question_code'])
-                    ->where('is_correct',1)
-                    ->count();
-                $value['is_answered_correctly'] = ($hasAnsweredCorrectly >= 1);
-            }
-
             if ($value['type_code'] == 'CODING'){
-                $validEntry = !$value['is_answered_correctly'];
+                // $validEntry = !$value['is_answered_correctly'];
             }
 
             if ( !($isSelf || $isAdmin) && !$value['is_approved'] ) {
