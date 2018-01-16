@@ -92,6 +92,7 @@ Route::get('/api/v1/type/get','TypeController@get');
 // Achievements API
 Route::get('/api/v1/achievements/FirstQuestion','AchievementsController@FirstQuestion');
 Route::post('/api/v1/achievements/Achievements','AchievementsController@Achievements');
+Route::get('/api/v1/achievements/get','AchievementsController@get');
 
 Route::get('/sampleTrait','LeaderboardController@Achievements');
 

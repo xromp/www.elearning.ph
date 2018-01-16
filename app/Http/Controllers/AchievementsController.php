@@ -134,5 +134,76 @@ class AchievementsController extends Controller
             'data'=>$achievements,
             'message'=>''
         ]);
+	}
+
+	public function get(Request $request) 
+    {
+        $data = array(
+            'student_id'=>$request->input('studentId')
+        );
+
+        $result = array();
+        $achievementsResult = array();
+
+        $students = DB::table('students as s')
+            -> select(
+                'student_id',
+                DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name')
+            );
+        if ($data['student_id']){
+            $students = $students-> where ('student_id',$data['student_id']);
+        }
+        $students = $students->get();
+        $studentsCopy = json_decode($students, true);
+        foreach ($studentsCopy as $key => $student) {
+            $achievementsTypes = array( 
+                array('desc' => 'Asking Questions','code'=>'ASKING'),
+                array('desc' => 'Answering Questions','code'=>'ANSWER'),
+                array('desc' => 'Participation','code'=>'PARTICIPATION'),
+                array('desc' => 'Social Activities','code'=>'SOCIAL'),
+                array('desc' => 'Ratings','code'=>'RATINGS'),
+                array('desc' => 'Fun Activities','code'=>'FUN')
+            );
+
+            // $categoriesCopy = json_decode($categories, true);
+            foreach ($achievementsTypes as $key => $type) {
+                $achievementsPerStudents = DB::table('rewards as r')
+                -> select(
+                    'r.reward_id',
+                    'r.achievement_code',
+                    'type',
+                    'title', 
+                    'description',
+                    'icon_path',
+                    'a.student_id',
+                    'a.is_achieved'
+                )
+                -> leftJoin( DB::raw( "(SELECT achievements.achievement_code, is_achieved, student_id FROM achievements 
+                    GROUP BY achievements.achievement_code,is_achieved, student_id) as a"), 'a.achievement_code', '=', 'r.achievement_code' )
+                -> where('r.active',true)
+                -> where('r.type',$type['code'])
+                -> where('student_id',$student['student_id'])
+                -> get();
+
+                $typeDetails['list'] = $achievementsPerStudents;
+                $typeDetails['count'] = $achievementsPerStudents->count();
+                $typeDetails['desc'] = $type['desc'];
+                $typeDetails['type'] = $type['code'];
+                                
+                array_push($achievementsResult,$typeDetails); 
+            }
+            $studentDetails['student_id'] = $student['student_id'];
+            $studentDetails['name'] = $student['student_name'];
+            $studentDetails['achievementList'] = $achievementsResult;
+
+            array_push($result,$studentDetails); 
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'count' => count($result),
+            'message' => 'Successfully saved.'
+        ]);
     }
 }
