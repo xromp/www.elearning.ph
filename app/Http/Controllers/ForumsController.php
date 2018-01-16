@@ -5,14 +5,37 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 
+use DB;
+use App\Student;
+
 class ForumsController extends Controller
 {
     public function Index()
     {
     	// echo "forum index";
     	return view('forum.index');
+    	
     }
 
+    public function Forums()
+    {
+    	$id = session()->get('student_id');
+    	$forums = DB::table('forums')->where('student_id', $id)->get();
+
+    	foreach($forums as $forum)
+    	{
+    		$ForumCode = $forum->forum_code;
+    		$forum->comments = $this->Comments($ForumCode);
+    	}
+
+    	return response()->json([
+            'status' => 200,
+            'data' => $forums,
+            'message' => 'Successfully loaded.'
+        ]);
+    }
+
+<<<<<<< HEAD
     public function get(Request $request)
     {
         $data = array(
@@ -88,3 +111,13 @@ class ForumsController extends Controller
         ]);
     }
 }
+=======
+    public function Comments($forumCode)
+    {
+    	$id = session()->get('student_id');
+    	$comments = DB::table('comments')->where('forum_code', $forumCode)->get();
+    	return $comments;
+    }
+
+}
+>>>>>>> 628070d120e3e80b0a09d8862b95db978984f564

@@ -41,38 +41,36 @@ Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategor
 // api
 Route::post('/api/v1/answer/save','AnswerController@save');
 
-//login
+// login
 Route::get('/login','AccountController@index');
 Route::post('/auth','AccountController@auth');
 Route::post('/upload/image','AccountController@store');
 Route::get('/logout','AccountController@logout');
 
-//for checking purposes only
+// for checking purposes only
 Route::get('/sess','QuestionController@sess'); //show specific value of a session
 Route::get('/sess_flush','QuestionController@sess_flush'); //remove specific session
 
- 
-//for profile 
+// for profile 
 Route::get('/profile','ProfileController@index'); //show specific value of a session
 Route::get('/profile/{id}','ProfileController@viewOtherProfile'); //show specific value of a session
 
-//for leaderboard
+// for leaderboard
 
-//for leaderboard
+// for leaderboard
 Route::get('/leaderboard/index','LeaderboardController@Index'); 
 // Route::get('/leaderboard/{id?}','LeaderboardController@Find');
 
-//leaderboard api
+// leaderboard api
 Route::get('/api/v1/leaderboard/users','LeaderboardController@Users');
 Route::get('/api/v1/leaderboard/topScorers','LeaderboardController@LeaderBoard');//get top 3 scorers
 Route::post('/api/v1/leaderboard/find','LeaderboardController@Find');
 
 
 //forums
-Route::get('/forum/index','ForumsController@Index');
-
-//forum api
-Route::get('/api/v1/forum/get','ForumsController@get');
+Route::get('/forums/index','ForumsController@Index');
+Route::get('/api/v1/forums/list','ForumsController@Forums');
+Route::get('/api/v1/forums/comments','ForumsController@Comments');
 
 //Posted Question API
 Route::get('/api/v1/profile/user','ProfileController@User'); 
@@ -98,3 +96,22 @@ Route::post('/api/v1/achievements/Achievements','AchievementsController@Achievem
 Route::get('/sampleTrait','LeaderboardController@Achievements');
 
 Route::get('/accounts','AccountController@bcrypt');
+
+
+//points
+Route::get('/points', 'PointsController@index');
+Route::get('/categories', 'PointsController@getCategories');
+Route::get('/questions', 'PointsController@getQuestions');
+Route::get('/answers', 'PointsController@getAnswers');
+Route::get('/getPoints', 'PointsController@getPoints');
+Route::get('/getWithAnswer', 'PointsController@getWithAnswer');
+Route::get('/median', 'PointsController@median');
+Route::get('/points_answering', 'PointsController@points_answering');
+
+//2018
+Route::get('/sampleArray', 'PointsController@sampleArray');
+Route::get('/PointsPosting', 'PointsController@PointsPosting'); //for posting
+Route::get('/ref', 'PointsController@ref');
+Route::get('/ref2', 'PointsController@ref2');
+Route::get('/GetPoints/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');
+

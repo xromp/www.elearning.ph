@@ -36,6 +36,8 @@ class AchievementsController extends Controller
     				->get();
     	$data->count();
 
+        
+
     	if($data->count()>0)
     	{
     		$achievement = array(
@@ -45,8 +47,6 @@ class AchievementsController extends Controller
     		); 
     		return $achievement;
     	}
- 
-
     }
 
 
