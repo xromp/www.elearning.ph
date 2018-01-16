@@ -76,6 +76,22 @@ class AnswerController extends Controller
                     'message' => 'You are not allowed to answer your own question.'
                 ]);
             }
+            if ($data['type_code'] == 'CODING') {
+                $hasAnsweredCorrectly = DB::table('answers')
+                    ->where('question_code',$data['question_code'])
+                    ->where('is_correct',1)
+                    ->count();
+                
+                if( $hasAnsweredCorrectly >= 1 ) {
+                    return response()->json([
+                        'status' => 403,
+                        'data' => 'null',
+                        'message' => 'This question has been already answered correctly.'
+                    ]);
+                }
+            }
+
+            
             
             $transaction = DB::transaction(function($data) use($data){
                 $answer = new Answer;
@@ -83,6 +99,24 @@ class AnswerController extends Controller
                 $answer->question_code = $data['question_code'];
                 $answer->student_id = $data['student_id'];
                 $answer->answer = $data['answer'];
+
+                if ($data['type_code'] == 'MULTIPLE_CHOICE') {
+                    $correctAns = DB::table('multiple_choices')
+                        ->where('question_code',$data['question_code'])
+                        ->where('choice_code',$data['answer'])
+                        ->where('is_correct',1)
+                        ->get();
+                    
+                    $answer->is_correct =  $correctAns->count();
+                } else if ($data['type_code'] == 'IDENTIFICATION') {
+                    $correctAns = DB::table('multiple_choices')
+                        ->where('question_code',$data['question_code'])
+                        ->where('choice_code',$data['answer'])
+                        ->where('is_correct',1)
+                        ->get();
+                    
+                    $answer->is_correct =  $correctAns->count();
+                }
 
                 if (!$this->isEmpty($data['rating'])) {
                     $answer->rating = $data['rating'];

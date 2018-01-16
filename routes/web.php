@@ -28,6 +28,7 @@ Route::get('/api/v1/question/categories','QuestionController@getCategories');
 Route::get('/api/v1/question/getQuestions','QuestionController@getQuestions');
 Route::post('/api/v1/question/create','QuestionController@create');
 Route::post('/api/v1/question/action','QuestionController@action');
+Route::post('/api/v1/question/actionAnswer','QuestionController@actionAnswer');
 Route::get('/api/v1/question/leaderBoard','QuestionController@leaderBoard');
 
 // stock market

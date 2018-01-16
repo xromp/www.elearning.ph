@@ -1,3 +1,4 @@
+
 <div class="container" id="mainDiv">
     <p>Stock Market Page</p>
     <div class="list-group" ng-repeat="category in sc.categoryList">

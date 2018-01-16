@@ -1,3 +1,11 @@
+<style>
+.trix_question {
+  pointer-events: none;
+}
+
+/* 
+trix-toolbar { display: none; } */
+</style>
 <div class="container" id="mainDiv">
     <form name="ansqc.frmQuestion" novalidate>
         <div class="row">
@@ -9,14 +17,14 @@
                     <%ansqc.questionDetails.title%>
                     </h5>
                 </div>
-                <small><% (ansqc.questionDetails.is_self) == true ? "You posted this question ": "Asked " %><time am-time-ago="ansqc.questionDetails.created_at"></time></small>
+                <small><% (ansqc.questionDetails.student_info.is_self) == true ? "You posted this question ": "Asked " %><time am-time-ago="ansqc.questionDetails.created_at"></time></small>
                 <div>
                     <span class="badge badge-default" ng-bind="ansqc.questionDetails.category_desc"></span>
                     <span class="badge badge-default" ng-bind="ansqc.questionDetails.type_desc"></span>
                 </div>
                 <br/> 
             </div>
-            <div class="col-sm-4" ng-if="ansqc.questionDetails.student_info.is_admin">
+            <div class="col-sm-4" ng-if="ansqc.questionDetails.student_info.is_admin && ansqc.questionDetails.is_approved == null">
                 <div class="pull-right">
                     <button class="btn btn-success" ng-click="ansqc.action(ansqc.questionDetails,'APPROVED')"><i class="fa fa fa-thumbs-up"></i> Approve</button>
                     <button class="btn btn-danger" ng-click="ansqc.action(ansqc.questionDetails,'DECLINED')"><i class="fa fa fa-thumbs-down"></i> Decline</button>
@@ -27,7 +35,7 @@
         <div class="form-group" ng-class="{'text-danger': ansqc.frmQuestion.desc.$invalid && ansqc.frmQuestion.withError }">
             <label>Question</label>
             <div>
-                <trix-editor id="quesion" ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content disabled" ng-model="ansqc.questionDetails.description" angular-trix trix-initialize="trixInitialize(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);"></trix-editor>
+                <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content trix_question" ng-model="ansqc.questionDetails.description" angular-trix trix-initialize="trixInitialize(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);"></trix-editor>
             </div>
         </div>
 
@@ -57,7 +65,7 @@
             </fieldset>
         </div>
 
-        <div class="form-group" ng-if="ansqc.questionDetails.type_code == 'CODING'">
+        <div class="form-group" ng-if="ansqc.questionDetails.type_code == 'CODING' && !ansqc.questionDetails.student_info.is_self">
         <label>Type the code below. <small class="" style="background-color:#eee;">Enclosed with <> tag for code statement</small></label>
             <!-- https://github.com/sachinchoolur/angular-trix -->
             <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content" ng-model="ansqc.questionDetails.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
@@ -72,7 +80,18 @@
         <div class="form-group row">
             <div class="col-sm-10">            
                 <button type="submit" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-show="!ansqc.questionDetails.student_info.is_self && !ansqc.questionDetails.student_info.has_answered" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
-                <table class="table table-sm table-responsive" ng-if="ansqc.questionDetails.student_info.is_self">
+                
+                <!-- answers with approval -->
+                <div class="row" ng-repeat="student in ansqc.questionDetails.students_answered.list | filter:{is_correct:null}:strict" ng-if="ansqc.questionDetails.type_code == 'CODING' && ansqc.questionDetails.student_info.is_self">
+                    <div class="col-md-9">
+                        <trix-editor ng-model-options="{ updateOn: 'blur' }" spellcheck="false" class="trix-content trix_question" ng-model="student.answer" angular-trix trix-initialize="trixInitialize(e, editor);" trix-change="trixChange(e, editor);" trix-selection-change="trixSelectionChange(e, editor);" trix-focus="trixFocus(e, editor);" trix-blur="trixBlur(e, editor);" trix-file-accept="trixFileAccept(e, editor);" trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);" placeholder="Write something.."></trix-editor>
+                    </div>
+                    <div class="col-md-3 pulll-right">
+                        <button class="btn btn-success btn-sm" ng-click="ansqc.actionAnswer(student,'CORRECT')"><i class="fa fa-check-circle"></i> Correct</button>
+                        <button class="btn btn-danger btn-sm" ng-click="ansqc.actionAnswer(student,'WRONG')"><i class="fa fa-times-circle"></i> Wrong</button>
+                    </div>
+                </div>
+                <!-- <table class="table table-sm table-responsive" ng-if="ansqc.questionDetails.student_info.is_self">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -82,15 +101,15 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Correct answers: <%ansqc.questionDetails.student_info.students_answered.correct_ans_count%>/<%ansqc.questionDetails.student_info.students_answered.count%></td>
+                            <td>No. of answer(s): <%ansqc.questionDetails.students_answered.count%></td>
                         </tr>
-                        <tr ng-class="{'table-success':student.is_correct}" ng-repeat="student in ansqc.questionDetails.student_info.students_answered.list">
+                        <tr ng-class="{'table-success':student.is_correct}" ng-repeat="student in ansqc.questionDetails.students_answered.list">
                             <td ng-bind="student.name"></td>
                             <td ng-bind="student.answer"></td>
                             <td ng-bind="student.answered_at |  date:'MM/dd/yyyy h:mma'"></td>
                         </tr>
                     </tbody>
-                </table>
+                </table> -->
             </div>
         </div>
     </form>

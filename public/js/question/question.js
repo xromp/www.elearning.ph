@@ -55,8 +55,12 @@
            
             vm.questionDetails = {
                 category_code: "ADAPTER",
-                type_code:'CODING'
+                type_code:'IDENTIFICATION'
             };
+
+            vm.identificationAnsList = [
+                {answer:''}
+            ];
 
             vm.defaultQuestionDet = angular.copy(vm.questionDetails);
 
@@ -104,6 +108,11 @@
                                 v.is_correct = false;
                             }
                         });    
+                    } else if  (dataCopy.type_code == 'IDENTIFICATION') {
+                        dataCopy.answer = [];
+                        angular.forEach(vm.identificationAnsList, function(v,k){
+                            dataCopy.answer.push(v.answer);
+                        });
                     }
                     console.log(dataCopy);
                 
@@ -131,6 +140,14 @@
                 
             };
 
+            vm.addAnsIdentif = function(){
+                vm.identificationAnsList.push({answer:''});
+            };
+
+            vm.removeAnsIdentif = function(i){
+                vm.identificationAnsList.splice(i,1);
+            };
+
 
         }
 
@@ -140,7 +157,7 @@
 
             vm.questionDetails = {};
             
-            vm.onload = function(){
+            vm.onload = function(hasNotif = true){
 
                 if ($stateParams.questionCode) {
                     // load questions
@@ -153,7 +170,7 @@
 
                         if((vm.questionDetails.student_info.is_self || 
                             vm.questionDetails.student_info.has_answered) &&
-                            vm.questionDetails.type_code == 'MULTIPLE_CHOICE'){
+                            (vm.questionDetails.type_code == 'MULTIPLE_CHOICE' || vm.questionDetails.type_code == 'CODING')){
 
                             vm.questionDetails.answer = vm.questionDetails.answer[0];
                         }
@@ -164,13 +181,16 @@
                         }
 
                         // todo: load notif
-                        if (vm.questionDetails.student_info.is_self) {
-                            Notification.info({message: 'You are viewing your own question.', positionY: 'bottom', positionX: 'right'});                
-                        }
+                        if (hasNotif) {
+                            if (vm.questionDetails.student_info.is_self) {
+                                Notification.info({message: 'You are viewing your own question.', positionY: 'bottom', positionX: 'right'});                
+                            }
 
-                        if (vm.questionDetails.student_info.has_answered) {
-                            Notification.warning({message: 'You\'ve already answered this question.', positionY: 'bottom', positionX: 'right'});                
+                            if (vm.questionDetails.student_info.has_answered) {
+                                Notification.warning({message: 'You\'ve already answered this question.', positionY: 'bottom', positionX: 'right'});                
+                            }
                         }
+                    
                     });
                  } else {
                      return alert('Something went wrong.');
@@ -238,6 +258,18 @@
 
             vm.decline = function(data){
                 console.log(data);
+            }
+
+            vm.actionAnswer = function(data, actionType) {
+                var formData = angular.copy(data);
+                formData.action = actionType;
+
+                var formDataCopy = angular.toJson(formData);
+                QuestionSrvcs.actionAnswer(formDataCopy)
+                .then(function(response){
+                    console.log(response);
+                    vm.onload(false);
+                });
             }
         }
 
@@ -347,6 +379,13 @@
                         method:'POST',
                         data:data,
                         url:'/api/v1/question/action'
+                    })
+                },
+                actionAnswer: function(data) {
+                    return $http({
+                        method:'POST',
+                        data:data,
+                        url:'/api/v1/question/actionAnswer'
                     })
                 },
                 leaderBoard: function(){

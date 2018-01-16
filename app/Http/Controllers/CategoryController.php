@@ -58,12 +58,13 @@ class CategoryController extends Controller
         $result = array();
 
         $categories = DB::table('categories as c')
+            ->select('c.category_code','c.description')
             ->leftJoin( DB::raw( "(SELECT q.category_code, COUNT( q.category_code ) as no_of_questions FROM questions as q GROUP BY q.category_code) as q"), 'q.category_code', '=', 'c.category_code' );
 
         if ($data['categoryCode']) {
             $categories->where('c.category_code',$data['categoryCode']);
         }
-
+        // dd($categories->get());
         $categories = $categories->get();
         
         $categoriesCopy = json_decode($categories, true);
@@ -74,6 +75,7 @@ class CategoryController extends Controller
                 )
                 ->leftJoin( DB::raw( '(SELECT question_code,COUNT(question_code) as no_answered from answers group by question_code) as a'), 'a.question_code', '=', 'q.question_code' )
                 ->where('q.category_code',$category['category_code'])
+                ->where('q.is_approved',1)
                 ->get();
                 
             $noAnswered = $answers->where('no_answered','>','0')
