@@ -50,6 +50,7 @@ class AccountController extends Controller
 
     public function auth(Request $request)
     {
+
     	$email = $request->input('uname');
     	$pword = $request->input('pword');
 
