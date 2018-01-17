@@ -153,6 +153,7 @@ class AchievementsController extends Controller
         if ($data['student_id']){
             $students = $students-> where ('student_id',$data['student_id']);
         }
+        
         $students = $students->get();
         $studentsCopy = json_decode($students, true);
         foreach ($studentsCopy as $key => $student) {
@@ -205,5 +206,11 @@ class AchievementsController extends Controller
             'count' => count($result),
             'message' => 'Successfully saved.'
         ]);
+    }
+
+    public function ask_01 (Request $request){
+        $data = array(
+            'student_id'=>$request->input('studentId')
+        );
     }
 }

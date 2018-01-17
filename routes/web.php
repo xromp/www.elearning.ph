@@ -94,6 +94,10 @@ Route::get('/api/v1/achievements/FirstQuestion','AchievementsController@FirstQue
 Route::post('/api/v1/achievements/Achievements','AchievementsController@Achievements');
 Route::get('/api/v1/achievements/get','AchievementsController@get');
 
+// ASK achievements API
+Route::get('/api/v1/achievements/firstQuestion','QuestionController@firstQuestion');
+
+
 Route::get('/sampleTrait','LeaderboardController@Achievements');
 
 Route::get('/accounts','AccountController@bcrypt');
