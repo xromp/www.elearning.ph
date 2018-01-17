@@ -18,8 +18,8 @@
                     <h5><%user.name%></h5>
                     <b>Points: 100</b>
                     <br>
-                    <span ng-repeat="achievement in user.achievements" >
-                        <img src="{{ url('/') }}/Icons/<%achievement.Icon%>" style="width:40px;border:3px solid #ddd;padding:3px; cursor:pointer; border-radius: 10px;" title="<%achievement.Desc%>"/> 
+                    <span ng-repeat="achievement in user.achievements" style="text-align: center;" >
+                        <img src="{{ url('/') }}/Icons/<%achievement.Icon%>" style="width:50px;border:none;padding:2px; cursor:pointer; border-radius: 10px;" title="<%achievement.Desc%>"/>
                     </span> 
                 </div>
             </div>

@@ -54,6 +54,14 @@
                 }
             }, function (){ alert('Bad Request!!!') })
 
+            ProfileSrvcs.Rewards({hashedID:$stateParams.id}).then (function (response) {
+                if(response.data.status == 200)
+                {
+                    vm.students = response.data.data;
+                    console.log(vm.students)
+                }
+            }, function (){ alert('Bad Request!!!') })
+
 
             $scope.ShowHidQuestionAns = function(status)
             {
@@ -68,6 +76,88 @@
                     $scope.answered_questions = true;
                 }
             }
+
+            // vm.students = [
+            //     {
+            //         "student_id": 1,
+            //         "student_name": "Rom",
+            //         "rewards": [
+            //             {
+            //                 "type": "Posting",
+            //                 "desc": "Posting Questions",
+            //                 "list": [
+            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
+            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
+            //                 ]
+            //             },
+            //             {
+            //                 "type": "Asking",
+            //                 "desc": "Asking Questions",
+            //                 "list": [
+            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
+            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
+            //                 ]
+            //             },
+            //             {
+            //                 "type": "Participation",
+            //                 "desc": "Participati.....",
+            //                 "list": [
+            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
+            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
+            //                 ]
+            //             }
+            //         ]
+            //     }
+
+            //     ,
+
+            //      {
+            //         "student_id": 1,
+            //         "student_name": "Erikson",
+            //         "rewards": [
+            //             {
+            //                 "type": "Posting",
+            //                 "desc": "Posting Questions",
+            //                 "list": [
+            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
+            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
+            //                 ]
+            //             },
+            //             {
+            //                 "type": "Asking",
+            //                 "desc": "Asking Questions",
+            //                 "list": [
+            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
+            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
+            //                 ]
+            //             },
+            //             {
+            //                 "type": "Participation",
+            //                 "desc": "Participati.....",
+            //                 "list": [
+            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
+            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
+            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
+            //                 ]
+            //             }
+            //         ]
+            //     }
+
+
+               
+            // ];
+
+            console.log(vm.rewards);
             
         }
 
@@ -105,8 +195,19 @@
                         data: data,
                         headers: {'Content-Type': 'application/json'}
                     })
+                },
+
+                Rewards: function(data) {
+                    return $http({
+                        method: 'GET',
+                        url: '/api/v1/achievements/get?studentId=1',
+                        data: data,
+                        headers: {'Content-Type': 'application/json'}
+                    })
                 }
 
             };
         }
+
+
 })();

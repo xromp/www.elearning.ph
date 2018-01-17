@@ -1,20 +1,48 @@
 
-
 <div class="container" id="mainDiv">
-    
-    
     <div class="row">
     	<div class="col-sm-2 blog-main">
-    		<img src="{{ url('/') }}/uploads/profile/person-8x.png" style="width:150px;"/>
+    		<img src="{{ url('/') }}/uploads/profile/person-8x.png" style="width:150px;"/> 
     	</div>
-    	<div class="col-sm-8 blog-main">
-    		<br>
-    		<br>
-    		<h3><%pc.UserName%></h3>
-    		<span ng-repeat="achievement in pc.achievements" >
-	    		<img src="{{ url('/') }}/Icons/<%achievement.Icon%>" style="width:40px;border:3px solid #ddd;padding:3px; border-radius: 10px;" title="<%achievement.Desc%>"/> 
-	    	</span> 
-    	</div>
+        <div class="col-sm-8 blog-main"> 
+            <h2><%pc.UserName%></h2>
+        </div>
+  
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-sm-12 blog-main" style="text-align: left;">
+            <span ng-repeat="student in pc.students"> 
+                <span ng-repeat="achievement in student.achievementList">
+                    <h5><%achievement.type%> - <%achievement.desc%> </h5>
+                    <div class="row">
+                        
+                        <div class="col-sm-2 blog-main" ng-repeat="list in achievement.list" 
+                            ng-if="!list.is_achieved" 
+                            style="border: 2px solid #ddd;margin:4px;text-align: center;padding:10px; border-radius: 15px;"" title="<%list.description%>">
+                          <img src="{{ url('/') }}/Icons/lock-item.png" style="width:55;" /> 
+                            <hr>
+                            <span style="color:#8c8c8c;font-size:12px;font-weight: bold;"><%list.title%></span>
+                        </div>
+
+                        <div class="col-sm-2 blog-main" ng-repeat="list in achievement.list" 
+                            ng-if="list.is_achieved" 
+                            style="border: 2px solid #ddd;margin:4px;text-align: center;padding:10px; border-radius: 15px; " title="<%list.description%>">
+                           
+                              <img src="{{ url('/') }}/Icons/<%list.icon_path%>" style="width:55;" /> 
+                            <hr>
+                            <span style="color:#8c8c8c;font-size:12px;font-weight: bold;"><%list.title%></span>
+                        </div>
+
+
+                    </div>
+                    <br>
+                    <br>
+                </span>
+                <br>
+            </span> 
+        </div>
     </div>
 
     <div class="row" style="padding:14px;text-align: center" ng-if="question_ans"> 

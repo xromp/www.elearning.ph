@@ -58,6 +58,7 @@
             vm.routeTo = function(route){
                 $window.location.href = route;
             };
+            
         }
 
         LeaderboardSrvcs.$inject = ['$http'];
