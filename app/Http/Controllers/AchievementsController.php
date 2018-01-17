@@ -206,4 +206,10 @@ class AchievementsController extends Controller
             'message' => 'Successfully saved.'
         ]);
     }
+
+    public function ask_01 (Request $request){
+        $data = array(
+            'student_id'=>$request->input('studentId')
+        );
+    }
 }
