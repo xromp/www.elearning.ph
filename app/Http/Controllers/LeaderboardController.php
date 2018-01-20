@@ -82,7 +82,6 @@ class LeaderboardController extends Controller
             $data[$key]['lName'] = $student->lName;
             $data[$key]['name'] = $student->lName.", ".$student->fName." ".$student->mName;
             $data[$key]['hashedID'] = $this->GetRandom(10).$student->student_id.$this->GetRandom(10);
-            
         }
 
         return response()->json([
@@ -94,36 +93,8 @@ class LeaderboardController extends Controller
 
 
    	public function Achievements($hashedID)
-    {	
-        // $hashedID = $request->input('hashedID');
-        // $hashedID = $this->RemoveExtras($hashedID);
-
-        // // $hashedID = 1;
-
-    	// $achievements = array();
-
-    	// if($this->FirstQuestion($hashedID))
-    	// {
-    	// 	array_push($achievements, $this->FirstQuestion($hashedID));
-    	// }
-
-    	// if($this->FirstAnswer($hashedID))
-    	// {
-    	// 	array_push($achievements, $this->FirstAnswer($hashedID));
-    	// }
-
-        // if($this->Forum($hashedID))
-        // {
-        //     array_push($achievements, $this->Forum($hashedID));
-        // }
-
-        // return $achievements;
-
-        // return response()-> json([
-        //     'status'=>200,
-        //     'data'=>$achievements,
-        //     'message'=>''
-        // ]);
+    {
+ 
     }
 
    	public function GetRandom($keyLength)

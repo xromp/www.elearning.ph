@@ -16,6 +16,7 @@
             }();
  
             ProfileSrvcs.OtherUser({hashedID:$stateParams.id}).then (function (response) {
+                 
                 if(response.data.status == 200)
                 {
                     vm.UserData = response.data.data;
@@ -35,6 +36,14 @@
         
                     // console.log("user = "+vm.UserName)
                     // console.log("user = "+vm.UserData.student_id)
+
+                    ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
+                        if(response.data.status == 200)
+                        {
+                            vm.students = response.data.data;
+                            console.log(vm.students[0])
+                        }
+                    }, function (){ alert('Bad Request!!!') })
                 }
             }, function (){alert('Bad Request!!!')})
           
@@ -65,7 +74,6 @@
                 }
             }, function (){ alert('Bad Request!!!') })
 
-           
             $scope.ShowHidQuestionAns = function(status)
             {
                 if(status == 1)
@@ -117,9 +125,7 @@
                         headers: {'Content-Type': 'application/json'}
                     })
                 },
-
                 Rewards: function(data) {
-                    
                     return $http({
                         method: 'GET',
                         data: data,
