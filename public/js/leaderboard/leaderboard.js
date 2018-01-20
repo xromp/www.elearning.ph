@@ -98,8 +98,7 @@
                         headers: {'Content-Type': 'application/json'}
                     })
                 },
-                Rewards: function() {
-                    
+                Rewards: function(){
                     return $http({
                         method: 'GET',
                         url: '/api/v1/achievements/get',

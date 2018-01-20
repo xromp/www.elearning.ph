@@ -31,6 +31,7 @@ class ProfileController extends Controller
 	    	$student = Student::PerStudent($hashedID)->first();
 	    	return view('profile.index');
     	}
+        
     	else
     	{
     		return "Profile Not found!";

@@ -160,10 +160,10 @@ class AchievementsController extends Controller
 	public function get(Request $request) 
     {    
 
-        $studentId = $this->RemoveExtras($request->input('studentId'));
+        // $studentId = $this->RemoveExtras($request->input('studentId'));
 
         $data = array(
-            'student_id'=>$studentId
+            'student_id'=>$request->input('studentId')
         );
 
         $result = array();
