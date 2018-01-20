@@ -347,9 +347,15 @@ trait PointsTrait
 		return ($points) > 8 ? 8 : $points;
 	}
 
-	// public function getPointsQuestionPerStudent($data) {
+	public function getPointsQuestionPerStudent($data) {
+		$points = $this->GetPoints('post',$data['type_code'],$data['category_code']);
 
-	// }
+		$this->onLoadPointsPerStudents($data);
+		return ($points) > 6 ? 6 : $points;
+		// DB::table('questions')
+		// -> where('question_code',$data['questionCode'])
+		// -> update(['points'=>$this->GetPoints('post',$data['type_code'],$data['category_code'])]);
+	}
 
 	public function getTotalPointPerCategory($data) {
 		$questionPoints = DB::table('questions')
@@ -417,5 +423,7 @@ trait PointsTrait
 	
 	public function onLoadPointsPerStudents($data){
 		$this->isMasterAchievedByCategory($data);
+		$this->isReaching75PointsAnswering($data);
+		$this->Reaching25PointsAsking($data);
 	}
 }

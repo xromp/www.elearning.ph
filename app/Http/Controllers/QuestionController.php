@@ -56,12 +56,12 @@ class QuestionController extends Controller
         );
         $isAdmin = ($request->session()->get('account_type') == 1);
 
-        $data = array();
-        $data['category_code'] = 'ADAPTER';
-        $data['student_id'] = 5;
+        // $data = array();
+        // $data['category_code'] = 'ADAPTER';
+        // $data['student_id'] = 5;
 
-        dd($this->isMasterAchievedByCategory($data));
-        
+        // dd($this->isMasterAchievedByCategory($data));
+
         $question = DB::table('questions as q')
             -> select(
                 'q.question_code',
@@ -443,9 +443,16 @@ class QuestionController extends Controller
                 -> update(['is_approved'=>$data['is_approved']]);
 
             if ($data['is_approved']) {
+                $i = array(
+                    'question_code'=>$data['questionCode'],
+                    'type_code'=>$data['type_code'],
+                    'student_id'=>$data['student_id'],
+                    'category_code'=>$data['category_code'],
+                );
+
                 DB::table('questions')
                     -> where('question_code',$data['questionCode'])
-                    -> update(['points'=>$this->GetPoints('post',$data['type_code'],$data['category_code'])]);
+                    -> update(['points'=>$this->getPointsQuestionPerStudent($i)]);
             }
             
             $message = 'Successfully '.strtolower($data['action'].'.');
@@ -522,10 +529,20 @@ class QuestionController extends Controller
             -> update(['is_correct'=>$data['is_correct']]);
 
             if ($data['is_correct']) {
+                $i = array(
+                    'question_code'=>$data['question_code'],
+                    'type_code'=>$data['type_code'],
+                    'student_id'=>$data['student_id'],
+                    'category_code'=>$data['category_code'],
+                );
+
                 DB::table('answers')
-                -> where('question_code',$data['question_code'])
-                -> where('student_id',$data['student_id'])
-                -> update(['points'=>$this->GetPoints('answer',$data['type_code'],$data['category_code'])]);
+                    -> where('answer_id',$answer->answer_id)
+                    -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
+                // DB::table('answers')
+                // -> where('question_code',$data['question_code'])
+                // -> where('student_id',$data['student_id'])
+                // -> update(['points'=>$this->GetPoints('answer',$data['type_code'],$data['category_code'])]);
 
                 $this->isFirstCorrectAnswer($data);
                 $this->isFirstCodingCorrectAnswer($data);
