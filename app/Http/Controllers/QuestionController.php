@@ -56,6 +56,12 @@ class QuestionController extends Controller
         );
         $isAdmin = ($request->session()->get('account_type') == 1);
 
+        $data = array();
+        $data['category_code'] = 'ADAPTER';
+        $data['student_id'] = 5;
+
+        dd($this->isMasterAchievedByCategory($data));
+        
         $question = DB::table('questions as q')
             -> select(
                 'q.question_code',

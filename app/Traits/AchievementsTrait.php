@@ -241,6 +241,55 @@ trait AchievementsTrait
         }
     }
 
+    public function isMasterAchievedByCategory($data) {
+        if ($this->getTotalPointPerCategory($data)['total_points'] >= 12) {
+            $achievedCode = DB::table('rewards as r')
+                ->where('entity1',$data['category_code'])
+                ->first();
+            
+            $data['code'] = $achievedCode->achievement_code;
+
+            $transaction = DB::transaction(function($data) use($data) {
+            
+                $formData = array (
+                    'code'=> $data['code'],
+                    'student_id'=>$data['student_id']
+    
+                );
+    
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+    
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+    
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+
+    }
+
+
     public function isFirstAchievement($data) {
         
         $achievements_count = DB::table('achievements as a')
