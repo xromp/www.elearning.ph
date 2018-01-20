@@ -20,6 +20,19 @@
                 {
                     vm.UserData = response.data.data;
                     vm.UserName = vm.UserData.fName + " " + vm.UserData.lName;
+
+                    ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
+
+                        // console.log(response.data);
+        
+                        if(response.data.status == 200)
+                        {
+                            vm.students = response.data.data;
+                            console.log(vm.students[0])
+                        }
+                    }, function (){ alert('Bad Request!!!') })
+        
+        
                     // console.log("user = "+vm.UserName)
                     // console.log("user = "+vm.UserData.student_id)
 
@@ -52,7 +65,6 @@
             }, function(){ alert('Bad Request!')})
             
             //get achievements
-
             ProfileSrvcs.Achievements({hashedID:$stateParams.id}).then (function (response) {
                 if(response.data.status == 200)
                 {
@@ -60,9 +72,6 @@
                     console.log(vm.achievements)
                 }
             }, function (){ alert('Bad Request!!!') })
-
-            
-
 
             $scope.ShowHidQuestionAns = function(status)
             {
