@@ -131,7 +131,6 @@ class PointsController extends Controller
     		}
 
     		$data[$key]['status'] = $status; 
-
     	}
 
 		$lowerPointsDiff = 2/$lower;
@@ -203,6 +202,8 @@ class PointsController extends Controller
     		$data[$key]['Coding'] = $val * 1;
     		$currentStatus = $datum['status']; 
 			$currentValue = $val;
+    		$data[$key]['val'] = $val;
+
     		
     	}
 
@@ -354,8 +355,4 @@ class PointsController extends Controller
     	}
     	return $points;
     }
-
-
-
-
 }
