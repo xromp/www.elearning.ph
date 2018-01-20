@@ -92,21 +92,6 @@ class PointsController extends Controller
     	return $median = collect($med_col)->median();
     }
 
-    public function GetCountStudent(Request $request)
-    {
-    	$med_col = array();
-
-    	foreach ($this->sortUnanswered($request) as $key => $datum) 
-    	{
-    		$no_of_questions = $datum['no_of_questions'];
-    		array_push($med_col, $no_of_questions);
-    	}
-
-    	return $median = collect($med_col)->median();
-    }
-
-
-
     public function PointsPosting(Request $request) // for posting
     {
     	$median = $this->GetMedian($request);
@@ -166,29 +151,23 @@ class PointsController extends Controller
 	    		if($unanswered == $datum['no_unanswered'])
 	    		{
 	    			$val = $currentValue;
-	    			$unanswered = $datum['no_unanswered'];
 	    		}
 	    		else
 	    		{
-	    			// $val = "not equal";
 	    			if($datum['status'] == 'Higher')
 	    			{
-	    				$unanswered = $datum['no_unanswered'];
-	    				// $val = "higher-erik";
 	    				$val = $currentValue - $higherPointsDiff;
 	    			}
 	    			else
 	    			{
 	    				if($currentStatus != "Lower")
 	    				{
-	    					$unanswered = $datum['no_unanswered'];
 	    					$val = 2;
 	    				}
-	    				else 
+	    				else
 	    				{
-	    					$unanswered = $datum['no_unanswered'];
-	    					// $val ="lower-erik";
-	    					$val = $currentValue - $lowerPointsDiff;
+	    					$val ="erikson";
+	    					// $val = $currentValue - $lowerPointsDiff;
 	    				}
 	    			}
 	    		}
@@ -266,32 +245,29 @@ class PointsController extends Controller
     		{
 	    		if($unanswered == $datum['no_unanswered'])
 	    		{
-	    			$unanswered = $datum['no_unanswered'];
 	    			$val = $currentValue;
 	    		}
 	    		else
 	    		{
 	    			if($datum['status'] == 'Lower')
 	    			{
-	    				$unanswered = $datum['no_unanswered'];
 	    				$val = $lowerPointsDiff + $currentValue;
 	    			}
 	    			else
 	    			{
 	    				if($currentStatus != "Higher")
 	    				{
-	    					$unanswered = $datum['no_unanswered'];
 	    					$val = 5;
 	    				}
 	    				else
 	    				{
-	    					$unanswered = $datum['no_unanswered'];
 	    					$val = $currentValue + $higherPointsDiff;
 	    				}
 	    			}
 	    		}
 				
 				$data[$key]['value'] = $val;
+
 	    	}
 
     		$data[$key]['Identification'] = $val * 0.75;

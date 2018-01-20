@@ -30,6 +30,16 @@
                         vm.UserData = response.data.data;
                     }
                 }, function (){ alert('Bad Request!!!') })
+
+
+                LeaderboardSrvcs.Rewards().then (function (response) {
+                    if(response.data.status == 200)
+                    {
+                        vm.students = response.data.data;
+                        console.log(vm.students)
+                    }
+                }, function (){ alert('Bad Request!!!') })
+
             }();
 
             
@@ -85,6 +95,14 @@
                         method: 'POST',
                         url: '/api/v1/leaderboard/find',
                         data: data,
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
+                Rewards: function() {
+                    
+                    return $http({
+                        method: 'GET',
+                        url: '/api/v1/achievements/get',
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

@@ -115,8 +115,10 @@ Route::get('/points_answering', 'PointsController@points_answering');
 
 //2018
 Route::get('/sampleArray', 'PointsController@sampleArray');
-Route::get('/PointsPosting', 'PointsController@PointsPosting'); //for posting
-Route::get('/ref', 'PointsController@ref');
-Route::get('/ref2', 'PointsController@ref2');
+Route::get('/PointsPosting', 'PointsController@PointsPosting'); //for posting 
 Route::get('/GetPoints/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');
+Route::get('/GetID/', 'AchievementsController@getStudID');
 
+//for checking
+Route::get('/GetPostPoints/', 'PointsController@PointsPosting');
+Route::get('/GetAnswerPoints/', 'PointsController@PointsAnswering');
