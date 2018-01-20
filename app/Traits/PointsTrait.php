@@ -424,6 +424,6 @@ trait PointsTrait
 	public function onLoadPointsPerStudents($data){
 		$this->isMasterAchievedByCategory($data);
 		$this->isReaching75PointsAnswering($data);
-		$this->Reaching25PointsAsking($data);
+		$this->isReaching25PointsAsking($data);
 	}
 }
