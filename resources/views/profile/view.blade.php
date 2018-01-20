@@ -49,8 +49,6 @@
                             <hr>
                             <span style="color:#8c8c8c;font-size:12px;font-weight: bold;"><%list.title%></span>
                         </div>
-
-
                     </div>
                     <br>
                     <br>
