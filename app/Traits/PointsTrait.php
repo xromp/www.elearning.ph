@@ -11,9 +11,11 @@ use App\Student;
 use App\Question_Choices;
 use App\Answer;
 
+// use App\Traits\AchievementsTrait;
+
 trait PointsTrait
 {
-   
+	// use AchievementsTrait;
     public function getWithAnswer() 
     {
         $result = array();
@@ -326,25 +328,10 @@ trait PointsTrait
     			// elseif($questionType == $Identification)
     		}
 		}
-		
+		// $this->onLoadPoints($data)
     	return $points;
 	}
 	
-	// public function studentRanking($data){	
-	// 	$result = $array();
-	// 	$studentAnswer = DB::table('answers as a')
-	// 		->where ('question_code',$data['question_code'])
-	// 		->get();
-
-	// 	$student = DB::table('students')
-	// 		->count();
-	// 	$result['student_count'] = $student->count()+1;
-	// 	$result['student_rank'] = $studentAnswer->count();
-		
-	// 	return $result;
-	
-	// }
-
 	public function getPointsAnswerPerStudent($data) {
 		$students = array();
 
@@ -357,10 +344,90 @@ trait PointsTrait
 		$x = $this->GetPoints('answer',$data['type_code'],$data['category_code']);
 		$i = ($students['student_count'] - $students['student_rank']) / $students['student_count'];
 		$points = $x * $i;
+
+		$this->onLoadPointsPerStudents($data);
+
 		return ($points) > 8 ? 8 : $points;
 	}
 
+ 
+	public function getPointsQuestionPerStudent($data) {
+		$points = $this->GetPoints('post',$data['type_code'],$data['category_code']);
 
+		$this->onLoadPointsPerStudents($data);
+		return ($points) > 6 ? 6 : $points;
+		// DB::table('questions')
+		// -> where('question_code',$data['questionCode'])
+		// -> update(['points'=>$this->GetPoints('post',$data['type_code'],$data['category_code'])]);
+	}
 
+	public function getTotalPointPerCategory($data) {
+		$questionPoints = DB::table('questions')
+			->select('student_id','category_code', DB::raw('SUM(points) as points'))
+			->where('category_code',$data['category_code'])
+			->where('student_id',$data['student_id'])			
+			->groupBy('student_id','category_code')
+			->first();
 
+		$answerPoints = DB::table('answers as a')
+			->select('a.student_id', DB::raw('SUM(points) as points'))
+			-> leftJoin( DB::raw( "(SELECT questions.question_code, questions.category_code, questions.student_id FROM questions
+                    GROUP BY question_code, category_code, student_id) as q"), 'q.question_code', '=', 'a.question_code' )
+			->where('a.student_id',$data['student_id'])		
+			->where('q.category_code',$data['category_code'])	
+			->groupBy('a.student_id')
+			->first();
+
+		$result= array();
+		$result['question_points'] = ($questionPoints) ? $questionPoints->points :0;
+		$result['answer_points'] = ($answerPoints) ? $answerPoints->points : 0;
+		$result['total_points'] = $result['question_points'] + $result['answer_points'];
+
+		return $result;
+	}
+
+	// public function masterAchieved($data) {
+		
+	// 	$transaction = DB::transaction(function($data) use($data) {
+			
+	// 		$formData = array (
+	// 			'code'=> 'ARQ-02',
+	// 			'student_id'=>$data['student_id']
+	// 		);
+
+	// 		if ($this->isAchivementExists($formData)){
+	// 			return response()->json([
+	// 				'status'=> 200,
+	// 				'data'=>'',
+	// 				'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+	// 			]);   
+	// 		}
+
+	// 		$achivements = new Achievements;
+	// 		$achivements->achievement_code = $formData['code'];
+	// 		$achivements->student_id = $formData['student_id'];
+	// 		$achivements->is_achieved = true;
+
+	// 		$achivements->save();
+	// 		$this->onLoadAchieved($data);
+
+	// 		if ($achivements->id){
+
+	// 			return response()->json([
+	// 				'status'=> 200,
+	// 				'data'=>'',
+	// 				'message'=>'Sucessfully saved.'
+	// 			]);    
+	// 		} else {
+	// 			throw new \Exception("Error Processing Request");
+	// 		}
+	// 	});
+	// 	return $transaction;
+	// }
+	
+	public function onLoadPointsPerStudents($data){
+		$this->isMasterAchievedByCategory($data);
+		$this->isReaching75PointsAnswering($data);
+		$this->isReaching25PointsAsking($data);
+	} 
 }

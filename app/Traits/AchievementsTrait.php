@@ -241,6 +241,106 @@ trait AchievementsTrait
         }
     }
 
+    public function isMasterAchievedByCategory($data) {
+        if ($this->getTotalPointPerCategory($data)['total_points'] >= 12) {
+            $achievedCode = DB::table('rewards as r')
+                ->where('entity1',$data['category_code'])
+                ->first();
+            
+            $data['code'] = $achievedCode->achievement_code;
+
+            $transaction = DB::transaction(function($data) use($data) {
+            
+                $formData = array (
+                    'code'=> $data['code'],
+                    'student_id'=>$data['student_id']
+    
+                );
+    
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+    
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+    
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+
+    }
+
+    public function isMasterAllCategory($data){
+        
+        $unAchievedCount = DB::table('achievements as a')
+            -> LEFTJOIN( DB::raw( "(SELECT rewards.achievement_code, rewards.active, entity2 FROM rewards
+                WHERE entity2 = 'CATEGORYGROUP' AND
+                active = 1
+                GROUP BY achievement_code, active, entity2) as r"), 
+                'a.achievement_code', '=', 'r.achievement_code' )
+            -> WHERE('a.is_achieved',false)
+            -> WHERE('a.student_id',$data['student_id'])
+            -> count();
+        
+        if ($unAchievedCount > 1) {
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'PTP-01',
+                    'student_id'=>$data['student_id']
+
+                );
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
     public function isFirstAchievement($data) {
         
         $achievements_count = DB::table('achievements as a')
@@ -397,9 +497,156 @@ trait AchievementsTrait
         }
     }
 
+    public function isReachingPoints($data){
+        $points = $this->getTotalPointPerCategory($data);
+        $isValid = false;
+        if ($points['total_points'] >= 25 ) {
+            $isValid = true;
+            $data['code'] = 'PTP-10';
+        } elseif ($points['total_points'] >= 50) {
+            $data['code'] = 'PTP-11';
+        } elseif ($points['total_points'] >= 100) {
+            $data['code'] = 'PTP-12';
+        } elseif ($points['total_points'] >= 150) {
+            $data['code'] = 'PTP-13';
+        } elseif ($points['total_points'] >= 200) {
+            $data['code'] = 'PTP-14';
+        } elseif ($points['total_points'] >= 500) {
+            $data['code'] = 'PTP-15';
+        }
+
+        if ($isValid) {
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> $data['code'],
+                    'student_id'=>$data['student_id']
+
+                );
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+
+    }
+
+    public function isReaching75PointsAnswering($data){
+        $points = $this->getTotalPointPerCategory($data);
+        
+        if($points['answer_points']>=75){
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'ANS-01',
+                    'student_id'=>$data['student_id']
+
+                );
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
+    public function isReaching25PointsAsking($data){
+        $points = $this->getTotalPointPerCategory($data);
+        
+        if($points['question_points']>=25){
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'ASK-01',
+                    'student_id'=>$data['student_id']
+
+                );
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
     public function onLoadAchieved($data) {
         $this->isFirstAchievement($data);
         $this->isAllAchievement($data);
+        $this->isMasterAllCategory($data);
+        $this->isReachingPoints($data);
     }
 
     // public function getTotalPoints

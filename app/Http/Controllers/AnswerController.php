@@ -121,9 +121,16 @@ class AnswerController extends Controller
                     $answer->save();
 
                     if ($correctAns->count()) {
+                        $i = array(
+                            'question_code'=>$data['question_code'],
+                            'type_code'=>$data['type_code'],
+                            'student_id'=>$data['student_id'],
+                            'category_code'=>$data['category_code'],
+                        );
+
                         DB::table('answers')
-                            -> where('answer_id',$answer->id)
-                            -> update(['points'=>$this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code'])]);
+                            -> where('answer_id',$answer->answer_id)
+                            -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
                     }
                 } else if ($data['type_code'] == 'IDENTIFICATION') {
                     $correctAns = DB::table('multiple_choices')
@@ -139,6 +146,7 @@ class AnswerController extends Controller
                         $i = array(
                             'question_code'=>$data['question_code'],
                             'type_code'=>$data['type_code'],
+                            'student_id'=>$data['student_id'],
                             'category_code'=>$data['category_code'],
                         );
 

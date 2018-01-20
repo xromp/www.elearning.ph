@@ -5,18 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 
-use App\Traits\AchievementsTrait;
 use App\Question;
 use App\Category;
 use App\Student;
 use App\Question_Choices;
 use App\Answer;
 
+use App\Traits\PointsTrait;
+use App\Traits\AchievementsTrait;
+
 class PointsController extends Controller
 {
 
-	use AchievementsTrait;
-   
+	use PointsTrait;
+    use AchievementsTrait;   
     public function getWithAnswer(Request $request) 
     {
         $data = array(
@@ -354,5 +356,20 @@ class PointsController extends Controller
     		}
     	}
     	return $points;
+    }
+ 
+
+	public function getTotalPointsByCategory(Request $request)
+    {
+        $data = array(
+			'category_code'=>$request->input('categoryCode'),
+			'student_id'=>$request->input('studentId'),
+        );
+
+        return response()->json([
+            'status' => 200,
+            'data' => $this->getTotalPointPerCategory($data),
+            'message' => 'Successfully saved.'
+        ]);
     }
 }
