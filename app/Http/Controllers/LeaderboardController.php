@@ -41,11 +41,11 @@ class LeaderboardController extends Controller
    			$data = null;
    		}
 
-        return response()->json([
-            'status' => 200,
-            'data' => $data,
-            'message' => 'Successfully loaded.'
-        ]);
+      return response()->json([
+          'status' => 200,
+          'data' => $data,
+          'message' => 'Successfully loaded.'
+      ]);
    	}
 
    	public function Users()

@@ -33,7 +33,7 @@ trait PointsTrait
                 )
                 ->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered from answers group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
                 ->where('q.category_code',$category['category_code'])
-
+                ->where('q.is_approved', 1)
                 ->get();
                 
             $noAnswered = $answers->where('no_answered','>','0')
@@ -173,6 +173,8 @@ trait PointsTrait
     		$data[$key]['Coding'] = $val * 1;
     		$currentStatus = $datum['status']; 
 			$currentValue = $val;
+
+            // $data[$key]['val'] = $val;
     		
     	}
 
@@ -217,7 +219,6 @@ trait PointsTrait
 
     	foreach ($data as $key => $datum) 
     	{
-
     		if($key==0)
     		{
     			if($datum['status'] == 'Higher')
@@ -295,6 +296,7 @@ trait PointsTrait
     	}
     	
     	$points = 0;
+
     	foreach ($data as $key => $datum) 
     	{
     		$category_code =  $datum['category_code'];
@@ -322,6 +324,7 @@ trait PointsTrait
     				echo "Invalid type of question!";
 
     			}
+
     			// elseif($questionType == $Identification)
     		}
 		}
@@ -347,6 +350,7 @@ trait PointsTrait
 		return ($points) > 8 ? 8 : $points;
 	}
 
+ 
 	public function getPointsQuestionPerStudent($data) {
 		$points = $this->GetPoints('post',$data['type_code'],$data['category_code']);
 
@@ -425,5 +429,5 @@ trait PointsTrait
 		$this->isMasterAchievedByCategory($data);
 		$this->isReaching75PointsAnswering($data);
 		$this->isReaching25PointsAsking($data);
-	}
+	} 
 }
