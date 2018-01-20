@@ -21,8 +21,14 @@ class AccountController extends Controller
 
     public function index(Request $request)
     {
-    	echo $request->session()->get('elearning_sess_email');
-    	return view('login');
+      if($request->session()->get('email'))
+      {
+        return redirect('question/view');
+      }
+      else
+      {
+    	 return view('login');
+      }
     }
 
   //   public function auth(Request $request)
