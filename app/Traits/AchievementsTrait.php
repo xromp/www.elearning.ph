@@ -402,4 +402,5 @@ trait AchievementsTrait
         $this->isAllAchievement($data);
     }
 
+    // public function getTotalPoints
 }

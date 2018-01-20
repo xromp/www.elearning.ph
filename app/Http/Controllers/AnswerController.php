@@ -136,9 +136,15 @@ class AnswerController extends Controller
                     $answer->save();
                     // dd($this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']));
                     if ($correctAns->count()) {
+                        $i = array(
+                            'question_code'=>$data['question_code'],
+                            'type_code'=>$data['type_code'],
+                            'category_code'=>$data['category_code'],
+                        );
+
                         DB::table('answers')
-                            -> where('answer_id',$answer->id)
-                            -> update(['points'=>$this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code'])]);
+                            -> where('answer_id',$answer->answer_id)
+                            -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
                     }
                 } else {
                     $answer->save();

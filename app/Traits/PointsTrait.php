@@ -307,7 +307,7 @@ trait PointsTrait
     			{
     				$points = $Identification;
     			}
-    			elseif($questionType === "MULTIPLECHOICE")
+    			elseif($questionType === "MULTIPLE_CHOICE")
     			{
     				$points = $MultipleChoice;
     			}
@@ -343,15 +343,12 @@ trait PointsTrait
 	// }
 
 	public function getPointsAnswerPerStudent($data) {
-		$students = $array();
+		$students = array();
 
 		$studentAnswer = DB::table('answers as a')
-			->where ('question_code',$data['question_code'])
-			->get();
+			->where ('question_code',$data['question_code']);
 
-		$student = DB::table('students')
-			->count();
-		$students['student_count'] = $student->count();
+		$students['student_count'] = DB::table('students')->count();
 		$students['student_rank'] = $studentAnswer->count();
 		
 		$x = $this->GetPoints('answer',$data['type_code'],$data['category_code']);

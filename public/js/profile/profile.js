@@ -20,6 +20,19 @@
                 {
                     vm.UserData = response.data.data;
                     vm.UserName = vm.UserData.fName + " " + vm.UserData.lName;
+
+                    ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
+
+                        // console.log(response.data);
+        
+                        if(response.data.status == 200)
+                        {
+                            vm.students = response.data.data;
+                            console.log(vm.students[0])
+                        }
+                    }, function (){ alert('Bad Request!!!') })
+        
+        
                     // console.log("user = "+vm.UserName)
                     // console.log("user = "+vm.UserData.student_id)
                 }
@@ -44,7 +57,6 @@
             }, function(){ alert('Bad Request!')})
             
             //get achievements
-
             ProfileSrvcs.Achievements({hashedID:$stateParams.id}).then (function (response) {
                 if(response.data.status == 200)
                 {
@@ -53,18 +65,7 @@
                 }
             }, function (){ alert('Bad Request!!!') })
 
-            ProfileSrvcs.Rewards({hashedID:$stateParams.id}).then (function (response) {
-
-                // console.log(response.data);
-
-                if(response.data.status == 200)
-                {
-                    vm.students = response.data.data;
-                    console.log(vm.students[0])
-                }
-            }, function (){ alert('Bad Request!!!') })
-
-
+           
             $scope.ShowHidQuestionAns = function(status)
             {
                 if(status == 1)
@@ -122,7 +123,7 @@
                     return $http({
                         method: 'GET',
                         data: data,
-                        url: '/api/v1/achievements/get?studentId='+data.hashedID,
+                        url: '/api/v1/achievements/get?studentId='+data.student_id,
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

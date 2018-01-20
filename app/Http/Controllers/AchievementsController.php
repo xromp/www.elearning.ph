@@ -160,14 +160,13 @@ class AchievementsController extends Controller
 	public function get(Request $request) 
     {    
 
-        $studentId = $this->RemoveExtras($request->input('studentId'));
+        // $studentId = $this->RemoveExtras($request->input('studentId'));
 
         $data = array(
-            'student_id'=>$studentId
+            'student_id'=>$request->input('studentId')
         );
 
         $result = array();
-        $achievementsResult = array();
 
         $students = DB::table('students as s')
             -> select(
@@ -183,7 +182,8 @@ class AchievementsController extends Controller
         $students = $students->get();
         $studentsCopy = json_decode($students, true);
         foreach ($studentsCopy as $key => $student) {
-
+            $achievementsResult = array();
+            
             $achievementsTypes = array( 
                 array('desc' => 'Asking Questions','code'=>'ASKING'),
                 array('desc' => 'Answering Questions','code'=>'ANSWER'),
@@ -207,10 +207,11 @@ class AchievementsController extends Controller
                     'a.is_achieved'
                 )
                 -> leftJoin( DB::raw( "(SELECT achievements.achievement_code, is_achieved, student_id FROM achievements 
+                    WHERE student_id = '".$student['student_id']."'
                     GROUP BY achievements.achievement_code,is_achieved, student_id) as a"), 'a.achievement_code', '=', 'r.achievement_code' )
                 -> where('r.active',true)
                 -> where('r.type',$type['code'])
-                -> where('student_id',$student['student_id'])
+                // -> where('student_id',$student['student_id'])
                 -> get();
 
                 $typeDetails['list'] = $achievementsPerStudents;
