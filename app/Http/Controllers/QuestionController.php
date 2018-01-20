@@ -18,6 +18,8 @@ use App\Answer;
 use App\Category;
 use App\Achievements;
 
+use App\Traits\PointsTrait;
+use App\Traits\AchievementsTrait;
 // use App\Collection_line;
 
 class QuestionController extends Controller
@@ -27,6 +29,8 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    use PointsTrait;
+    use AchievementsTrait;
     public function index(Request $request)
     {
         $request->session()->get('elearning_sess_accountId');
@@ -398,7 +402,9 @@ class QuestionController extends Controller
             'questionCode'=>$request->input('question_code'),
             'action'=>$request->input('action'),
             'is_approved' => 0,
-            'student_id' => $request->input('student_id')
+            'student_id' => $request->input('student_id'),
+            'category_code' => $request->input('category_code'),
+            'type_code' => $request->input('type_code')
         );
 
         if(!($data['action'] == 'APPROVED'||$data['action'] == 'DECLINED')) {
@@ -422,15 +428,20 @@ class QuestionController extends Controller
         
         if ($data['action'] == 'APPROVED') {
             $data['is_approved'] = 1;
-
         }
 
         $transaction = DB::transaction(function($data) use($data) {
             
             DB::table('questions')
-            -> where('question_code',$data['questionCode'])
-            -> update(['is_approved'=>$data['is_approved']]);
+                -> where('question_code',$data['questionCode'])
+                -> update(['is_approved'=>$data['is_approved']]);
 
+            if ($data['is_approved']) {
+                DB::table('questions')
+                    -> where('question_code',$data['questionCode'])
+                    -> update(['points'=>$this->GetPoints('post',$data['type_code'],$data['category_code'])]);
+            }
+            
             $message = 'Successfully '.strtolower($data['action'].'.');
 
             return response()->json([
@@ -443,7 +454,7 @@ class QuestionController extends Controller
         //checking achievements
         $this->isFirstApprovedQuestion($data);
         $this->isHaving20QuestionsApproved($data);
-
+        $this->isFirstReject($data);
         return $transaction;
     }
 
@@ -466,7 +477,9 @@ class QuestionController extends Controller
             'question_code'=>$request->input('question_code'),
             'action'=>$request->input('action'),
             'student_id'=>$request->input('student_id'),
-            'is_correct'=>0
+            'is_correct'=>0,
+            'category_code'=>$request->input('category_code'),
+            'type_code'=>$request->input('type_code')
         );
 
         $currentUser = $request->session()->get('student_id');
@@ -502,6 +515,16 @@ class QuestionController extends Controller
             -> where('student_id',$data['student_id'])
             -> update(['is_correct'=>$data['is_correct']]);
 
+            if ($data['is_correct']) {
+                DB::table('answers')
+                -> where('question_code',$data['question_code'])
+                -> where('student_id',$data['student_id'])
+                -> update(['points'=>$this->GetPoints('answer',$data['type_code'],$data['category_code'])]);
+
+                $this->isFirstCorrectAnswer($data);
+                $this->isFirstCodingCorrectAnswer($data);
+            }
+            
             $message = 'Successfully updated';
 
             return response()->json([
@@ -591,7 +614,7 @@ class QuestionController extends Controller
                 $achivements->is_achieved = true;
 
                 $achivements->save();
- 
+                $this->onLoadAchieved($data);
                 if ($achivements->id){
     
                     return response()->json([
@@ -649,6 +672,7 @@ class QuestionController extends Controller
                     return response()->json([
                         'status'=> 200,
                         'data'=>'',
+                        
                         'message'=>'Sucessfully saved.'
                     ]);    
                 } else {
@@ -724,3 +748,4 @@ class QuestionController extends Controller
         return ($isExists >= 1);
     }
 }
+

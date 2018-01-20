@@ -13,8 +13,12 @@ use App\Student;
 use App\Question_Choices;
 use App\Answer_Multiple_Choice;
 use App\Answer;
+use App\Achievements;
 
 // use App\Collection_line;
+use App\Traits\PointsTrait;
+use App\Traits\AchievementsTrait;
+;
 
 class AnswerController extends Controller
 {
@@ -23,6 +27,8 @@ class AnswerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    use PointsTrait;
+    use AchievementsTrait;
     public function index()
     {
         // return view('stock-market.index');
@@ -99,6 +105,10 @@ class AnswerController extends Controller
                 $answer->question_code = $data['question_code'];
                 $answer->student_id = $data['student_id'];
                 $answer->answer = $data['answer'];
+                if (!$this->isEmpty($data['rating'])) {
+                    $answer->rating = $data['rating'];
+                }
+                // $answer->points = $this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']);
 
                 if ($data['type_code'] == 'MULTIPLE_CHOICE') {
                     $correctAns = DB::table('multiple_choices')
@@ -108,6 +118,13 @@ class AnswerController extends Controller
                         ->get();
                     
                     $answer->is_correct =  $correctAns->count();
+                    $answer->save();
+
+                    if ($correctAns->count()) {
+                        DB::table('answers')
+                            -> where('answer_id',$answer->id)
+                            -> update(['points'=>$this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code'])]);
+                    }
                 } else if ($data['type_code'] == 'IDENTIFICATION') {
                     $correctAns = DB::table('multiple_choices')
                         ->where('question_code',$data['question_code'])
@@ -116,13 +133,24 @@ class AnswerController extends Controller
                         ->get();
                     
                     $answer->is_correct =  $correctAns->count();
+                    $answer->save();
+                    // dd($this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']));
+                    if ($correctAns->count()) {
+                        DB::table('answers')
+                            -> where('answer_id',$answer->id)
+                            -> update(['points'=>$this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code'])]);
+                    }
+                } else {
+                    $answer->save();
                 }
 
-                if (!$this->isEmpty($data['rating'])) {
-                    $answer->rating = $data['rating'];
-                }
+               
 
-                $answer->save();
+                // achievements
+                $this->isFirstAnswer($data);
+                $this->isFirstCorrectAnswer($data);
+                $this->isFirstRated($data);
+                $this->isFirst5Rated($data);
      
                 return response()->json([
                     'status' => 200,

@@ -260,9 +260,11 @@
                 console.log(data);
             }
 
-            vm.actionAnswer = function(data, actionType) {
+            vm.actionAnswer = function(data, actionType, questionDet) {
                 var formData = angular.copy(data);
                 formData.action = actionType;
+                formData.category_code = questionDet.category_code;
+                formData.type_code = questionDet.type_code;
 
                 var formDataCopy = angular.toJson(formData);
                 QuestionSrvcs.actionAnswer(formDataCopy)

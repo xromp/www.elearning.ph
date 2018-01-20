@@ -88,7 +88,7 @@ trix-toolbar { display: none; } */
                         <br><br>
                     </div>
                     <div class="col-md-3 pulll-right" ng-hide="ansqc.questionDetails.is_answered_correctly">
-                        <button class="btn btn-success btn-sm" ng-click="ansqc.actionAnswer(student,'CORRECT')"><i class="fa fa-check-circle"></i> Mark as correct</button>
+                        <button class="btn btn-success btn-sm" ng-click="ansqc.actionAnswer(student,'CORRECT',ansqc.questionDetails)"><i class="fa fa-check-circle"></i> Mark as correct</button>
                         <!-- <button class="btn btn-danger btn-sm" ng-click="ansqc.actionAnswer(student,'WRONG')"><i class="fa fa-times-circle"></i> Wrong</button> -->
                     </div>
                 </div>
