@@ -70,23 +70,25 @@ class ProfileController extends Controller
 
     	$id = session()->get('elearning_sess_accountId');
 
-    	if($hashedID == $id)
-    	{ 
-    		$isSelf = "true"; 
-    		$postedQuestions = DB::table('questions as q')
-            -> select('*')->where('student_id', $id)->get();
-    	}
-    	else
-    	{ 
-    		$isSelf = "false"; 
-    		$postedQuestions = null;
-    	}
-    	
+    	// if($hashedID == $id)
+    	// { 
+    	// 	$isSelf = "true"; 
+    	// 	$postedQuestions = DB::table('questions as q')
+     //        -> select('*')->where('student_id', $id)->get();
+    	// }
+    	// else
+    	// { 
+    	// 	$isSelf = "false"; 
+    	// 	$postedQuestions = null;
+    	// }
+
+        $postedQuestions = DB::table('questions as q')
+        -> select('*')->where('student_id', $hashedID)->get();
 
         return response()-> json([
             'status'=>200,
             'data'=>$postedQuestions,
-            'isSelf'=>$isSelf,
+            // 'isSelf'=>$isSelf,
             'message'=>''
         ]);
     }

@@ -14,14 +14,17 @@
             </div>
             </div>
             <div class="row">
-                <div class="col-sm-3" ng-repeat="user in lbc.UserData" style="border:1px solid #ddd;padding:10px;margin:10px;cursor:pointer;border-radius: 10px;" ng-click="lbc.routeTo('/profile/'+user.hashedID)">
-                    <h5><%user.name%></h5>
-                    <b>Points: 100</b>
-                    <br>
-                    <span ng-repeat="achievement in user.achievements" style="text-align: center;" >
-                        <img src="{{ url('/') }}/Icons/<%achievement.Icon%>" style="width:50px;border:none;padding:2px; cursor:pointer; border-radius: 10px;" title="<%achievement.Desc%>"/>
-                    </span> 
-                </div>
+
+                <div class="col-sm-3 blog-main" ng-repeat="student in lbc.students" style="border: 1px solid #ddd;margin:10px;padding:10px;border-radius: 15px;"> 
+                    <h5> <%student.name%></h5>
+                       
+                    <span ng-repeat="achievement in student.achievementList"> 
+                            <span class="blog-main" ng-repeat="list in achievement.list" ng-if="list.is_achieved" title="<%list.description%>"> 
+                                  <img src="{{ url('/') }}/Icons/<%list.icon_path%>" style="width:35;" /> 
+                            </span>
+                    </span>
+                       
+                </div>  
             </div>
             
         </div>

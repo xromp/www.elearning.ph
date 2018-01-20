@@ -120,4 +120,9 @@ Route::get('/ref', 'PointsController@ref');
 Route::get('/ref2', 'PointsController@ref2');
 Route::get('/api/v1/points/get/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');
 Route::get('/api/v1/points/getanswering/{action}/{questionType}/{categoryType}', 'PointsController@PointsAnswering');
+Route::get('/GetPoints/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');
+Route::get('/GetID/', 'AchievementsController@getStudID');
 
+//for checking
+Route::get('/GetPostPoints/', 'PointsController@PointsPosting');
+Route::get('/GetAnswerPoints/', 'PointsController@PointsAnswering');

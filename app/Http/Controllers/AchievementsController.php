@@ -11,6 +11,7 @@ use App\Question;
 use App\Question_Choices;
 use App\Answer;
 use App\Category;
+use Hash;
 
 class AchievementsController extends Controller
 {
@@ -49,7 +50,6 @@ class AchievementsController extends Controller
     	}
     }
 
-
     public function FirstAnswer($id)
     { 
     	// $id = session()->get('elearning_sess_accountId');
@@ -74,8 +74,7 @@ class AchievementsController extends Controller
     				'Icon'=>'first-answer.png'
     		); 
     		return $achievement;
-    	} 
-
+    	}
     }
 
     public function Forum($id)
@@ -136,10 +135,35 @@ class AchievementsController extends Controller
         ]);
 	}
 
+    // public function RemoveExtras($hashed)
+    // {
+    //     $data = substr($hashed, 10);
+    //     return substr($data, 0, -10);
+    // }
+
+    public function getStudID(Request $request) 
+    {   
+        $id = "UaQHgsgZW51GXsU4yOwKW";
+        echo $this->RemoveExtras($id);
+
+        // $student_id = $request->input('studentId');
+        // if(Hash::check(1, '$2y$10$yJkoIsiZ.ECLdjmRQxc42uxT5YcPLjPD8dZMvQE.KMkyVEW80TCRy'))
+        // {
+        //     echo "true";
+        // }
+        // else
+        // {
+        //     echo "false";
+        // }
+    }
+
 	public function get(Request $request) 
-    {
+    {    
+
+        $studentId = $this->RemoveExtras($request->input('studentId'));
+
         $data = array(
-            'student_id'=>$request->input('studentId')
+            'student_id'=>$studentId
         );
 
         $result = array();
@@ -150,13 +174,16 @@ class AchievementsController extends Controller
                 'student_id',
                 DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name')
             );
-        if ($data['student_id']){
+
+        if ($data['student_id'])
+        {
             $students = $students-> where ('student_id',$data['student_id']);
         }
         
         $students = $students->get();
         $studentsCopy = json_decode($students, true);
         foreach ($studentsCopy as $key => $student) {
+
             $achievementsTypes = array( 
                 array('desc' => 'Asking Questions','code'=>'ASKING'),
                 array('desc' => 'Answering Questions','code'=>'ANSWER'),

@@ -14,33 +14,32 @@
                 $scope.posted_questions = true;
                 $scope.answered_questions = false;
             }();
-            
-            //get user data
-            
-            //get other user data
+ 
             ProfileSrvcs.OtherUser({hashedID:$stateParams.id}).then (function (response) {
                 if(response.data.status == 200)
                 {
                     vm.UserData = response.data.data;
                     vm.UserName = vm.UserData.fName + " " + vm.UserData.lName;
-                    console.log("user = "+vm.UserName)
+                    // console.log("user = "+vm.UserName)
+                    // console.log("user = "+vm.UserData.student_id)
                 }
-            }, function (){ alert('Bad Request!!!') })
-
+            }, function (){alert('Bad Request!!!')})
           
             ProfileSrvcs.PostedQuestions({hashedID:$stateParams.id}).then (function (response) {
                 console.log(response.data)
+
                 if(response.data.status == 200)
                 {
-                    if(response.data.isSelf == "true")
-                    {
-                        vm.questionList = response.data.data;
-                        console.log(vm.questionList)
-                    }
-                    else
-                    {
-                        $scope.question_ans = false;
-                    }
+                    vm.questionList = response.data.data;
+                    // if(response.data.isSelf == "true")
+                    // {
+                    //     vm.questionList = response.data.data;
+                    //     console.log(vm.questionList)
+                    // }
+                    // else
+                    // {
+                    //     // $scope.question_ans = false;
+                    // }
                 }
             }, function(){ alert('Bad Request!')})
             
@@ -55,10 +54,13 @@
             }, function (){ alert('Bad Request!!!') })
 
             ProfileSrvcs.Rewards({hashedID:$stateParams.id}).then (function (response) {
+
+                // console.log(response.data);
+
                 if(response.data.status == 200)
                 {
                     vm.students = response.data.data;
-                    console.log(vm.students)
+                    console.log(vm.students[0])
                 }
             }, function (){ alert('Bad Request!!!') })
 
@@ -76,92 +78,10 @@
                     $scope.answered_questions = true;
                 }
             }
-
-            // vm.students = [
-            //     {
-            //         "student_id": 1,
-            //         "student_name": "Rom",
-            //         "rewards": [
-            //             {
-            //                 "type": "Posting",
-            //                 "desc": "Posting Questions",
-            //                 "list": [
-            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
-            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
-            //                 ]
-            //             },
-            //             {
-            //                 "type": "Asking",
-            //                 "desc": "Asking Questions",
-            //                 "list": [
-            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
-            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
-            //                 ]
-            //             },
-            //             {
-            //                 "type": "Participation",
-            //                 "desc": "Participati.....",
-            //                 "list": [
-            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
-            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
-            //                 ]
-            //             }
-            //         ]
-            //     }
-
-            //     ,
-
-            //      {
-            //         "student_id": 1,
-            //         "student_name": "Erikson",
-            //         "rewards": [
-            //             {
-            //                 "type": "Posting",
-            //                 "desc": "Posting Questions",
-            //                 "list": [
-            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
-            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
-            //                 ]
-            //             },
-            //             {
-            //                 "type": "Asking",
-            //                 "desc": "Asking Questions",
-            //                 "list": [
-            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
-            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
-            //                 ]
-            //             },
-            //             {
-            //                 "type": "Participation",
-            //                 "desc": "Participati.....",
-            //                 "list": [
-            //                     {'rewards_id':1, "icon":'25.png', "title":'Approaching the base', "desc":'Reach 25 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':2, "icon":'50.png', "title":'Halfway there', "desc":'Reach 50 points overall', "is_Achieved": 1},
-            //                     {'rewards_id':3, "icon":'100.png', "title":'Accomplished', "desc":'Reach 100 points overall', "is_Achieved": 0},
-            //                     {'rewards_id':4, "icon":'Abstract.png', "title":'Abstract Master', "desc":'Mastered Abstract Factory Category', "is_Achieved": 1}
-            //                 ]
-            //             }
-            //         ]
-            //     }
-
-
-               
-            // ];
-
             console.log(vm.rewards);
-            
         }
 
-        ProfileSrvcs.$inject = ['$http'];
+        ProfileSrvcs.$inject = ['$http', '$stateParams'];
         function ProfileSrvcs ($http){
             return {
                 User: function(data) {
@@ -198,10 +118,11 @@
                 },
 
                 Rewards: function(data) {
+                    
                     return $http({
                         method: 'GET',
-                        url: '/api/v1/achievements/get?studentId=1',
                         data: data,
+                        url: '/api/v1/achievements/get?studentId='+data.hashedID,
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

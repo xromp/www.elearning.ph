@@ -6,6 +6,21 @@
     	</div>
         <div class="col-sm-8 blog-main"> 
             <h2><%pc.UserName%></h2>
+
+            <div class="row">
+                <div class="col-sm-4 blog-main" style="text-align: center;">
+                   <h1> 30 </h1>
+                   <h5>Total Points</h5>
+                </div>
+                <div class="col-sm-4 blog-main" style="text-align: center;">
+                   <h1> 15 </h1>
+                   <h5>Points - Answering</h5>
+                </div>
+                <div class="col-sm-4 blog-main" style="text-align: center;">
+                   <h1> 15 </h1>
+                   <h5>Points - Posting</h5>
+                </div>
+            </div>
         </div>
   
     </div>
