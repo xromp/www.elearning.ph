@@ -14,16 +14,14 @@
             </div>
             </div>
             <div class="row">
-                <div class="col-sm-3 blog-main" ng-repeat="student in lbc.students" style="border: 1px solid #ddd;margin:10px;padding:10px;border-radius: 15px;"> 
-                <a ng-click="lbc.routeTo('/profile/'+user.hashedID)">
+                <div class="col-sm-3 blog-main" ng-repeat="student in lbc.students" style="border: 1px solid #ddd;margin:10px;padding:10px;border-radius: 15px;cursor:ponter" ng-click="lbc.routeTo('/profile/'+student.hashedID)"> 
                     <h5> <%student.name%></h5>
                        
                     <span ng-repeat="achievement in student.achievementList"> 
                             <span class="blog-main" ng-repeat="list in achievement.list" ng-if="list.is_achieved" title="<%list.description%>"> 
                                 <img src="{{ url('/') }}/Icons/<%list.icon_path%>" style="width:35;" /> 
                             </span>
-                    </span>
-                </a>
+                    </span> 
                 </div>  
             </div>
             

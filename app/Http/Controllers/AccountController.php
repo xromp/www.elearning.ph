@@ -48,6 +48,11 @@ class AccountController extends Controller
   //   	}
   //   }
 
+    public function GetRandom($keyLength)
+    {
+        return str_random($keyLength);
+    }
+
     public function auth(Request $request)
     {
 
@@ -65,7 +70,9 @@ class AccountController extends Controller
 				    $request->session()->put('student_id', $accountData->account_id);
             $request->session()->put('email', $email);
             $request->session()->put('account_type', $accountData->accountTypeID);
-	    		  $request->session()->put('fullname', $student->lName.', '.$student->fName.''.$student->mName);
+            $request->session()->put('fullname', $student->lName.', '.$student->fName.' '.$student->mName);
+	    		  $request->session()->put('hashedID', $this->GetRandom(10).$student['student_id'].$this->GetRandom(10));
+            
 	    		return redirect('question/view');
 		    }
 		    else

@@ -29,13 +29,12 @@
                 <a class="nav-link"  ng-click="tc.routeTo('/forum/index')" href="#">Forum</a>
             </li>
         </ul>
-
         <div>
-            <a class="nav-link"> {{ Session::get('fullname') }} <% tc.Name %></a>
+            <a class="nav-link"> {{Session::get('fullname')}} </a>
         </div>
 
         <div id="iconHeaderMargin">
-            <a ng-click="tc.routeTo('/profile/index')" href="" data-toggle="tooltip" data-placement="bottom" title="Profile">
+            <a ng-click="tc.routeTo('/profile/{{Session::get('hashedID')}}')" href="" data-toggle="tooltip" data-placement="bottom" title="Profile">
                 <img src="/assets/png/person-3x.png">
             </a>
         </div>

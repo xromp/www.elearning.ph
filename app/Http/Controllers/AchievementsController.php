@@ -157,6 +157,11 @@ class AchievementsController extends Controller
         // }
     }
 
+    public function GetRandom($keyLength)
+    {
+        return str_random($keyLength);
+    }
+
 	public function get(Request $request) 
     {    
 
@@ -222,8 +227,10 @@ class AchievementsController extends Controller
                 array_push($achievementsResult,$typeDetails); 
             }
             $studentDetails['student_id'] = $student['student_id'];
+            $studentDetails['hashedID'] = $this->GetRandom(10).$student['student_id'].$this->GetRandom(10);
             $studentDetails['name'] = $student['student_name'];
             $studentDetails['achievementList'] = $achievementsResult;
+
 
             array_push($result,$studentDetails); 
         }

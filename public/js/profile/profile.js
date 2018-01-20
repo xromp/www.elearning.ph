@@ -16,6 +16,7 @@
             }();
  
             ProfileSrvcs.OtherUser({hashedID:$stateParams.id}).then (function (response) {
+                 
                 if(response.data.status == 200)
                 {
                     vm.UserData = response.data.data;
