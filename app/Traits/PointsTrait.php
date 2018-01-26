@@ -189,7 +189,7 @@ trait PointsTrait
     	$median = $this->GetMedian();
 
     	$higher = 0;
-    	$lower = 0;
+    	$lower = 1;
     	$status = '';
     	$unanswered = '';
     	$data = $this->sortUnanswered();

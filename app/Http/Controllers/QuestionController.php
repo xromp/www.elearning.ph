@@ -537,7 +537,8 @@ class QuestionController extends Controller
                 );
 
                 DB::table('answers')
-                    -> where('answer_id',$answer->answer_id)
+                    -> where('question_code',$data['question_code'])
+                    -> where('student_id',$data['student_id'])
                     -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
                 // DB::table('answers')
                 // -> where('question_code',$data['question_code'])
@@ -545,7 +546,7 @@ class QuestionController extends Controller
                 // -> update(['points'=>$this->GetPoints('answer',$data['type_code'],$data['category_code'])]);
 
                 $this->isFirstCorrectAnswer($data);
-                $this->isFirstCodingCorrectAnswer($data);
+                $this->isFirstCorrectCodingAnswer($data);
             }
             
             $message = 'Successfully updated';
@@ -652,116 +653,6 @@ class QuestionController extends Controller
             return $transaction;
         }
     }
-
-    public function isFirstApprovedQuestion($data) {
-
-        if ($this->isEmpty($data['student_id'])) {
-            return 'No student_id supplied';
-        }
-        
-        $questions_count = DB::table('questions as q')
-            -> where('is_approved',true)
-            -> where('student_id',$data['student_id'])
-            -> count();
-        
-        $isFirstQuestion = ($questions_count == 0);
-
-        if ($isFirstQuestion){
-            $transaction = DB::transaction(function($data) use($data) {
-                
-                $formData = array (
-                    'code'=> 'ASK-03',
-                    'student_id'=>$data['student_id']
-
-                );
-
-                if ($this->isAchivementExists($formData)){
-                    return response()->json([
-                        'status'=> 200,
-                        'data'=>'',
-                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
-                    ]);   
-                }
-
-                $achivements = new Achievements;
-                $achivements->achievement_code = $formData['code'];
-                $achivements->student_id = $data['student_id'];
-                $achivements->is_achieved = true;
-
-                $achivements->save();
- 
-                if ($achivements->id){
-    
-                    return response()->json([
-                        'status'=> 200,
-                        'data'=>'',
-                        
-                        'message'=>'Sucessfully saved.'
-                    ]);    
-                } else {
-                    throw new \Exception("Error Processing Request");
-                }
-            });
-            return $transaction;
-        }
-    }
-
-    public function isHaving20QuestionsApproved($data) {
-
-        if ($this->isEmpty($data['student_id'])) {
-            return 'No student_id supplied';
-        }
-        
-        $questions_count = DB::table('questions as q')
-            -> where('is_approved',true)
-            -> where('student_id',$data['student_id'])
-            -> count();
-        
-        $isFirst20Question = ($questions_count == 20);
-
-        if ($isFirst20Question){
-            $transaction = DB::transaction(function($data) use($data) {
-                
-                $formData = array (
-                    'code'=> 'ASK-04',
-                    'student_id'=>$data['student_id']
-
-                );
-
-                if ($this->isAchivementExists($formData)){
-                    return response()->json([
-                        'status'=> 200,
-                        'data'=>'',
-                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
-                    ]);   
-                }
-
-                $achivements = new Achievements;
-                $achivements->achievement_code = $formData['code'];
-                $achivements->student_id = $data['student_id'];
-                $achivements->is_achieved = true;
-
-                $achivements->save();
- 
-                if ($achivements->id){
-    
-                    return response()->json([
-                        'status'=> 200,
-                        'data'=>'',
-                        'message'=>'Sucessfully saved.'
-                    ]);    
-                } else {
-                    throw new \Exception("Error Processing Request");
-                }
-            });
-            return $transaction;
-        }
-    }
-
-    public function having20QuestionsApproved(Request $request) {
-        
-    }
-    
     public function isAchivementExists($formData) {
         $isExists = DB::table('achievements as a')
             -> where('achievement_code',$formData['code'])
