@@ -334,6 +334,13 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
     
                 $achivements->save();
+                // event logs
+                $logsData = array(
+                    'student_id'=>$data['student_id'],
+                    'category'=>$data['code']
+                );
+                $this->workingLogs($logsData);
+
                 $this->onLoadAchieved($data);
     
                 if ($achivements->id){

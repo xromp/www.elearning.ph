@@ -20,6 +20,7 @@ use App\Achievements;
 
 use App\Traits\PointsTrait;
 use App\Traits\AchievementsTrait;
+use App\Traits\LogsTrait;
 // use App\Collection_line;
 
 class QuestionController extends Controller
@@ -31,6 +32,7 @@ class QuestionController extends Controller
      */
     use PointsTrait;
     use AchievementsTrait;
+    use LogsTrait;
     public function index(Request $request)
     {
         $request->session()->get('elearning_sess_accountId');
@@ -64,6 +66,7 @@ class QuestionController extends Controller
 
         $question = DB::table('questions as q')
             -> select(
+                'q.question_id',
                 'q.question_code',
                 'q.title',
                 'q.description', 
@@ -315,7 +318,13 @@ class QuestionController extends Controller
                         $questionChoices->save();
                     }
                 }
-
+                // event logs
+                $logsData = array(
+                    'student_id'=>$data['student_id'],
+                    'type'=>'ASKED',
+                    'question_id'=>$question->question_id
+                );
+                $this->workingLogs($logsData);
             } else {
                 throw new \Exception("Error Processing Request");
             }

@@ -18,7 +18,8 @@ use App\Achievements;
 // use App\Collection_line;
 use App\Traits\PointsTrait;
 use App\Traits\AchievementsTrait;
-;
+use App\Traits\LogsTrait;
+
 
 class AnswerController extends Controller
 {
@@ -29,6 +30,7 @@ class AnswerController extends Controller
      */
     use PointsTrait;
     use AchievementsTrait;
+    use LogsTrait;
     public function index()
     {
         // return view('stock-market.index');
@@ -52,6 +54,7 @@ class AnswerController extends Controller
             }
     
             $data = array();
+            $data['question_id'] = $request-> input('question_id');
             $data['question_code'] = $request-> input('question_code');
             $data['category_code'] = $request-> input('category_code');
             $data['type_code'] = $request-> input('type_code');
@@ -107,6 +110,13 @@ class AnswerController extends Controller
                 $answer->answer = $data['answer'];
                 if (!$this->isEmpty($data['rating'])) {
                     $answer->rating = $data['rating'];
+                    //event logging
+                    $logsData = array(
+                        'student_id'=>$data['student_id'],
+                        'type'=>'RATED',
+                        'question_id'=>$data['question_id']
+                    );
+                    $this->workingLogs($logsData);
                 }
                 // $answer->points = $this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']);
 
@@ -119,7 +129,6 @@ class AnswerController extends Controller
                     
                     $answer->is_correct =  $correctAns->count();
                     $answer->save();
-
                     if ($correctAns->count()) {
                         $i = array(
                             'question_code'=>$data['question_code'],
@@ -157,8 +166,14 @@ class AnswerController extends Controller
                 } else {
                     $answer->save();
                 }
-
-               
+                
+                //event logging
+                $logsData = array(
+                    'student_id'=>$data['student_id'],
+                    'type'=>'ANSWERED',
+                    'question_id'=>$data['question_id']
+                );
+                $this->workingLogs($logsData);
 
                 // achievements
                 $this->isFirstAnswer($data);
