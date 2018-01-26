@@ -30,6 +30,7 @@ Route::post('/api/v1/question/create','QuestionController@create');
 Route::post('/api/v1/question/action','QuestionController@action');
 Route::post('/api/v1/question/actionAnswer','QuestionController@actionAnswer');
 Route::get('/api/v1/question/leaderBoard','QuestionController@leaderBoard');
+Route::post('/api/v1/leaderboard/insertLogsVisit','LogsController@viewLeaderBoard');
 
 // stock market
 Route::get('/stockmarket/view','StockMarketController@index');

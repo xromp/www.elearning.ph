@@ -20,7 +20,7 @@
                 <a class="nav-link" ng-click="tc.routeTo('/stockmarket/view')">Stock Market    <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" ng-click="tc.routeTo('/leaderboard/index')" href="#">Leaderboards </a>
+                <a class="nav-link" ng-click="tc.routeTo('/leaderboard/index',true)" href="#">Leaderboards </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"  href="#">Rewards</a>

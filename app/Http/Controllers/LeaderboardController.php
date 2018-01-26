@@ -7,14 +7,21 @@ use Illuminate\Http\Request;
 use App\Traits\AchievementsTrait;
 use DB;
 use App\Student;
+
+use App\Traits\LogsTrait;
 class LeaderboardController extends Controller
 {
 
 	use AchievementsTrait; // inherit function from achievements trait
-
-   	public function Index()
+    use LogsTrait;
+   	public function Index(Request $request)
    	{
-   		return view('leaderboard.index');
+        $logData = array (
+            'student_id' => $request->session()->get('student_id')
+        );
+        $this->accessedLeaderDashboard($logData);   
+
+        return view('leaderboard.index');        
    	}
 
    	public function Find(Request $request) //get top 3 scorers
@@ -90,7 +97,8 @@ class LeaderboardController extends Controller
             'message' => 'Successfully loaded.'
         ]);
    	}
-
+    
+    
 
    	public function Achievements($hashedID)
     {

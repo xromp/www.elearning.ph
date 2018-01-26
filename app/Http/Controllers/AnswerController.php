@@ -62,6 +62,7 @@ class AnswerController extends Controller
             $data['rating'] = $request-> input('rating');
             $data['answer'] = $request-> input('answer');
             $data['session']['student_id'] = $request->session()->get('student_id');
+            $data['loggedForPlan']= $request-> input('loggedForPlan');
 
             $hasAnswered = DB::table('answers')
                 ->where('question_code',$data['question_code'])
@@ -174,6 +175,14 @@ class AnswerController extends Controller
                     'question_id'=>$data['question_id']
                 );
                 $this->workingLogs($logsData);
+
+                if($data['loggedForPlan']) {
+                    $logsData = array(
+                        'student_id'=>$data['student_id'],
+                        'question_id'=>$data['question_id']
+                    );
+                    $this->logsForPlan($logsData);
+                }
 
                 // achievements
                 $this->isFirstAnswer($data);

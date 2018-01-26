@@ -70,4 +70,35 @@ trait LogsTrait
 
         $this->insertLogs($formData);
     }
+
+    public function accessedLeaderDashboard($data){
+        $formData = array(
+            'student_id'=>$data['student_id'],
+        );
+
+        $formData['desc'] = $formData['student_id'].' has accessed leaderboards page';
+        $formData['type'] = 'FA';
+
+        $this->insertLogs($formData);
+    }
+
+    public function logsForPlan($data) {
+        $formData = array(
+            'student_id'=>$data['student_id'],
+            'desc'=>$data['student_id'].' has planned before answering question '.$data['question_id'],
+            'type'=>'PA'
+        );
+        $this->insertLogs($formData);
+    }
+
+    public function hasBadgeLogs($data){
+        $formData = array(
+            'student_id'=>$data['student_id'],
+            'code'=>$data['achievement_code']
+        );
+
+        $formData['desc'] = $formData['student_id'].' has achieved badge '.$formData['code'];
+
+        $this->insertLogs($formData);
+    }    
 }

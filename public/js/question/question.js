@@ -14,7 +14,6 @@
 
             var vm = this;
             var data = {};
-
             QuestionSrvcs.get(data)
             .then (function (response) {
               if (response.data.status == 200) {
@@ -151,10 +150,9 @@
 
         }
 
-        AnswerQuestionCtrl.$inject = ['QuestionSrvcs', '$stateParams', '$sce', 'Notification', '$uibModal'];
-        function AnswerQuestionCtrl(QuestionSrvcs, $stateParams, $sce, Notification, $uibModal){
+        AnswerQuestionCtrl.$inject = ['QuestionSrvcs', '$stateParams', '$sce', 'Notification', '$uibModal', '$location','$browser', '$window'];
+        function AnswerQuestionCtrl(QuestionSrvcs, $stateParams, $sce, Notification, $uibModal, $location, $browser, $window){
             var vm = this; 
-
             vm.questionDetails = {};
             
             vm.onload = function(hasNotif = true){
@@ -192,6 +190,7 @@
                         }
                     
                     });
+
                  } else {
                      return alert('Something went wrong.');
                  }
@@ -206,6 +205,16 @@
                 console.log(data);
                 if(data.answer){
                     var dataCopy = angular.copy(data);
+
+                    var referrerUrl = document.referrer;
+                    var i = referrerUrl.split(new $window.URL($location.absUrl()).origin);
+                    var x = i[1].split('/');
+                    var fromUrl = x[1];
+
+                    if (fromUrl == 'stockmarket') {
+                        dataCopy['loggedForPlan'] = true;
+                    }
+
 
                     var formData = angular.toJson(dataCopy)
                     var modalInstance = $uibModal.open({

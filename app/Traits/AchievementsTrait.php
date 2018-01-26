@@ -46,6 +46,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -63,7 +64,7 @@ trait AchievementsTrait
                 $achivements->save();
 
                 $this->onLoadAchieved($data);
-    
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -100,6 +101,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -116,7 +118,7 @@ trait AchievementsTrait
 
                 $achivements->save();
                 $this->onLoadAchieved($data);
-    
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -159,7 +161,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -174,8 +176,8 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
 
                 $achivements->save();
-                $this->onLoadAchieved($data);
-    
+                $this->onLoadAchieved($formData);
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -218,7 +220,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -272,7 +274,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -319,7 +321,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
     
                 );
-    
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -339,7 +341,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id'],
                     'category'=>$data['code']
                 );
-                $this->workingLogs($logsData);
+                $this->masteredLogs($logsData);
 
                 $this->onLoadAchieved($data);
     
@@ -379,7 +381,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -428,7 +430,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -483,6 +485,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -498,6 +501,8 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
 
                 $achivements->save();
+
+                $this->onLoadAchieved($data);
  
                 if ($achivements->id){
     
@@ -535,6 +540,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -550,6 +556,7 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
 
                 $achivements->save();
+                $this->onLoadAchieved($data);
  
                 if ($achivements->id){
     
@@ -586,6 +593,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -641,6 +649,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -656,7 +665,8 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
 
                 $achivements->save();
-    
+                $this->onLoadAchieved($data);
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -822,6 +832,9 @@ trait AchievementsTrait
         $this->isAllAchievement($data);
         $this->isMasterAllCategory($data);
         $this->isReachingPoints($data);
+
+        //event logs for has badget
+        $this->hasBadgeLogs($data);
     }
 
     // public function getTotalPoints
