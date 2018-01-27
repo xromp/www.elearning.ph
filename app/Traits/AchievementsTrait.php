@@ -46,6 +46,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -63,7 +64,7 @@ trait AchievementsTrait
                 $achivements->save();
 
                 $this->onLoadAchieved($data);
-    
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -100,6 +101,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -116,7 +118,66 @@ trait AchievementsTrait
 
                 $achivements->save();
                 $this->onLoadAchieved($data);
+
+                if ($achivements->id){
     
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
+    public function isFirstCorrectCodingAnswer($data) {
+
+        if ($this->isEmpty($data['student_id'])) {
+            return 'No student_id supplied';
+        }
+        
+        $answers_count = DB::table('answers as a')
+            -> leftJoin( DB::raw( "(SELECT questions.question_code, questions.type_code FROM questions 
+                WHERE questions.type_code='CODING'
+                AND questions.question_code='".$data['question_code']."'
+                GROUP BY questions.question_code, questions.type_code) as q"), 
+                'a.question_code', '=', 'q.question_code' )			
+            -> where('q.type_code','CODING')
+            -> where('a.student_id',$data['student_id'])
+			-> where('is_correct',true)
+            -> count();
+
+        $isFirstAnswer = ($answers_count == 1);
+
+        if ($isFirstAnswer){
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'ANS-04',
+                    'student_id'=>$data['student_id']
+
+                );
+                $data['achievement_code'] = $formData['code'];
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $data['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($formData);
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -136,9 +197,13 @@ trait AchievementsTrait
         
 		$answers = DB::table('questions as q')
 			->leftJoin( DB::raw( 
-				"(SELECT answers.question_code, answers.rating FROM answers WHERE answers.rating = 5) as a"), 
+                "(SELECT answers.question_code, answers.rating FROM answers 
+                WHERE answers.rating = 5
+                AND answers.question_code='".$data['question_code']."' 
+                ) as a"), 
                 'q.question_code', '=', 'a.question_code' )
-            ->where('q.question_code',$data['question_code']);
+            ->where('q.question_code',$data['question_code'])
+            ->where('a.rating','5');
         
         $answers_count = $answers-> count();
         $answers_det = $answers-> first();
@@ -155,7 +220,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -209,7 +274,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -256,7 +321,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
     
                 );
-    
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -271,6 +336,13 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
     
                 $achivements->save();
+                // event logs
+                $logsData = array(
+                    'student_id'=>$data['student_id'],
+                    'category'=>$data['code']
+                );
+                $this->masteredLogs($logsData);
+
                 $this->onLoadAchieved($data);
     
                 if ($achivements->id){
@@ -309,7 +381,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -358,7 +430,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -390,7 +462,117 @@ trait AchievementsTrait
         }
     }
 
-    // participations
+    // ASK
+    
+    public function isFirstApprovedQuestion($data) {
+
+        if ($this->isEmpty($data['student_id'])) {
+            return 'No student_id supplied';
+        }
+        
+        $questions_count = DB::table('questions as q')
+            -> where('is_approved',true)
+            -> where('student_id',$data['student_id'])
+            -> count();
+        
+        $isFirstQuestion = ($questions_count == 1);
+
+        if ($isFirstQuestion){
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'ASK-03',
+                    'student_id'=>$data['student_id']
+
+                );
+                $data['achievement_code'] = $formData['code'];
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $data['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+
+                $this->onLoadAchieved($data);
+ 
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
+    public function isHaving20QuestionsApproved($data) {
+
+        if ($this->isEmpty($data['student_id'])) {
+            return 'No student_id supplied';
+        }
+        
+        $questions_count = DB::table('questions as q')
+            -> where('is_approved',true)
+            -> where('student_id',$data['student_id'])
+            -> count();
+        $isFirst20Question = ($questions_count == 20);
+
+        if ($isFirst20Question){
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'ASK-04',
+                    'student_id'=>$data['student_id']
+
+                );
+                $data['achievement_code'] = $formData['code'];
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $data['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
+ 
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
 	public function isFirstReject($data) {
         
 		$answers = DB::table('questions as q')
@@ -411,6 +593,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -466,6 +649,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
+                $data['achievement_code'] = $formData['code'];
 
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
@@ -481,7 +665,8 @@ trait AchievementsTrait
                 $achivements->is_achieved = true;
 
                 $achivements->save();
-    
+                $this->onLoadAchieved($data);
+
                 if ($achivements->id){
     
                     return response()->json([
@@ -647,6 +832,9 @@ trait AchievementsTrait
         $this->isAllAchievement($data);
         $this->isMasterAllCategory($data);
         $this->isReachingPoints($data);
+
+        //event logs for has badget
+        $this->hasBadgeLogs($data);
     }
 
     // public function getTotalPoints

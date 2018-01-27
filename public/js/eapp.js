@@ -79,11 +79,11 @@
             $urlRouterProvider.otherwise('/home');
         }
 
-        TopNavCtrl.$inject = ['$window'];
-        function TopNavCtrl($window) {
+        TopNavCtrl.$inject = ['$window','$http'];
+        function TopNavCtrl($window, $http) {
             var vm = this;
 
-            vm.routeTo = function(route){
+            vm.routeTo = function(route, enableLogging){
                 $window.location.href = route;
             };
         };
