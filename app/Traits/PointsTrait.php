@@ -109,8 +109,24 @@ trait PointsTrait
 
     	}
 
-		$lowerPointsDiff = 2/$lower;
-    	$higherPointsDiff = 2/$higher;
+        if($lower == 0){
+            $lower = 0;
+        }
+        else
+        {
+            $lowerPointsDiff = 2/$lower;
+        }
+
+        if($higher == 0){
+            $higher = 0;
+        }
+        else
+        {
+            $higherPointsDiff = 2/$higher;
+        }
+
+		
+    	
 
     	$currentStatus = '';
 		$currentValue = 0;
@@ -211,8 +227,22 @@ trait PointsTrait
 
     	}
 
-		$lowerPointsDiff = 4/$lower;
-    	$higherPointsDiff = 4/$higher;
+        if($lower == 0){
+            $lower = 0;
+        }
+        else
+        {
+            $lowerPointsDiff = 4/$lower;
+        }
+
+        if($higher == 0){
+            $higher = 0;
+        }
+        else
+        {
+            $higherPointsDiff = 4/$higher;
+        }
+
 
     	$currentStatus = '';
 		$currentValue = 0;
