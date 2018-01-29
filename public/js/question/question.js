@@ -47,8 +47,8 @@
             };
         }
 
-        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal'];
-        function AskQuestionCtrl(QuestionSrvcs, $uibModal){
+        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal', '$window'];
+        function AskQuestionCtrl(QuestionSrvcs, $uibModal, $window){
             var vm = this;
 
            
@@ -132,6 +132,11 @@
                             }
                         });
                         vm.questionDetails = angular.copy(vm.defaultQuestionDet);
+                        modalInstance.result.then(function (e){
+                            $window.location.href = '/question/view';                            
+                        }, function () {
+                            alert('Something went wrong.')
+                        });
                     });
                 } else {
                     vm.frmQuestion.withError = true;
@@ -227,6 +232,11 @@
                           }
                         }
                       });
+                    modalInstance.result.then(function (e){
+                        $window.location.href = '/question/view';                            
+                    }, function () {
+                        alert('Something went wrong.')
+                    });
       
                     //   modalInstance.result.then(function (){
                     //   },function (){
@@ -261,6 +271,11 @@
                             };
                           }
                         }
+                    });
+                    modalInstance.result.then(function (e){
+                        $window.location.href = '/question/view';                            
+                    }, function () {
+                        alert('Something went wrong.')
                     });
                 },function(error){alert('Something went wrong.')});
             }

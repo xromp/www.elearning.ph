@@ -118,6 +118,15 @@ class AnswerController extends Controller
                         'question_id'=>$data['question_id']
                     );
                     $this->workingLogs($logsData);
+                } else {
+                    //event logging
+                    $logsData = array(
+                        'student_id'=>$data['student_id'],
+                        'type'=>'ANSWERED',
+                        'question_id'=>$data['question_id']
+                    );
+                    $this->workingLogs($logsData);
+
                 }
                 // $answer->points = $this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']);
 
@@ -168,14 +177,6 @@ class AnswerController extends Controller
                     $answer->save();
                 }
                 
-                //event logging
-                $logsData = array(
-                    'student_id'=>$data['student_id'],
-                    'type'=>'ANSWERED',
-                    'question_id'=>$data['question_id']
-                );
-                $this->workingLogs($logsData);
-
                 if($data['loggedForPlan']) {
                     $logsData = array(
                         'student_id'=>$data['student_id'],
@@ -199,6 +200,54 @@ class AnswerController extends Controller
     
             return $transaction;
         }   
+    }
+
+    public function getAnsweredBySelf(Request $request)
+    {
+        $formData = array(
+            'student_id'=>$request->input('studentId')
+        );
+        $self = $request->session()->get('student_id');
+        
+        $answersPerStudent = DB::table('answers as a')
+            -> select(
+                'q.question_id',
+                'q.question_code',
+                'q.title',
+                'q.description', 
+                'q.is_approved',
+                'c.category_code',
+                'c.description as category_desc',
+                't.type_code',
+                't.description as type_desc',
+                'q.student_id',
+                DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name'),
+                'q.created_at')
+            -> join( DB::raw( "(SELECT 
+                questions.question_id,
+                questions.question_code,
+                questions.category_code,
+                questions.type_code,
+                questions.student_id,
+                questions.title,
+                questions.description, 
+                questions.is_approved,
+                questions.created_at
+                FROM questions) as q"), 
+                'a.question_code', '=', 'q.question_code' )
+            -> leftjoin('categories as c','c.category_code','=','q.category_code')
+            -> leftjoin('types as t','t.type_code','=','q.type_code')
+            -> leftjoin('students as s','s.student_id','=','q.student_id')
+            -> where('a.student_id',$self)
+            ->get();
+
+       
+        return response()-> json([
+            'status'=>200,
+            'count'=>count($answersPerStudent),
+            'data'=>$answersPerStudent,
+            'message'=>''
+        ]);
     }
 
     public function isEmpty($question){

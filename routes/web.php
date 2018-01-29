@@ -32,6 +32,8 @@ Route::post('/api/v1/question/actionAnswer','QuestionController@actionAnswer');
 Route::get('/api/v1/question/leaderBoard','QuestionController@leaderBoard');
 Route::post('/api/v1/leaderboard/insertLogsVisit','LogsController@viewLeaderBoard');
 
+
+
 // stock market
 Route::get('/stockmarket/view','StockMarketController@index');
 Route::get('/stockmarket/category/{categoryCode}','StockMarketController@index');
@@ -39,8 +41,10 @@ Route::get('/stockmarket/category/{categoryCode}','StockMarketController@index')
 // api
 Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategory');
 
-// api
+// answer api
+Route::get('/api/v1/answer/getAnsweredBySelf','AnswerController@getAnsweredBySelf'); //http://localhost:8000/api/v1/answer/getAnsweredBySelf
 Route::post('/api/v1/answer/save','AnswerController@save');
+
 
 // login
 Route::get('/login','AccountController@index');
