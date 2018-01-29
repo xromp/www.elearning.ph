@@ -5,8 +5,8 @@
         .controller('ProfileCtrl', ProfileCtrl)
         .factory('ProfileSrvcs', ProfileSrvcs)
 
-        ProfileCtrl.$inject = ['$scope', 'ProfileSrvcs', '$stateParams'];
-        function ProfileCtrl($scope, ProfileSrvcs, $stateParams) {
+        ProfileCtrl.$inject = ['$scope', 'ProfileSrvcs', '$stateParams', '$window'];
+        function ProfileCtrl($scope, ProfileSrvcs, $stateParams, $window) {
             var vm = this;
             vm.onLoad = function(){
 
@@ -15,6 +15,9 @@
                 $scope.answered_questions = false;
             }();
  
+            vm.routeTo = function(qc) {
+                $window.location.href ='/question/answerquestion/'+qc;
+            };
             ProfileSrvcs.OtherUser({hashedID:$stateParams.id}).then (function (response) {
                  
                 if(response.data.status == 200)

@@ -166,7 +166,8 @@ class AchievementsController extends Controller
     {    
         // $studentId = $this->RemoveExtras($request->input('studentId'));
         $data = array(
-            'student_id'=>$request->input('studentId')
+            'student_id'=>$request->input('studentId'),
+            'search_name'=>$request->input('search_name')
         );
 
         $result = array();
@@ -180,6 +181,12 @@ class AchievementsController extends Controller
         if ($data['student_id'])
         {
             $students = $students-> where ('student_id',$data['student_id']);
+        }
+
+        if ($data['search_name']) {
+            $students = $students->orWhere('s.lName', 'like', '%' . $data['search_name'] . '%')
+                ->orWhere('s.fName', 'like', '%' . $data['search_name'] . '%')
+                ->orWhere('s.mName', 'like', '%' . $data['search_name'] . '%');
         }
         
         $students = $students->get();

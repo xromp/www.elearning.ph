@@ -14,13 +14,20 @@
 
             var vm = this;
             var data = {};
+
+            vm.searchDet = {
+                search_title:'',
+                search_type:'ALL'
+            };
+
             QuestionSrvcs.get(data)
             .then (function (response) {
               if (response.data.status == 200) {
                 vm.questionList = response.data.data;
-                console.log(vm.questionList)
+                // console.log(vm.questionList)
               }
             },function(){ alert("Bad Request!")})
+
             vm.totalItems = 30;
             vm.currentPage = 4;
             vm.maxSize = 3;
@@ -34,11 +41,23 @@
                 {uid:'4', name:'John Doe4', points:'10', hashedID: 'CuNHGncUra4RzKVegJs1U'}
             ];
 
+            vm.search = function(data){
+                var dataCopy = angular.copy(data);
+
+                QuestionSrvcs.get(dataCopy)
+                .then (function (response) {
+                    if (response.data.status == 200) {
+                        vm.questionList = response.data.data;
+                        // console.log(vm.questionList)
+                    }
+                },function(){ alert("Bad Request!")})
+            };
+
             QuestionSrvcs.leaderBoard().then(function(response){
                 if(response.data.status == 200)
                 {
                     vm.leaderBoardList = response.data.data;
-                    console.log(response.data);
+                    // console.log(response.data);
                 }
             }, function() { alert('Bad Request!!!') })
 
@@ -372,7 +391,7 @@
                   return $http({
                     method:'GET',
                     data:data,
-                    url: '/api/v1/question/get?questionCode='+data.questionCode,
+                    url: '/api/v1/question/get?questionCode='+data.questionCode+'&search_type='+data.search_type+'&search_title='+data.search_title,
                     headers: {'Content-Type': 'application/json'}
                   })
                 },
