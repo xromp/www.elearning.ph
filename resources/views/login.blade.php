@@ -40,42 +40,11 @@
                     </div>
                 </div>
 
-                sample account<br>
-                uname: c@c.com<br>
-                pword: bry
-
-              
-
             </div>
 
             </div>
         </div>
     </form>
 
-
-      <hr>
-                <br>
-                <br>
-                <br>
-                <br>
-                
-                <form method="POST" action="/upload/image" class="form-horizontal" role="form"  enctype="multipart/form-data">
-                {!! csrf_field() !!}
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Attach file:</label>
-                        <div class="col-md-8">
-                            <input  type="file" id="resume" name="resume_link" placeholder="Resume" required class=""/>
-                            <span class="required" id='spnFileError'></span>
-                        </div>
-                    </div>                
-                </div>
-                  <div class="modal-footer">
-                    <div class="col-xs-5">
-                      <p style="margin:0;text-align:left;color: green;display:none;" id="successMsg">Submitted Successfully!</p>
-                    </div>
-                    <button type="submit" id="btnUpload" class="custm-btn btn-primary">Submit</button>
-                    <button type="button" class="custm-btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </form>
 </div>
 

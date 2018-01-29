@@ -416,6 +416,43 @@ trait PointsTrait
 		return $result;
 	}
 
+
+    public function getTotalPointPerStudent($data) {
+        $questionPoints = DB::table('questions')
+            ->select('student_id', DB::raw('SUM(points) as points'))
+            // ->where('category_code',$data['category_code'])
+            ->where('student_id',$data['student_id'])           
+            ->groupBy('student_id')
+            ->first();
+
+        $answerPoints = DB::table('answers as a')
+            ->select('a.student_id', DB::raw('SUM(points) as points'))
+            -> leftJoin( DB::raw( "(SELECT questions.question_code, questions.category_code, questions.student_id FROM questions
+                    GROUP BY question_code, category_code, student_id) as q"), 'q.question_code', '=', 'a.question_code' )
+            // ->where('q.category_code',$data['category_code'])    
+            ->where('a.student_id',$data['student_id'])     
+            ->groupBy('a.student_id')
+            ->first();
+
+        $result= array();
+        $result['question_points'] = ($questionPoints) ? $questionPoints->points :0;
+        $result['answer_points'] = ($answerPoints) ? $answerPoints->points : 0;
+        $result['total_points'] = $result['question_points'] + $result['answer_points'];
+
+        return $result;
+    }
+
+    public function studentRanking()
+    {
+        $students = DB::table('students')->select('s.student_id')->where('student_id', 1);
+        // -> leftJoin(DB::raw("(SELECT SUM(points) AS qPoints FROM questions) as q"), 's.student_id', '=', 'q.student_id')
+        // ->groupBy('s.student_id');
+
+        return $students;
+    }
+
+
+
 	// public function masterAchieved($data) {
 		
 	// 	$transaction = DB::transaction(function($data) use($data) {

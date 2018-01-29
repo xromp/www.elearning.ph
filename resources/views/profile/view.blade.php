@@ -9,15 +9,15 @@
 
             <div class="row">
                 <div class="col-sm-4 blog-main" style="text-align: center;">
-                   <h1> 30 </h1>
+                   <h1> <%pc.points['total_points'] | number : 2 %> </h1>
                    <h5>Total Points</h5>
                 </div>
                 <div class="col-sm-4 blog-main" style="text-align: center;">
-                   <h1> 15 </h1>
+                   <h1> <%pc.points['answer_points'] | number : 2 %> </h1>
                    <h5>Points - Answering</h5>
                 </div>
                 <div class="col-sm-4 blog-main" style="text-align: center;">
-                   <h1> 15 </h1>
+                   <h1> <%pc.points['question_points'] | number : 2 %> </h1>
                    <h5>Points - Posting</h5>
                 </div>
             </div>

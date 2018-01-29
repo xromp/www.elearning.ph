@@ -23,9 +23,6 @@
                 <a class="nav-link" ng-click="tc.routeTo('/leaderboard/index',true)" href="#">Leaderboards </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"  href="#">Rewards</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link"  ng-click="tc.routeTo('/forum/index')" href="#">Forum</a>
             </li>
         </ul>

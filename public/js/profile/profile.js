@@ -23,9 +23,6 @@
                     vm.UserName = vm.UserData.fName + " " + vm.UserData.lName;
 
                     ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
-
-                        // console.log(response.data);
-        
                         if(response.data.status == 200)
                         {
                             vm.students = response.data.data;
@@ -33,17 +30,27 @@
                         }
                     }, function (){ alert('Bad Request!!!') })
         
-        
+                    
+                    //points
+                    ProfileSrvcs.Points({student_id:vm.UserData.student_id}).then (function (response) {
+                        if(response.data.status == 200)
+                        {
+                            vm.points = response.data.data;
+                            console.log(vm.points)
+                        }
+                    }, function (){ alert('Bad Request!!!') })
+
+
                     // console.log("user = "+vm.UserName)
                     // console.log("user = "+vm.UserData.student_id)
 
-                    ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
-                        if(response.data.status == 200)
-                        {
-                            vm.students = response.data.data;
-                            console.log(vm.students[0])
-                        }
-                    }, function (){ alert('Bad Request!!!') })
+                    // ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
+                    //     if(response.data.status == 200)
+                    //     {
+                    //         vm.students = response.data.data;
+                    //         console.log(vm.students[0])
+                    //     }
+                    // }, function (){ alert('Bad Request!!!') })
                 }
             }, function (){alert('Bad Request!!!')})
           
@@ -130,6 +137,14 @@
                         method: 'GET',
                         data: data,
                         url: '/api/v1/achievements/get?studentId='+data.student_id,
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
+                Points: function(data) {
+                    return $http({
+                        method: 'GET',
+                        data: data,
+                        url: '/api/v1/points/getStudentTotalPoints?studentId='+data.student_id,
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

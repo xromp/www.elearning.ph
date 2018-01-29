@@ -399,4 +399,43 @@ class PointsController extends Controller
             'message' => 'Successfully saved.'
         ]);
     }
+
+    public function getTotalPointsPerStudent(Request $request)
+    {
+        $data = array(
+			'student_id'=>$request->input('studentId'),
+        );
+
+        return response()->json([
+            'status' => 200,
+            'data' => $this->getTotalPointPerStudent($data),
+            'message' => 'Successfully saved.'
+        ]);
+    }
+
+    // public function studentRanking()
+    // {
+    //     $students = DB::table('students as s')
+    //     // ->leftJoin(DB::raw("(SELECT SUM(points) AS qPoints FROM questions) as q"), 's.student_id', '=', 'q.student_id')
+    //     ->select(['s.student_id', 
+    //                 DB::raw('COALESCE(SUM(questions.points),0) AS question_points'), 
+    //                 DB::raw('COALESCE(SUM(answers.points),0) AS answer_points'), 
+    //      DB::raw('(COALESCE(sum(questions.points),0) + COALESCE(sum(answers.points),0)) as totolPoints')])
+    //     DB::raw('COALESCE(sum(questions.points),0) + COALESCE(sum(answers.points),0)', )
+    //     // ->leftJoin('questions', 'questions.student_id', '=', 's.student_id') 
+    //     ->leftJoin('answers', 's.student_id', '=', 'answers.student_id', 'questions.question_code', '=', 'answers.question_code')
+    //     ->groupBy('s.student_id')
+    //     ->get();
+
+    //     return response()->json([
+    //         'status' => 200,
+    //         'data' => $students,
+    //         'message' => 'Successfully saved.'
+    //     ]);
+    // }
+
+    
+    // SELECT id, name, score, 
+    //     FIND_IN_SET( score, (SELECT GROUP_CONCAT( score ORDER BY score DESC ) FROM scores )) AS rank
+    // FROM scores
 }

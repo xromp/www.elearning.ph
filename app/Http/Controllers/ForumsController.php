@@ -34,8 +34,7 @@ class ForumsController extends Controller
             'message' => 'Successfully loaded.'
         ]);
     }
-
-<<<<<<< HEAD
+ 
     public function get(Request $request)
     {
         $data = array(
@@ -110,8 +109,7 @@ class ForumsController extends Controller
             'message' => ''
         ]);
     }
-}
-=======
+} 
     public function Comments($forumCode)
     {
     	$id = session()->get('student_id');
@@ -119,5 +117,4 @@ class ForumsController extends Controller
     	return $comments;
     }
 
-}
->>>>>>> 628070d120e3e80b0a09d8862b95db978984f564
+} 

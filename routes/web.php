@@ -122,6 +122,8 @@ Route::get('/ref2', 'PointsController@ref2');
 Route::get('/api/v1/points/get/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');
 Route::get('/api/v1/points/getanswering/{action}/{questionType}/{categoryType}', 'PointsController@PointsAnswering');
 Route::get('/api/v1/points/gettotalpoints', 'PointsController@getTotalPointsByCategory'); //http://localhost:8002/api/v1/points/gettotalpoints?categoryCode=ADAPTER&studentId=5
+Route::get('/api/v1/points/getStudentTotalPoints', 'PointsController@getTotalPointsPerStudent'); //http://localhost:8002/api/v1/points/gettotalpoints?categoryCode=ADAPTER&studentId=5
+Route::get('/api/v1/points/getStudentRank', 'PointsController@studentRanking'); //http://localhost:8002/api/v1/points/gettotalpoints?categoryCode=ADAPTER&studentId=5
 
 Route::get('/GetPoints/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');
 Route::get('/GetID/', 'AchievementsController@getStudID');
