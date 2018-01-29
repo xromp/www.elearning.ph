@@ -51,13 +51,15 @@
             }();
 
             
-            $scope.search = function(name)
+            vm.search = function(data)
             {
-                LeaderboardSrvcs.FindUsers({fName:name}).then (function (response) {
+                var dataCopy = angular.copy(data);
+
+                LeaderboardSrvcs.FindUsers(dataCopy).then (function (response) {
                     if(response.data.status == 200 && response.data.data != null)
                     {
-                        vm.UserData = response.data.data;
-                        console.log(vm.UserData);
+                        vm.students = response.data.data;
+                        console.log(vm.students);
                     }
                     else
                     {
@@ -100,8 +102,8 @@
                 },
                 FindUsers: function(data){
                     return $http({
-                        method: 'POST',
-                        url: '/api/v1/leaderboard/find',
+                        method: 'GET',
+                        url: '/api/v1/achievements/get?search_name='+data.name,
                         data: data,
                         headers: {'Content-Type': 'application/json'}
                     })

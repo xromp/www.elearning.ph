@@ -3,15 +3,21 @@
    <div class="row">
         <div class="col-sm-9 blog-main">
             <div class="row">
-            <div class="col-sm-4 blog-main">
-             <div class="form-group">
-                <form>
-                    <label for="">Search: </label>
-                    <input type="text" class="form-control" ng-model="name" id=""/>
-                    <input type="submit" class="btn btn-success btn-success-sm" style="margin-top:3px;" ng-click="search(name)">
-                </form>
-              </div>
-            </div>
+            <div class="col-sm-10 blog-main">
+                <div class="form-group">
+                    <form>
+                        <div class="input-group">
+                            <input type="text" class="form-control" ng-model="lbc.seachdet.name" placeholder="Search for...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary btn-success" ng-click="lbc.search(lbc.seachdet)" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </span>
+                        </div>
+                        <!-- <label for="">Search: </label>
+                        <input type="text" class="form-control" ng-model="name" id=""/>
+                        <input type="submit" class="btn btn-success btn-success-sm" style="margin-top:3px;" ng-click="search(name)"> -->
+                    </form>
+                </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-sm-3 blog-main" ng-repeat="student in lbc.students" style="border: 1px solid #ddd;margin:10px;padding:10px;border-radius: 15px;cursor:ponter" ng-click="lbc.routeTo('/profile/'+student.hashedID)"> 

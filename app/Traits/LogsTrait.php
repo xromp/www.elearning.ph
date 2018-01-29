@@ -5,11 +5,11 @@ namespace App\Traits;
 use Illuminate\Http\Request;
 use DB;
 
-use App\Question;
-use App\Category;
-use App\Student;
-use App\Question_Choices;
-use App\Answer;
+// use App\Question;
+// use App\Category;
+// use App\Student;
+// use App\Question_Choices;
+// use App\Answer;
 use App\Logs;
 
 trait LogsTrait
@@ -17,6 +17,9 @@ trait LogsTrait
     public function insertLogs($data) {
 
         $transaction = DB::transaction(function($data) use($data){
+            // $data['type'] = 'WAD';
+            // echo($data['type']);
+            
             if ($data['type'] == 'WAD') {
                 $data['type_desc'] = 'Working Activities (Direct)';
             } elseif ($data['type'] == 'WAI') {
@@ -29,8 +32,11 @@ trait LogsTrait
                 $data['type_desc'] = 'Social Activities';
             } elseif ($data['type'] == 'FA') {
                 $data['type_desc'] = 'Fun Activities';
-            } else {return;}
-
+            } else {
+                return true;
+            }
+            // print_r($data);
+            // dd(1);
             $logs = new Logs;
                 $logs->log_description = $data['desc'];
                 $logs->student_id = $data['student_id'];
@@ -42,7 +48,8 @@ trait LogsTrait
     public function workingLogs($data){        
         $formData = array(
             'student_id'=>$data['student_id'],
-            'question_id'=>$data['question_id']
+            'question_id'=>$data['question_id'],
+            'type'=>$data['type']
         );
 
         if ($data['type'] == 'ASKED') {

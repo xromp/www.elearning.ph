@@ -14,37 +14,27 @@
 
             var vm = this;
             var data = {};
+
+            vm.searchDet = {
+                search_title:'',
+                search_type:'ALL'
+            };
+
             QuestionSrvcs.get(data)
             .then (function (response) {
               if (response.data.status == 200) {
                 vm.questionList = response.data.data;
-                console.log(vm.questionList)
+                // console.log(vm.questionList)
               }
             },function(){ alert("Bad Request!")})
+
             vm.totalItems = 30;
             vm.currentPage = 4;
             vm.maxSize = 3;
             vm.bigTotalItems = 175;
             vm.bigCurrentPage = 1;
 
-            // vm.leaderBoardList = [
-            //     {uid:'1', name:'John Doe', points:'30', hashedID: '9Vyn2EEQhC1ZFKzMYkqzj'},
-            //     {uid:'2', name:'John Doe2', points:'24', hashedID: 'jJBg8sh3SD251403IGnIa'},
-            //     {uid:'3', name:'John Doe3', points:'51', hashedID: 'mlhcGVXCMI3d1HhiRS57D'},
-            //     {uid:'4', name:'John Doe4', points:'10', hashedID: 'CuNHGncUra4RzKVegJs1U'}
-            // ];
-
-            // QuestionSrvcs.leaderBoard().then(function(response){
-            //     if(response.data.status == 200)
-            //     {
-            //         vm.leaderBoardList = response.data.data;
-            //         console.log(response.data);
-            //     }
-            // }, function() { alert('Bad Request!!!') })
-
-            //  vm.routeTo = function(route){
-            //     $window.location.href = route;
-            // };
+ 
 
             QuestionSrvcs.TopStudents().then(function(response){
                     if(response.data.status == 200)
@@ -53,10 +43,29 @@
                         console.log(response.data);
                     }
                 }, function() { alert('Bad Request!!!') })
+ 
+
+            vm.search = function(data){
+                var dataCopy = angular.copy(data);
+
+                QuestionSrvcs.get(dataCopy)
+                .then (function (response) {
+                    if (response.data.status == 200) {
+                        vm.questionList = response.data.data;
+                        // console.log(vm.questionList)
+                    }
+                },function(){ alert("Bad Request!")})
+            };
+
+            
+
+             vm.routeTo = function(route){
+                $window.location.href = route;
+            }; 
         }
 
-        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal'];
-        function AskQuestionCtrl(QuestionSrvcs, $uibModal){
+        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal', '$window'];
+        function AskQuestionCtrl(QuestionSrvcs, $uibModal, $window){
             var vm = this;
 
            
@@ -140,6 +149,11 @@
                             }
                         });
                         vm.questionDetails = angular.copy(vm.defaultQuestionDet);
+                        modalInstance.result.then(function (e){
+                            $window.location.href = '/question/view';                            
+                        }, function () {
+                            alert('Something went wrong.')
+                        });
                     });
                 } else {
                     vm.frmQuestion.withError = true;
@@ -235,6 +249,11 @@
                           }
                         }
                       });
+                    modalInstance.result.then(function (e){
+                        $window.location.href = '/question/view';                            
+                    }, function () {
+                        alert('Something went wrong.')
+                    });
       
                     //   modalInstance.result.then(function (){
                     //   },function (){
@@ -269,6 +288,11 @@
                             };
                           }
                         }
+                    });
+                    modalInstance.result.then(function (e){
+                        $window.location.href = '/question/view';                            
+                    }, function () {
+                        alert('Something went wrong.')
                     });
                 },function(error){alert('Something went wrong.')});
             }
@@ -365,7 +389,7 @@
                   return $http({
                     method:'GET',
                     data:data,
-                    url: '/api/v1/question/get?questionCode='+data.questionCode,
+                    url: '/api/v1/question/get?questionCode='+data.questionCode+'&search_type='+data.search_type+'&search_title='+data.search_title,
                     headers: {'Content-Type': 'application/json'}
                   })
                 },

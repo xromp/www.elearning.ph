@@ -2,10 +2,31 @@
     <div class="row">
         <div class="col-sm-8">
             <h3>Most Recent Questions</h3>
+            <form>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="qc.searchDet.search_title" placeholder="Search for title ...">
+                    <span>
+                    <div class="input-group">
+                        <select class="custom-select text-success" id="inputGroupSelect01" ng-model="qc.searchDet.search_type">
+                            <option value="ALL" selected>All</option>
+                            <option value="UNANSWERED">Unanswered</option>
+                            <option value="ANSWERED">Answered</option>
+                            <option value="SELF">Own Question(s)</option>
+                        </select>
+                    </div>
+                    </span>
+
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary btn-success" ng-click="qc.search(qc.searchDet)" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        
+                    </span>                
+                </div>
+            </form>
         </div>
         <div class="col-sm-4 text-right">
             <p><a class="btn btn-large btn-outline-primary" href="/question/askquestion">Ask a Question</a></p>
         </div>
+
     </div>
     <!-- List of recent questions -->
     

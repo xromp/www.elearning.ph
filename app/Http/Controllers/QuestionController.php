@@ -55,6 +55,8 @@ class QuestionController extends Controller
             'questionCode'=>$request->input('questionCode'),
             'categoryCode'=>$request->input('categoryCode'),
             'type'=>$request->input('orno'),
+            'search_type'=>$request->input('search_type'),
+            'search_title'=>$request->input('search_title')
         );
         $isAdmin = ($request->session()->get('account_type') == 1);
 
@@ -89,6 +91,9 @@ class QuestionController extends Controller
         }
         if (!$this->isEmpty($formData['categoryCode'])) {
             $question->where('q.category_code',$formData['categoryCode']);
+        }
+        if (!$this->isEmpty($formData['search_title'])) {
+            $question->orWhere('q.title', 'like', '%' . $formData['search_title'] . '%');
         }
 
         // if (!$isAdmin){
@@ -211,6 +216,17 @@ class QuestionController extends Controller
             if ( !($isSelf || $isAdmin) && !$value['is_approved'] ) {
                 $validEntry = false;
             }
+
+            // for seaching on the question dashboard
+            if ($formData['search_type'] == 'UNANSWERED'){
+                $validEntry = ($value['student_info']['has_answered'] == false) ? true: false;
+
+            } elseif ($formData['search_type'] == 'ANSWERED'){
+                $validEntry = ($value['student_info']['has_answered'] == true) ? true: false;
+            } elseif ($formData['search_type'] == 'SELF'){
+                $validEntry = ($value['student_info']['is_self'] == true) ? true: false;
+            }
+
 
             if ($validEntry) {
                 array_push($result,$value);
