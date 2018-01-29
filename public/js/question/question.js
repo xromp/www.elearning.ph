@@ -27,24 +27,32 @@
             vm.bigTotalItems = 175;
             vm.bigCurrentPage = 1;
 
-            vm.leaderBoardList = [
-                {uid:'1', name:'John Doe', points:'30', hashedID: '9Vyn2EEQhC1ZFKzMYkqzj'},
-                {uid:'2', name:'John Doe2', points:'24', hashedID: 'jJBg8sh3SD251403IGnIa'},
-                {uid:'3', name:'John Doe3', points:'51', hashedID: 'mlhcGVXCMI3d1HhiRS57D'},
-                {uid:'4', name:'John Doe4', points:'10', hashedID: 'CuNHGncUra4RzKVegJs1U'}
-            ];
+            // vm.leaderBoardList = [
+            //     {uid:'1', name:'John Doe', points:'30', hashedID: '9Vyn2EEQhC1ZFKzMYkqzj'},
+            //     {uid:'2', name:'John Doe2', points:'24', hashedID: 'jJBg8sh3SD251403IGnIa'},
+            //     {uid:'3', name:'John Doe3', points:'51', hashedID: 'mlhcGVXCMI3d1HhiRS57D'},
+            //     {uid:'4', name:'John Doe4', points:'10', hashedID: 'CuNHGncUra4RzKVegJs1U'}
+            // ];
 
-            QuestionSrvcs.leaderBoard().then(function(response){
-                if(response.data.status == 200)
-                {
-                    vm.leaderBoardList = response.data.data;
-                    console.log(response.data);
-                }
-            }, function() { alert('Bad Request!!!') })
+            // QuestionSrvcs.leaderBoard().then(function(response){
+            //     if(response.data.status == 200)
+            //     {
+            //         vm.leaderBoardList = response.data.data;
+            //         console.log(response.data);
+            //     }
+            // }, function() { alert('Bad Request!!!') })
 
-             vm.routeTo = function(route){
-                $window.location.href = route;
-            };
+            //  vm.routeTo = function(route){
+            //     $window.location.href = route;
+            // };
+
+            QuestionSrvcs.TopStudents().then(function(response){
+                    if(response.data.status == 200)
+                    {
+                        vm.leaderBoardList = response.data.data;
+                        console.log(response.data);
+                    }
+                }, function() { alert('Bad Request!!!') })
         }
 
         AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal'];
@@ -405,7 +413,14 @@
                         data: null,
                         url: '/api/v1/question/leaderBoard'
                     })
-                }
+                },
+                TopStudents: function(){
+                    return $http({
+                        method: 'GET',
+                        url: '/api/v1/top10/get',
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
             };
         }
 })();

@@ -413,6 +413,93 @@ class PointsController extends Controller
         ]);
     }
 
+
+    public function studentRanking()
+    {
+ 
+        $data = array();
+
+        $students = DB::table('students')->get();
+   
+        foreach($students as $student)
+        {
+            $datum['student_id'] = $student->student_id;
+            $points = $this->getTotalPointPerStudent($datum);
+            $datum['name'] = $student->lName.", ".$student->fName." ".$student->mName;
+            $datum['question_points'] = $points['question_points'];
+            $datum['answer_points'] = $points['answer_points'];
+            $datum['total_points'] = $points['total_points'];
+            array_push($data, $datum);
+        }
+
+        foreach ($data as $key=> $datum) {
+            $total_points[$key] = $datum['total_points'];
+        }
+        
+        array_multisort($total_points, SORT_DESC, $data);
+
+        return $data;
+    }
+
+    public function getTop10()
+    {
+        // return $this->studentRanking();
+        $data = array();
+        $position = 1;
+        $limit = 10;
+        $value = 0;
+        foreach($this->studentRanking() as $key => $student)
+        {
+            
+            $datum['name'] = $student['name'];
+            $datum['total_points'] = $student['total_points'];
+            $datum['position'] = $position;
+            $datum['hashedID'] = $this->GetRandom(10).$student['student_id'].$this->GetRandom(10);
+            if($student['total_points'] > 0)
+            {
+                if($key>0)
+                {
+                    if($value == $student['total_points'])
+                    {
+                        $position = $position;
+                    }
+                    else
+                    {
+                        $position = $position + 1;
+                    }
+
+                    $value = $student['total_points'];
+                    $datum['position'] = $position;
+                }
+                else
+                {
+                    $value = $student['total_points'];
+                }
+
+                if($position<=10)
+                {
+                    array_push($data, $datum);
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $data,
+            'message' => 'Success'
+        ]);
+    }
+
+    public function GetRandom($keyLength)
+    {
+        return str_random($keyLength);
+    }
+
+    // public function studentRanking()
+    // {
+
+    // }
+
     // public function studentRanking()
     // {
     //     $students = DB::table('students as s')
@@ -421,7 +508,7 @@ class PointsController extends Controller
     //                 DB::raw('COALESCE(SUM(questions.points),0) AS question_points'), 
     //                 DB::raw('COALESCE(SUM(answers.points),0) AS answer_points'), 
     //      DB::raw('(COALESCE(sum(questions.points),0) + COALESCE(sum(answers.points),0)) as totolPoints')])
-    //     DB::raw('COALESCE(sum(questions.points),0) + COALESCE(sum(answers.points),0)', )
+    //     DB::raw('COALESCE(sum(questions.points),0) + COALESCE(sum(answers.points),0)' )
     //     // ->leftJoin('questions', 'questions.student_id', '=', 's.student_id') 
     //     ->leftJoin('answers', 's.student_id', '=', 'answers.student_id', 'questions.question_code', '=', 'answers.question_code')
     //     ->groupBy('s.student_id')
@@ -434,7 +521,7 @@ class PointsController extends Controller
     //     ]);
     // }
 
-    
+
     // SELECT id, name, score, 
     //     FIND_IN_SET( score, (SELECT GROUP_CONCAT( score ORDER BY score DESC ) FROM scores )) AS rank
     // FROM scores

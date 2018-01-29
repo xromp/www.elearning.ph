@@ -12,7 +12,7 @@
                     <h1 class="display-3">CQV E-Learning</h1>
                     <p class="lead">Learn the fun way.</p>
                 </div>
-                <br> 
+                <br>
                 <br>
                 @if (session('status'))
                     <div class="alert alert-danger" style="text-align:center;">
@@ -26,22 +26,18 @@
                         <input type="email" name="uname" placeholder= "Your email" class="form-control">
                     </div>
                 </div>
-
                 <div class="form-group row">
                     <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
                     <div class="col-sm-10">
                         <input name="pword" class="form-control" id="inputPassword" placeholder="Password" type="password">
                     </div>
                 </div>
-
                 <div class="form-group row">
                     <div class="col-sm-10">
                         <button type="submit" class="btn btn-primary" name = "submit">Sign in</button>
                     </div>
                 </div>
-
             </div>
-
             </div>
         </div>
     </form>

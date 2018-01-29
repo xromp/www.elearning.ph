@@ -164,7 +164,9 @@ class AchievementsController extends Controller
 
 	public function get(Request $request) 
     {    
+
         // $studentId = $this->RemoveExtras($request->input('studentId'));
+
         $data = array(
             'student_id'=>$request->input('studentId')
         );
@@ -187,7 +189,7 @@ class AchievementsController extends Controller
         foreach ($studentsCopy as $key => $student) {
             $achievementsResult = array();
             
-            $achievementsTypes = array( 
+            $achievementsTypes = array(
                 array('desc' => 'Asking Questions','code'=>'ASKING'),
                 array('desc' => 'Answering Questions','code'=>'ANSWER'),
                 array('desc' => 'Participation','code'=>'PARTICIPATION'),

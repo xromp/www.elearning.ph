@@ -15,7 +15,15 @@
                 $scope.posted_questions = true;
                 $scope.answered_questions = false;
 
-                LeaderboardSrvcs.LeaderBoard().then(function(response){
+                // LeaderboardSrvcs.LeaderBoard().then(function(response){
+                //     if(response.data.status == 200)
+                //     {
+                //         vm.leaderBoardList = response.data.data;
+                //         console.log(response.data);
+                //     }
+                // }, function() { alert('Bad Request!!!') })
+
+                LeaderboardSrvcs.TopStudents().then(function(response){
                     if(response.data.status == 200)
                     {
                         vm.leaderBoardList = response.data.data;
@@ -102,6 +110,13 @@
                     return $http({
                         method: 'GET',
                         url: '/api/v1/achievements/get',
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
+                TopStudents: function(){
+                    return $http({
+                        method: 'GET',
+                        url: '/api/v1/top10/get',
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

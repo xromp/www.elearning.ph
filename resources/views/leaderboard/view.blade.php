@@ -42,7 +42,7 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="leaderBoard in lbc.leaderBoardList | orderBy:'-points'">
-                            <td ng-bind="$index+1 + '.'"></td>
+                            <td ng-bind="leaderBoard.position + '.'"></td>
                             <td><a ng-click="lbc.routeTo('/profile/'+leaderBoard.hashedID)" href=""><%leaderBoard.name%></a></td>
                             <td ng-bind="leaderBoard.points"></td>
                         </tr>

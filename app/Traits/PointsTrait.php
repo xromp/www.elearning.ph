@@ -418,6 +418,7 @@ trait PointsTrait
 
 
     public function getTotalPointPerStudent($data) {
+
         $questionPoints = DB::table('questions')
             ->select('student_id', DB::raw('SUM(points) as points'))
             // ->where('category_code',$data['category_code'])
@@ -444,7 +445,7 @@ trait PointsTrait
 
     public function studentRanking()
     {
-        $students = DB::table('students')->select('s.student_id')->where('student_id', 1);
+        $students = DB::table('students')->select('s.student_id')->get();
         // -> leftJoin(DB::raw("(SELECT SUM(points) AS qPoints FROM questions) as q"), 's.student_id', '=', 'q.student_id')
         // ->groupBy('s.student_id');
 
