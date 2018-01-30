@@ -442,20 +442,10 @@ trait PointsTrait
 
         return $result;
     }
-
-    public function studentRanking()
-    {
-        $students = DB::table('students')->select('s.student_id')->get();
-        // -> leftJoin(DB::raw("(SELECT SUM(points) AS qPoints FROM questions) as q"), 's.student_id', '=', 'q.student_id')
-        // ->groupBy('s.student_id');
-
-        return $students;
-    }
-
-
+ 
 
 	// public function masterAchieved($data) {
-		
+
 	// 	$transaction = DB::transaction(function($data) use($data) {
 			
 	// 		$formData = array (
@@ -497,5 +487,5 @@ trait PointsTrait
 		$this->isMasterAchievedByCategory($data);
 		$this->isReaching75PointsAnswering($data);
 		$this->isReaching25PointsAsking($data);
-	} 
+	}
 }

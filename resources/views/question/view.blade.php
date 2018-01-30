@@ -18,7 +18,6 @@
 
                     <span class="input-group-btn">
                         <button class="btn btn-secondary btn-success" ng-click="qc.search(qc.searchDet)" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                        
                     </span>                
                 </div>
             </form>
@@ -75,13 +74,12 @@
                         <tr ng-repeat="leaderBoard in qc.leaderBoardList | orderBy:'-points'">
                             <td ng-bind="leaderBoard.position + '.'"></td>
                             <td><a ng-click="qc.routeTo('/profile/'+leaderBoard.hashedID)" href=""><%leaderBoard.name%></a></td>
-                            <td ng-bind="leaderBoard.points"></td>
+                            <td ng-bind="leaderBoard.total_points"></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
         <ul uib-pagination total-items="qc.bigTotalItems" ng-model="qc.bigCurrentPage" max-size="qc.maxSize" class="pagination-sm" boundary-link-numbers="true"></ul>
-        
     </div>
 </div>

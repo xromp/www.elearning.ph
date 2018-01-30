@@ -15,14 +15,6 @@
                 $scope.posted_questions = true;
                 $scope.answered_questions = false;
 
-                // LeaderboardSrvcs.LeaderBoard().then(function(response){
-                //     if(response.data.status == 200)
-                //     {
-                //         vm.leaderBoardList = response.data.data;
-                //         console.log(response.data);
-                //     }
-                // }, function() { alert('Bad Request!!!') })
-
                 LeaderboardSrvcs.TopStudents().then(function(response){
                     if(response.data.status == 200)
                     {

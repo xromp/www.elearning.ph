@@ -98,6 +98,7 @@ Route::get('/api/v1/type/get','TypeController@get');
 Route::get('/api/v1/achievements/FirstQuestion','AchievementsController@FirstQuestion');
 Route::post('/api/v1/achievements/Achievements','AchievementsController@Achievements');
 Route::get('/api/v1/achievements/get','AchievementsController@get');
+Route::get('/api/v1/achievements/sample_view','AchievementsController@sample_view');
 
 // ASK achievements API
 Route::get('/api/v1/achievements/firstQuestion','QuestionController@firstQuestion');

@@ -13,8 +13,12 @@ use App\Answer;
 use App\Category;
 use Hash;
 
+use App\Traits\PointsTrait;
+
 class AchievementsController extends Controller
 {
+    use PointsTrait;
+
     public function RemoveExtras($hashed)
     {
         $data = substr($hashed, 10);
@@ -238,6 +242,10 @@ class AchievementsController extends Controller
             $studentDetails['name'] = $student['student_name'];
             $studentDetails['achievementList'] = $achievementsResult;
 
+            $points = $this->getTotalPointPerStudent($studentDetails);
+            $studentDetails['question_points'] = $points['question_points'];
+            $studentDetails['answer_points'] = $points['answer_points'];
+            $studentDetails['total_points'] = $points['total_points'];
 
             array_push($result,$studentDetails); 
         }
@@ -254,5 +262,12 @@ class AchievementsController extends Controller
         $data = array(
             'student_id'=>$request->input('studentId')
         );
+    }
+
+
+    public function sample_view()
+    {
+        $datum['student_id'] = 3;
+        dd($this->getTotalPointPerStudent($datum));
     }
 }

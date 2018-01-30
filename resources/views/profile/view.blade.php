@@ -58,6 +58,24 @@
         </div>
     </div>
 
+    <div class="row" style="border:1px solid red;">
+
+        <div class="col-sm-12">
+
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Rewards</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Posted Questions</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Answered</a>
+              </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="row" style="padding:14px;text-align: center" ng-if="question_ans"> 
 		<div class="col-sm-6 blog-main" style="border:1px solid;border-color:#ddd;cursor: pointer;border-radius: 5px;" title="Posted Questions" ng-click="ShowHidQuestionAns(1)">
 			<h5>Posted Questions</h5>
