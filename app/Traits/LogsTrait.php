@@ -18,7 +18,7 @@ trait LogsTrait
 
         $transaction = DB::transaction(function($data) use($data){
             // $data['type'] = 'WAD';
-            // echo($data['type']);
+            
             
             if ($data['type'] == 'WAD') {
                 $data['type_desc'] = 'Working Activities (Direct)';
@@ -51,7 +51,6 @@ trait LogsTrait
             'question_id'=>$data['question_id'],
             'type'=>$data['type']
         );
-
         if ($data['type'] == 'ASKED') {
             $formData['desc'] = $formData['student_id'].' has posted question '.$formData['question_id'];
             $formData['type'] = 'WAD';
@@ -101,7 +100,8 @@ trait LogsTrait
     public function hasBadgeLogs($data){
         $formData = array(
             'student_id'=>$data['student_id'],
-            'code'=>$data['achievement_code']
+            'code'=>$data['achievement_code'],
+            'type'=>'FA'
         );
 
         $formData['desc'] = $formData['student_id'].' has achieved badge '.$formData['code'];
