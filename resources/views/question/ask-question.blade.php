@@ -40,10 +40,10 @@
                                     <input type="radio" aria-label="Radio button for following text input" name="choices" ng-model="aqc.questionDetails.answer" ng-value="choice.choice_code">
                                 </span>
                                 <input type="text" class="form-control" aria-label="Text input with radio button" name="answerDesc" ng-model="choice.choice_desc" required>
+                                <!-- <small class="text-danger" ng-show="aqc.frmQuestion.answerDesc.$invalid && aqc.frmQuestion.withError">Description is required field.</small> -->
                             </div>
                         </div>
                     </div>
-
                 </div>
             </fieldset>
         </div>
@@ -72,7 +72,7 @@
 
         <div class="form-group row">
             <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary" ng-click="aqc.submit(aqc.questionDetails)">
+                <button class="btn btn-primary" ng-click="aqc.submit(aqc.questionDetails)">
                     Submit Question
                 </button>
             </div>

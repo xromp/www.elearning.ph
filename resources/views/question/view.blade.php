@@ -80,7 +80,10 @@
                 </table>
             </div>
         </div>
-        <ul uib-pagination total-items="qc.searchDet.totalItems" ng-model="qc.searchDet.currentPage" max-size="qc.searchDet.rowPerPage" class="pagination-m" boundary-link-numbers="true" ng-change="qc.search(qc.searchDet)"></ul>
+        <div ng-show="qc.searchDet.totalItems > qc.searchDet.rowPerPage">
+            <ul uib-pagination total-items="qc.searchDet.totalItems" ng-model="qc.searchDet.currentPage" max-size="qc.searchDet.rowPerPage" class="pagination-m" boundary-link-numbers="true" ng-change="qc.search(qc.searchDet)"></ul>
+        </div>
+        
     </div>
 </div>
 <script>

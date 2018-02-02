@@ -126,6 +126,7 @@ Route::get('/points_answering', 'PointsController@points_answering');
 //2018
 Route::get('/sampleArray', 'PointsController@sampleArray');
 Route::get('/PointsPosting', 'PointsController@PointsPosting'); //for posting
+Route::get('/PointsAnswering', 'PointsController@PointsAnswering'); //for posting
 Route::get('/ref', 'PointsController@ref');
 Route::get('/ref2', 'PointsController@ref2');
 Route::get('/api/v1/points/get/{action}/{questionType}/{categoryType}', 'PointsController@GetPoints');

@@ -109,6 +109,7 @@ class AnswerController extends Controller
                 $answer->question_code = $data['question_code'];
                 $answer->student_id = $data['student_id'];
                 $answer->answer = $data['answer'];
+
                 if (!$this->isEmpty($data['rating'])) {
                     $answer->rating = $data['rating'];
                     //event logging
@@ -128,7 +129,6 @@ class AnswerController extends Controller
                     $this->workingLogs($logsData);
 
                 }
-                // $answer->points = $this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']);
 
                 if ($data['type_code'] == 'MULTIPLE_CHOICE') {
                     $correctAns = DB::table('multiple_choices')
@@ -137,8 +137,6 @@ class AnswerController extends Controller
                         ->where('is_correct',1)
                         ->get();
                     
-                    $answer->is_correct =  $correctAns->count();
-                    $answer->save();
                     if ($correctAns->count()) {
                         $i = array(
                             'question_code'=>$data['question_code'],
@@ -147,20 +145,17 @@ class AnswerController extends Controller
                             'category_code'=>$data['category_code'],
                         );
 
-                        DB::table('answers')
-                            -> where('answer_id',$answer->answer_id)
-                            -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
+                        $answer->points =  $this->getPointsAnswerPerStudent($i);
                     }
+                    $answer->is_correct =  $correctAns->count();
+                    $answer->save();
                 } else if ($data['type_code'] == 'IDENTIFICATION') {
                     $correctAns = DB::table('multiple_choices')
                         ->where('question_code',$data['question_code'])
                         ->where('choice_code',$data['answer'])
                         ->where('is_correct',1)
                         ->get();
-                    
-                    $answer->is_correct =  $correctAns->count();
-                    $answer->save();
-                    // dd($this->getPointsAnswerPerStudent('answer',$data['type_code'],$data['category_code']));
+                                        
                     if ($correctAns->count()) {
                         $i = array(
                             'question_code'=>$data['question_code'],
@@ -168,11 +163,11 @@ class AnswerController extends Controller
                             'student_id'=>$data['student_id'],
                             'category_code'=>$data['category_code'],
                         );
-
-                        DB::table('answers')
-                            -> where('answer_id',$answer->answer_id)
-                            -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
+                        $answer->points =  $this->getPointsAnswerPerStudent($i);
                     }
+                    $answer->is_correct =  $correctAns->count();
+                    $answer->save();
+
                 } else {
                     $answer->save();
                 }

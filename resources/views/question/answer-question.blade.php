@@ -78,7 +78,7 @@ trix-toolbar { display: none; } */
 
         <div class="form-group row">
             <div class="col-sm-10">            
-                <button type="submit" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-show="(!ansqc.questionDetails.student_info.is_self && !ansqc.questionDetails.student_info.has_answered)" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
+                <button type="button" class="btn btn-primary" ng-click="ansqc.submit(ansqc.questionDetails)"  ng-show="(!ansqc.questionDetails.student_info.is_self && !ansqc.questionDetails.student_info.has_answered)" ng-disabled="!ansqc.questionDetails.answer">Submit Answer</button>
                 
                 <!-- answers with approval -->
                 <div class="row" ng-repeat="student in ansqc.questionDetails.students_answered.list" ng-if="ansqc.questionDetails.type_code == 'CODING' && (ansqc.questionDetails.student_info.is_self || ansqc.questionDetails.is_answered_correctly)">

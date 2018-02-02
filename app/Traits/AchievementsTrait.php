@@ -155,13 +155,14 @@ trait AchievementsTrait
 
         if ($isFirstAnswer){
             $transaction = DB::transaction(function($data) use($data) {
-                
                 $formData = array (
                     'code'=> 'ANS-04',
-                    'student_id'=>$data['student_id']
+                    'student_id'=>$data['student_id'],
+                    'category_code'=>$data['category_code']
 
                 );
                 $data['achievement_code'] = $formData['code'];
+                $formData['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,

@@ -115,13 +115,19 @@
 
                     // multiple choices
                     if  (dataCopy.type_code == 'MULTIPLE_CHOICE') {
+                        var hasAnswer = false;
                         angular.forEach(dataCopy.choiceList, function(v,k){
                             if (dataCopy.answer == v.choice_code) {
                                 v.is_correct = true;
+                                hasAnswer = true;
                             } else {
                                 v.is_correct = false;
                             }
                         });    
+
+                        if (!hasAnswer){
+                            return alert('Please select the correct answer.');
+                        }
                     } else if  (dataCopy.type_code == 'IDENTIFICATION') {
                         dataCopy.answer = [];
                         angular.forEach(vm.identificationAnsList, function(v,k){

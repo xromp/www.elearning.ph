@@ -33,7 +33,7 @@ trait PointsTrait
                 )
                 ->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered from answers group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
                 ->where('q.category_code',$category['category_code'])
-                ->where('q.is_approved', 1)
+				->where('q.is_approved', 1)
                 ->get();
                 
             $noAnswered = $answers->where('no_answered','>','0')
@@ -368,7 +368,10 @@ trait PointsTrait
 		$studentAnswer = DB::table('answers as a')
 			->where ('question_code',$data['question_code']);
 
-		$students['student_count'] = DB::table('students')->count();
+		$students['student_count'] = DB::table('students')
+			->join('accounts','students.student_id','=','accounts.studID')
+			->where('accounts.accountTypeID',2)
+			->count();
 		$students['student_rank'] = $studentAnswer->count();
 		
 		$x = $this->GetPoints('answer',$data['type_code'],$data['category_code']);
@@ -392,11 +395,12 @@ trait PointsTrait
 	}
 
 	public function getTotalPointPerCategory($data) {
+		
 		$questionPoints = DB::table('questions')
 			->select('student_id','category_code', DB::raw('SUM(points) as points'))
-			->where('category_code',$data['category_code'])
-			->where('student_id',$data['student_id'])			
-			->groupBy('student_id','category_code')
+			->where('category_code', $data['category_code'])
+			->where('student_id', $data['student_id'])			
+			->groupBy('student_id', 'category_code')
 			->first();
 
 		$answerPoints = DB::table('answers as a')
