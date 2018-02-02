@@ -136,6 +136,4 @@ Route::get('/GetID/', 'AchievementsController@getStudID');
 //for checking
 Route::get('/GetPostPoints/', 'PointsController@PointsPosting');
 Route::get('/GetAnswerPoints/', 'PointsController@PointsAnswering');
-
-
 Route::get('/api/v1/top10/get', 'PointsController@getTop10');

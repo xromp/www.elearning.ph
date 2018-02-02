@@ -9,15 +9,35 @@
         function ProfileCtrl($scope, ProfileSrvcs, $stateParams, $window) {
             var vm = this;
             vm.onLoad = function(){
+ 
+                vm.tabs = [
+                    {"id":2, "title":"Posted Questions", "status":"active", "code":"PostedQuestions"},
+                    {"id":3, "title":"Answered Questions", "status":null, "code":"AnsweredQuestions"},
+                    {"id":1, "title":"Rewards", "status":null, "code":"Rewards"}
+                ];
 
-                $scope.question_ans = true;
-                $scope.posted_questions = true;
-                $scope.answered_questions = false;
+                vm.dataView = "PostedQuestions";
             }();
  
             vm.routeTo = function(qc) {
                 $window.location.href ='/question/answerquestion/'+qc;
             };
+
+            $scope.tabs = function(value)
+            {
+                // alert(value);
+                angular.forEach(vm.tabs, function(v, k){
+                    v.status = null;
+                    if(v.id == value)
+                    {
+                        v.status = "active";
+                        vm.dataView = v.code;
+                    }
+                })
+
+                // console.log(vm.tabs);
+            }
+
             ProfileSrvcs.OtherUser({hashedID:$stateParams.id}).then (function (response) {
                  
                 if(response.data.status == 200)
@@ -29,17 +49,16 @@
                         if(response.data.status == 200)
                         {
                             vm.students = response.data.data;
-                            console.log(vm.students[0])
+                            // console.log(vm.students[0])
                         }
                     }, function (){ alert('Bad Request!!!') })
         
-                    
                     //points
                     ProfileSrvcs.Points({student_id:vm.UserData.student_id}).then (function (response) {
                         if(response.data.status == 200)
                         {
                             vm.points = response.data.data;
-                            console.log(vm.points)
+                            // console.log(vm.points)
                         }
                     }, function (){ alert('Bad Request!!!') })
 
@@ -54,11 +73,12 @@
                     //         console.log(vm.students[0])
                     //     }
                     // }, function (){ alert('Bad Request!!!') })
+
                 }
             }, function (){alert('Bad Request!!!')})
           
             ProfileSrvcs.PostedQuestions({hashedID:$stateParams.id}).then (function (response) {
-                console.log(response.data)
+                // console.log(response.data)
 
                 if(response.data.status == 200)
                 {
@@ -74,13 +94,23 @@
                     // }
                 }
             }, function(){ alert('Bad Request!')})
+
+            ProfileSrvcs.AnsweredQuestions({hashedID:$stateParams.id}).then (function (response) {
+                // console.log(response.data)
+
+                if(response.data.status == 200)
+                {
+                    vm.answeredQuestionList = response.data.data;
+                    // console.log(vm.answeredQuestionList)
+                }
+            }, function(){ alert('Bad Request!')})
             
             //get achievements
             ProfileSrvcs.Achievements({hashedID:$stateParams.id}).then (function (response) {
                 if(response.data.status == 200)
                 {
                     vm.achievements = response.data.data;
-                    console.log(vm.achievements)
+                    // console.log(vm.achievements)
                 }
             }, function (){ alert('Bad Request!!!') })
 
@@ -97,7 +127,7 @@
                     $scope.answered_questions = true;
                 }
             }
-            console.log(vm.rewards);
+            // console.log(vm.rewards);
         }
 
         ProfileSrvcs.$inject = ['$http', '$stateParams'];
@@ -123,6 +153,14 @@
                     return $http({
                         method: 'POST',
                         url: '/api/v1/profile/postedQuestions',
+                        data: data,
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
+                AnsweredQuestions: function(data) {
+                    return $http({
+                        method: 'GET',
+                        url: '/api/v1/answer/getAnsweredBySelf',
                         data: data,
                         headers: {'Content-Type': 'application/json'}
                     })
