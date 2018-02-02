@@ -209,6 +209,13 @@ class AnswerController extends Controller
         );
         $self = $request->session()->get('student_id');
         
+        if ($self != $formData['student_id'] || $this->isEmpty($formData['student_id'])) {
+            return response()-> json([
+                'status'=>403,
+                'data'=>'',
+                'message'=>'Unauthorized'
+            ]);
+        }
         $answersPerStudent = DB::table('answers as a')
             -> select(
                 'q.question_id',
@@ -223,7 +230,7 @@ class AnswerController extends Controller
                 'q.student_id',
                 DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name'),
                 'q.created_at')
-            -> join( DB::raw( "(SELECT 
+            -> join ( DB::raw( "(SELECT 
                 questions.question_id,
                 questions.question_code,
                 questions.category_code,
