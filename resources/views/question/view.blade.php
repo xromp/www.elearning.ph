@@ -1,4 +1,4 @@
-<div class="container" id="mainDiv">
+<div class="container" id="mainDiv" ng-cloak>
     <div class="row">
         <div class="col-sm-8">
             <h3>Most Recent Questions</h3>
@@ -80,6 +80,14 @@
                 </table>
             </div>
         </div>
-        <ul uib-pagination total-items="qc.bigTotalItems" ng-model="qc.bigCurrentPage" max-size="qc.maxSize" class="pagination-sm" boundary-link-numbers="true"></ul>
+        <ul uib-pagination total-items="qc.searchDet.totalItems" ng-model="qc.searchDet.currentPage" max-size="qc.searchDet.rowPerPage" class="pagination-m" boundary-link-numbers="true" ng-change="qc.search(qc.searchDet)"></ul>
     </div>
 </div>
+<script>
+$().ready(function(){
+    $('.material-icons').each(function(i){
+        if (i == 0) {$(this).text('Prev');}
+        if (i == 1) {$(this).text('Next');}
+    });
+});
+</script>

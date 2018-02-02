@@ -6,7 +6,7 @@
 /* 
 trix-toolbar { display: none; } */
 </style>
-<div class="container" id="mainDiv">
+<div class="container" id="mainDiv" ng-cloak>
     <form name="ansqc.frmQuestion" novalidate>
         <div class="row">
             <div class="col-sm-8">

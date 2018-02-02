@@ -48,6 +48,7 @@ class QuestionController extends Controller
         }
     }
 
+
     public function get(Request $request)
     {
         $formData = array(
@@ -59,7 +60,184 @@ class QuestionController extends Controller
             'search_title'=>$request->input('search_title')
         );
         $isAdmin = ($request->session()->get('account_type') == 1);
+        // $data = array();
+        // $data['category_code'] = 'ADAPTER';
+        // $data['student_id'] = 5;
+        // dd($this->isMasterAchievedByCategory($data));
+        $question = DB::table('questions as q')
+            -> select(
+                'q.question_id',
+                'q.question_code',
+                'q.title',
+                'q.description', 
+                'q.is_approved',
+                'c.category_code',
+                'c.description as category_desc',
+                't.type_code',
+                't.description as type_desc',
+                'q.student_id',
+                DB::raw('concat(s.lName,",", s.fName," ", s.mName) as student_name'),
+                'a.no_of_answers',
+                'q.created_at')
+            -> leftJoin( DB::raw( "(SELECT answers.question_code, COUNT( answers.question_code ) as no_of_answers FROM answers GROUP BY answers.question_code) as a"), 'a.question_code', '=', 'q.question_code' )
+            -> leftjoin('categories as c','c.category_code','=','q.category_code')
+            -> leftjoin('types as t','t.type_code','=','q.type_code')
+            -> leftjoin('students as s','s.student_id','=','q.student_id');
+        if (!$this->isEmpty($formData['questionCode'])) {
+            $question->where('q.question_code',$formData['questionCode']);
+        }
+        if (!$this->isEmpty($formData['categoryCode'])) {
+            $question->where('q.category_code',$formData['categoryCode']);
+        }
+        if (!$this->isEmpty($formData['search_title'])) {
+            $question->orWhere('q.title', 'like', '%' . $formData['search_title'] . '%');
+        }
+        // if (!$isAdmin){
+        //     $question->where('q.is_approved',1);
+        // }
+        if ($formData['limit']) {
+            $question->take($formData['limit']);
+        }
+        $question= $question
+        ->latest()
+        ->get();
+        
+        $result = array();
+        $questionCopy = json_decode($question, true);
+        foreach ($questionCopy as $key => $value) {
+            $validEntry = true;
+            $hasAnswered = DB::table('answers')
+                ->where('question_code',$value['question_code'])
+                ->where('student_id',$request->session()->get('student_id'))
+                ->count();
+            
+            $isSelf = ($request->session()->get('student_id') == $value['student_id']);
+            $hasAnswered = ($hasAnswered >= 1);
+            $value['student_info'] = array(
+                'student_id'=>$request->session()->get('student_id'),
+                'name'=>$request->session()->get('fullname'),
+                'is_self'=>$isSelf,
+                'has_answered'=>$hasAnswered,
+                'is_admin'=>$isAdmin
+            );
+            
+            if ($value['type_code'] == 'MULTIPLE_CHOICE'){
+                $multipleChoice = DB::table('multiple_choices')
+                    ->select('question_code','choice_code','choice_desc')
+                    ->where('question_code',$value['question_code'])
+                    ->get();
+                
+                $value['choiceList'] =  $multipleChoice;
+            } elseif($value['type_code'] == 'CODING') {
+                $hasAnsweredCorrectly = DB::table('answers')
+                    ->select('question_code','choice_code','choice_desc')
+                    ->where('question_code',$value['question_code'])
+                    ->where('is_correct',1)
+                    ->count();
+                $value['is_answered_correctly'] = ($hasAnsweredCorrectly >= 1);
+            }
+            if ($value['student_info']['is_self'] == true || ($value['type_code'] == 'CODING' && $value['is_answered_correctly'] && $value['student_info']['has_answered']) ){
+                $isCodingCorrectlyAnswered = ($value['type_code'] == 'CODING' && $value['is_answered_correctly'] && $value['student_info']['has_answered']);
+                $student_answered = DB::table('answers as a')
+                ->select('a.student_id',
+                    DB::raw('concat(s.lName,",", s.fName," ", s.mName) as name'),
+                    'answer',
+                    'question_code',
+                    'is_correct')
+                ->leftjoin('students as s','s.student_id','=','a.student_id')
+                ->where('a.question_code',$value['question_code']);
+                if ($isCodingCorrectlyAnswered) {
+                    $student_answered->where('a.is_correct',true);
+                }
+                $student_answeredCopy = $student_answered;
+                $student_answered = $student_answered->get();
+                
+                if ($isCodingCorrectlyAnswered) {
+                    $student_answeredCopy = $student_answeredCopy->first();
+                    // check if current you user answer this correctly
+                    if ($student_answeredCopy->student_id == $request->session()->get('student_id')) {
+                        $value['student_info']['answered_correctly'] = true;
+                    }
+                                    
+                }
+                $value['students_answered'] = array(
+                    'list'=>collect($student_answered),
+                    'count'=>$student_answered->count()
+                );    
+            }
+            
+            if ($value['student_info']['has_answered']){
+                $studentAnswer = DB::table('answers')
+                    ->where('question_code',$value['question_code'])
+                    ->where('student_id',$request->session()->get('student_id'))
+                    ->get();
+                $value['answer'] = array();
+                $studentAnswerCopy = json_decode($studentAnswer, true);
+                // dd($studentAnswerCopy);
+                foreach ($studentAnswerCopy as $key => $student_value)
+                {
+                    array_push($value['answer'],$student_value['answer']);
+                }
+            }
+            if ($value['student_info']['is_self']){
+                $correctAnswer = DB::table('multiple_choices')
+                    ->where('question_code',$value['question_code'])
+                    ->where('is_correct',1)
+                    ->get();
+                $value['answer'] = array();
+                $correctAnswerCopy = json_decode($correctAnswer, true);
+                foreach ($correctAnswerCopy as $key => $ans_value)
+                {
+                    array_push($value['answer'],$ans_value['choice_code']);
+                }
+                
+            }
+            if ($value['type_code'] == 'CODING'){
+                // $validEntry = !$value['is_answered_correctly'];
+            }
+            if ( !($isSelf || $isAdmin) && !$value['is_approved'] ) {
+                $validEntry = false;
+            }
+            // for seaching on the question dashboard
+            if ($formData['search_type'] == 'UNANSWERED'){
+                $validEntry = ($value['student_info']['has_answered'] == false) ? true: false;
+            } elseif ($formData['search_type'] == 'ANSWERED'){
+                $validEntry = ($value['student_info']['has_answered'] == true) ? true: false;
+            } elseif ($formData['search_type'] == 'SELF'){
+                $validEntry = ($value['student_info']['is_self'] == true) ? true: false;
+            }
+            if ($validEntry) {
+                array_push($result,$value);
+                
+            }
+        }
+        return response()-> json([
+            'status'=>200,
+            'count'=>count($result),
+            'data'=>$result,
+            'message'=>''
+        ]);
+    }
 
+    public function getByPage(Request $request)
+    {
+        $formData = array(
+            'limit'=>$request->input('limit'),
+            'questionCode'=>$request->input('questionCode'),
+            'categoryCode'=>$request->input('categoryCode'),
+            'type'=>$request->input('orno'),
+            'search_type'=>$request->input('search_type'),
+            'search_title'=>$request->input('search_title'),
+            'row_per_page'=>$request->input('rowPerPage'),
+            'current_page'=>$request->input('currentPage')
+        );
+        $isAdmin = ($request->session()->get('account_type') == 1);
+
+
+        //pagination param
+
+        if ($this->isEmpty($formData['row_per_page'])) {$formData['row_per_page'] =10;}
+        if ($this->isEmpty($formData['current_page'])) {$formData['current_page'] =1;}
         // $data = array();
         // $data['category_code'] = 'ADAPTER';
         // $data['student_id'] = 5;
@@ -110,6 +288,9 @@ class QuestionController extends Controller
         $result = array();
 
         $questionCopy = json_decode($question, true);
+        $row=0;
+        $totalItems=0;
+        $pageNo=0;
         foreach ($questionCopy as $key => $value) {
             $validEntry = true;
 
@@ -226,22 +407,37 @@ class QuestionController extends Controller
             } elseif ($formData['search_type'] == 'SELF'){
                 $validEntry = ($value['student_info']['is_self'] == true) ? true: false;
             }
-
+            
 
             if ($validEntry) {
-                array_push($result,$value);
+                $row++;
+                $totalItems++;
+                $pageNo = (int)($row/$formData['row_per_page']) +1;
+                
+                $value['row'] = $row;
+                $value['pageNo'] = $pageNo;
+            
+                if ($pageNo== $formData['current_page']) {
+                    array_push($result,$value);        
+                }
                 
             }
         }
+        $pageData = array(
+            'totalItems' => $totalItems,
+            'currentPage'=>$formData['current_page'],
+            'rowPerPage'=>$formData['row_per_page']
+        );
 
         return response()-> json([
             'status'=>200,
-            'count'=>count($result),
+            'count'=>$totalItems,
+            'page'=> $pageData,
             'data'=>$result,
             'message'=>''
         ]);
     }
-    
+
     public function getWithPaginate(Request $request){
         $users = DB::table('questions')->simplePaginate(10);
         

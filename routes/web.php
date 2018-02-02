@@ -23,6 +23,7 @@ Route::get('/question/answerquestion/{questionid}','QuestionController@index');
 
 // api
 Route::get('/api/v1/question/get','QuestionController@get');
+Route::get('/api/v1/question/getByPage','QuestionController@getByPage');
 Route::get('/api/v1/question/getWithPaginate','QuestionController@getWithPaginate');
 Route::get('/api/v1/question/categories','QuestionController@getCategories');
 Route::get('/api/v1/question/getQuestions','QuestionController@getQuestions');
@@ -42,7 +43,10 @@ Route::get('/stockmarket/category/{categoryCode}','StockMarketController@index')
 Route::get('/stockmarket/stockmarket/getcategory','QuestionController@getCategory');
 
 // answer api
-Route::get('/api/v1/answer/getAnsweredBySelf','AnswerController@getAnsweredBySelf'); //http://localhost:8000/api/v1/answer/getAnsweredBySelf
+// Route::group(['middleware' => 'isLoggedOn'], function () {
+    Route::get('/api/v1/answer/getAnsweredBySelf','AnswerController@getAnsweredBySelf'); //http://localhost:8000/api/v1/answer/getAnsweredBySelf
+    
+// });
 Route::post('/api/v1/answer/save','AnswerController@save');
 
 

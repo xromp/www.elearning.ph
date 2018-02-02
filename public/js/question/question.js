@@ -17,24 +17,22 @@
 
             vm.searchDet = {
                 search_title:'',
-                search_type:'ALL'
+                search_type:'ALL',
+                rowPerPage:10,
+                currentPage:1,
             };
 
-            QuestionSrvcs.get(data)
-            .then (function (response) {
-              if (response.data.status == 200) {
-                vm.questionList = response.data.data;
-                // console.log(vm.questionList)
-              }
-            },function(){ alert("Bad Request!")})
+            // QuestionSrvcs.get(data)
+            // .then (function (response) {
+            //   if (response.data.status == 200) {
+            //     vm.questionList = response.data.data;
+            //     // console.log(vm.questionList)
+            //   }
+            // },function(){ alert("Bad Request!")})
 
-            vm.totalItems = 30;
-            vm.currentPage = 4;
-            vm.maxSize = 3;
-            vm.bigTotalItems = 175;
-            vm.bigCurrentPage = 1;
-
- 
+            vm.pageChanged = function(i) {
+                console.log('Page changed to: ' + i);
+            };
 
             QuestionSrvcs.TopStudents().then(function(response){
                     if(response.data.status == 200)
@@ -47,17 +45,17 @@
 
             vm.search = function(data){
                 var dataCopy = angular.copy(data);
-
-                QuestionSrvcs.get(dataCopy)
+                
+                QuestionSrvcs.getByPage(dataCopy)
                 .then (function (response) {
                     if (response.data.status == 200) {
                         vm.questionList = response.data.data;
-                        // console.log(vm.questionList)
+                        vm.searchDet.totalItems = response.data.page.totalItems;
                     }
                 },function(){ alert("Bad Request!")})
             };
 
-            
+            vm.search(data);            
 
              vm.routeTo = function(route){
                 $window.location.href = route;
@@ -393,6 +391,14 @@
                     headers: {'Content-Type': 'application/json'}
                   })
                 },
+                getByPage: function(data) {
+                    return $http({
+                      method:'GET',
+                      data:data,
+                      url: '/api/v1/question/getByPage?questionCode='+data.questionCode+'&search_type='+data.search_type+'&search_title='+data.search_title+'&rowPerPage='+data.rowPerPage+'&currentPage='+data.currentPage,
+                      headers: {'Content-Type': 'application/json'}
+                    })
+                  },  
                 updateRatings: function(data) {
                     return $http({
                         method:'POST',
