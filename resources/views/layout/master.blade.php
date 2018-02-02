@@ -119,8 +119,10 @@
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular/angular.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-router/release/angular-ui-router.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-sanitize/angular-sanitize.min.js')}}"></script>
+    
     <!--script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js')}}"></script-->
-    <script type="text/javascript" src="{{URL::to('assets/node_modules/angular1-ui-bootstrap4/dist/ui-bootstrap-tpls.js')}}"></script>
+    <script type="text/javascript" src="{{URL::to('assets/node_modules/angular1-ui-bootstrap4/dist/ui-bootstrap-tpls.js')}}"></script> 
+
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-ui-notification/dist/angular-ui-notification.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/angular-trix/dist/angular-trix.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::to('assets/node_modules/trix/dist/trix.js')}}"></script>

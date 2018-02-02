@@ -1,5 +1,5 @@
 
-<div class="container" id="mainDiv">
+<div class="container" id="mainDiv" ng-cloak>
     <div class="row">
     	<div class="col-sm-2 blog-main">
     		<img src="{{ url('/') }}/uploads/profile/person-8x.png" style="width:150px;"/> 
@@ -31,7 +31,7 @@
         <div class="col-sm-12">
             <ul class="nav nav-tabs">
               <li class="nav-item" ng-repeat="tab in pc.tabs">
-                <a class="nav-link <%tab.status%>" ng-click="tabs(tab.id)" href="#"><%tab.title%></a>
+                <a class="nav-link <%tab.status%>" ng-if="tab.isSelf"  ng-click="tabs(tab.id)" href="#"><%tab.title%></a>
               </li>
             </ul>
 
@@ -86,7 +86,7 @@
                         </a>
                         <br/>
                     </div>
- 
+                    <h5 style="text-align: center;" ng-if="pc.questionsWarning"> No records </h5>
                 </div>
             </div>
             <!-- posted questions -->
@@ -94,7 +94,6 @@
             <!-- anwered questions -->
             <div class="row" ng-if="'AnsweredQuestions'==pc.dataView" style="margin-top:20px;" >
                 <div class="col-sm-12 blog-main">
-                    
                     <div class="list-group" ng-repeat="question in pc.answeredQuestionList">
                         <a href="\question\answerquestion\<%question.question_code%>" ng-click="pc.routeTo(question.question_code)" class="list-group-item list-group-item-action flex-column align-items-start">
                             <div class="d-flex w-100 justify-content-between">
@@ -111,11 +110,9 @@
                         </a>
                         <br/>
                     </div>
-                     
                 </div>
             </div>
             <!-- a questions -->
-
         </div>
         <br>
         <br>

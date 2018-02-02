@@ -9,11 +9,12 @@
         function ProfileCtrl($scope, ProfileSrvcs, $stateParams, $window) {
             var vm = this;
             vm.onLoad = function(){
- 
+
+                vm.questionsWarning = false;
                 vm.tabs = [
-                    {"id":2, "title":"Posted Questions", "status":"active", "code":"PostedQuestions"},
-                    {"id":3, "title":"Answered Questions", "status":null, "code":"AnsweredQuestions"},
-                    {"id":1, "title":"Rewards", "status":null, "code":"Rewards"}
+                    {"id":2, "title":"Posted Questions", "status":"active", "code":"PostedQuestions", "isSelf":true},
+                    {"id":3, "title":"Answered Questions", "status":null, "code":"AnsweredQuestions", "isSelf":false},
+                    {"id":1, "title":"Rewards", "status":null, "code":"Rewards", "isSelf":true}
                 ];
 
                 vm.dataView = "PostedQuestions";
@@ -34,8 +35,6 @@
                         vm.dataView = v.code;
                     }
                 })
-
-                // console.log(vm.tabs);
             }
 
             ProfileSrvcs.OtherUser({hashedID:$stateParams.id}).then (function (response) {
@@ -62,49 +61,47 @@
                         }
                     }, function (){ alert('Bad Request!!!') })
 
+                    ProfileSrvcs.AnsweredQuestions({studentId:vm.UserData.student_id}).then (function (response) {
+                        // console.log(response.data)
+                        if(response.data.status == 200)
+                        {
+                            vm.isSelf = true;
+                            vm.answeredQuestionList = response.data.data;
+                            vm.tabs[1].isSelf = true;
+                            // console.log(vm.answeredQuestionList)
+                        }
+                        else if(response.data.status == 403)
+                        {
+                            vm.isSelf = false;
+                            vm.tabs[1].isSelf = false;
+                        }
 
-                    // console.log("user = "+vm.UserName)
-                    // console.log("user = "+vm.UserData.student_id)
-
-                    // ProfileSrvcs.Rewards({student_id:vm.UserData.student_id}).then (function (response) {
-                    //     if(response.data.status == 200)
-                    //     {
-                    //         vm.students = response.data.data;
-                    //         console.log(vm.students[0])
-                    //     }
-                    // }, function (){ alert('Bad Request!!!') })
+                    }, function(){ alert('Bad Request!')})
 
                 }
             }, function (){alert('Bad Request!!!')})
           
+
+
+
             ProfileSrvcs.PostedQuestions({hashedID:$stateParams.id}).then (function (response) {
-                // console.log(response.data)
+                // 
 
                 if(response.data.status == 200)
                 {
                     vm.questionList = response.data.data;
-                    // if(response.data.isSelf == "true")
-                    // {
-                    //     vm.questionList = response.data.data;
-                    //     console.log(vm.questionList)
-                    // }
-                    // else
-                    // {
-                    //     // $scope.question_ans = false;
-                    // }
+                    console.log(response.data.data)
+
+                    if(Object.keys(vm.questionList).length == 0)
+                    {
+                        vm.questionsWarning = true;
+                    }
+
+                    console.log(vm.questionsWarning)
+                    
                 }
             }, function(){ alert('Bad Request!')})
 
-            ProfileSrvcs.AnsweredQuestions({hashedID:$stateParams.id}).then (function (response) {
-                // console.log(response.data)
-
-                if(response.data.status == 200)
-                {
-                    vm.answeredQuestionList = response.data.data;
-                    // console.log(vm.answeredQuestionList)
-                }
-            }, function(){ alert('Bad Request!')})
-            
             //get achievements
             ProfileSrvcs.Achievements({hashedID:$stateParams.id}).then (function (response) {
                 if(response.data.status == 200)
@@ -113,21 +110,6 @@
                     // console.log(vm.achievements)
                 }
             }, function (){ alert('Bad Request!!!') })
-
-            $scope.ShowHidQuestionAns = function(status)
-            {
-                if(status == 1)
-                {
-                    $scope.posted_questions = true;
-                    $scope.answered_questions = false;
-                }
-                else
-                {
-                    $scope.posted_questions = false;
-                    $scope.answered_questions = true;
-                }
-            }
-            // console.log(vm.rewards);
         }
 
         ProfileSrvcs.$inject = ['$http', '$stateParams'];
@@ -160,7 +142,7 @@
                 AnsweredQuestions: function(data) {
                     return $http({
                         method: 'GET',
-                        url: '/api/v1/answer/getAnsweredBySelf',
+                        url: '/api/v1/answer/getAnsweredBySelf?studentId='+data.studentId,
                         data: data,
                         headers: {'Content-Type': 'application/json'}
                     })
