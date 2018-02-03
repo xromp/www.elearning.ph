@@ -308,6 +308,12 @@ trait AchievementsTrait
     }
 
     public function isMasterAchievedByCategory($data) {
+        // echo($this->getTotalPointPerCategory($data)['total_points']);
+        // dd($this->getTotalPointPerCategory($data)['total_points']);
+        $this->isReachingPoints($data);
+        $this->isAllAchievement($data);
+        $this->isMasterAllCategory($data);
+
         if ($this->getTotalPointPerCategory($data)['total_points'] >= 12) {
             $achievedCode = DB::table('rewards as r')
                 ->where('entity1',$data['category_code'])
@@ -367,14 +373,15 @@ trait AchievementsTrait
         $unAchievedCount = DB::table('achievements as a')
             -> LEFTJOIN( DB::raw( "(SELECT rewards.achievement_code, rewards.active, entity2 FROM rewards
                 WHERE entity2 = 'CATEGORYGROUP' AND
+                rewards.achievement_code <> 'PTP-01' AND
                 active = 1
                 GROUP BY achievement_code, active, entity2) as r"), 
                 'a.achievement_code', '=', 'r.achievement_code' )
             -> WHERE('a.is_achieved',false)
             -> WHERE('a.student_id',$data['student_id'])
             -> count();
-        
-        if ($unAchievedCount > 1) {
+
+        if ($unAchievedCount == 0) {
             $transaction = DB::transaction(function($data) use($data) {
                 
                 $formData = array (
@@ -684,22 +691,28 @@ trait AchievementsTrait
     public function isAllAchievement($data) {
         
         $rewards_count = DB::table('rewards as r')
-            ->where('active',1)
-            ->count();
-        
+            ->select(DB::raw('count(achievement_code) as total'))
+            ->where('active',true)
+            ->where('achievement_code','<>','FNA-02')
+            ->groupBy('active', 'achievement_code')
+            ->get();
+
         $achievements_count = DB::table('achievements as a')
+            ->select(DB::raw('count(achievement_code) as total'))
             ->where('is_achieved',true)
             ->where('student_id',$data['student_id'])
-            ->count();
+            ->groupBy('is_achieved', 'student_id','achievement_code')
+            ->get();
 
-        $isGetAll = ($rewards_count == $achievements_count);
-
+        $isGetAll = (count($rewards_count) == count($achievements_count));
+        // print_r(count($rewards_count).'-'.count($achievements_count));
+        // print_r($isGetAll);
         if ($isGetAll){
 
             $transaction = DB::transaction(function($data) use($data) {
                 
                 $formData = array (
-                    'code'=> 'FNA-01',
+                    'code'=> 'FNA-02',
                     'student_id'=>$data['student_id']
 
                 );
@@ -737,20 +750,32 @@ trait AchievementsTrait
     }
 
     public function isReachingPoints($data){
-        $points = $this->getTotalPointPerCategory($data);
+        $points = $this->getTotalPointPerStudent($data);
+        // print_r($points);
+        // dd();
         $isValid = false;
         if ($points['total_points'] >= 25 ) {
             $isValid = true;
             $data['code'] = 'PTP-10';
-        } elseif ($points['total_points'] >= 50) {
+        } 
+        if ($points['total_points'] >= 50) {
+            $isValid = true;
             $data['code'] = 'PTP-11';
-        } elseif ($points['total_points'] >= 100) {
+        } 
+        if ($points['total_points'] >= 100) {
+            $isValid = true;
             $data['code'] = 'PTP-12';
-        } elseif ($points['total_points'] >= 150) {
+        } 
+        if ($points['total_points'] >= 150) {
+            $isValid = true;
             $data['code'] = 'PTP-13';
-        } elseif ($points['total_points'] >= 200) {
+        } 
+        if ($points['total_points'] >= 200) {
+            $isValid = true;
             $data['code'] = 'PTP-14';
-        } elseif ($points['total_points'] >= 500) {
+        } 
+        if ($points['total_points'] >= 500) {
+            $isValid = true;
             $data['code'] = 'PTP-15';
         }
 
@@ -762,7 +787,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -806,7 +831,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,
@@ -849,7 +874,7 @@ trait AchievementsTrait
                     'student_id'=>$data['student_id']
 
                 );
-
+                $data['achievement_code'] = $formData['code'];
                 if ($this->isAchivementExists($formData)){
                     return response()->json([
                         'status'=> 200,

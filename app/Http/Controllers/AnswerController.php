@@ -185,7 +185,8 @@ class AnswerController extends Controller
                 $this->isFirstCorrectAnswer($data);
                 $this->isFirstRated($data);
                 $this->isFirst5Rated($data);
-     
+                $this->isMasterAchievedByCategory($data);
+                
                 return response()->json([
                     'status' => 200,
                     'data' => 'null',

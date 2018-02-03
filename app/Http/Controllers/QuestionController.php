@@ -690,6 +690,8 @@ class QuestionController extends Controller
         $this->isFirstApprovedQuestion($data);
         $this->isHaving20QuestionsApproved($data);
         $this->isFirstReject($data);
+        $this->isMasterAchievedByCategory($data);
+        
         return $transaction;
     }
 
@@ -752,12 +754,12 @@ class QuestionController extends Controller
                     'student_id'=>$data['student_id'],
                     'category_code'=>$data['category_code'],
                 );
-                echo($this->getPointsAnswerPerStudent($i));
-                dd($this->getPointsAnswerPerStudent($i));
+
                 DB::table('answers')
                     -> where('question_code',$data['question_code'])
                     -> where('student_id',$data['student_id'])
-                    -> update(['points'=>$this->getPointsAnswerPerStudent($i)]);
+                    -> update(['points'=>$this->getPointsAnswerCodingPerStudent($i)]);
+                    
             }
             DB::table('answers')
                 -> where('question_code',$data['question_code'])
@@ -766,7 +768,8 @@ class QuestionController extends Controller
             
             $this->isFirstCorrectAnswer($data);
             $this->isFirstCorrectCodingAnswer($data);
-
+            $this->isMasterAchievedByCategory($data);
+            
             
             $message = 'Successfully updated';
 

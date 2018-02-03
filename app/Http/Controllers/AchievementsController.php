@@ -228,6 +228,7 @@ class AchievementsController extends Controller
                 -> where('r.active',true)
                 -> where('r.type',$type['code'])
                 // -> where('student_id',$student['student_id'])
+                ->orderBy('reward_id')
                 -> get();
 
                 $typeDetails['list'] = $achievementsPerStudents;

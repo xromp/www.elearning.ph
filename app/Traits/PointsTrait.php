@@ -16,34 +16,63 @@ use App\Answer;
 trait PointsTrait
 {
 	// use AchievementsTrait;
-    public function getWithAnswer() 
+    public function getWithAnswer($data) 
     {
         $result = array();
         $categories = DB::table('categories as c')
             ->leftJoin( DB::raw( "(SELECT q.category_code, COUNT( q.category_code ) as no_of_questions FROM questions as q GROUP BY q.category_code) as q"), 'q.category_code', '=', 'c.category_code' );
  
-
         $categories = $categories->get();
         
         $categoriesCopy = json_decode($categories, true);
         foreach ($categoriesCopy as $key => $category) {
-            $answers = DB::table('questions as q')
-                ->select(
-                    DB::raw(' COALESCE(no_answered,0) as no_answered')
-                )
-                ->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered from answers group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
+			$answers = DB::table('questions as q');
+			if ( !$data) {
+				
+				if($data['type_code'] == 'CODING') {
+					$answers = $answers
+					->select(
+						DB::raw(' COALESCE(no_answered,0) as no_answered')
+					)
+					->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered 
+						from answers 
+						where is_correct=1
+						group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
+					->where('q.category_code',$category['category_code'])
+					->where('q.is_approved', 1)
+					->get();
+				} else {
+					$answers = $answers
+					->select(DB::raw(' COALESCE(no_answered,0) as no_answered'))
+					->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered 
+						from answers
+						group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
+					->where('q.category_code',$category['category_code'])
+					->where('q.is_approved', 1)
+					->get();						
+				}
+			} else {
+				
+				$answers = $answers
+                ->select(DB::raw(' COALESCE(no_answered,0) as no_answered'))
+				->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered 
+					from answers
+					group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
                 ->where('q.category_code',$category['category_code'])
 				->where('q.is_approved', 1)
-                ->get();
-                
-            $noAnswered = $answers->where('no_answered','>','0')
+				->get();
+			}
+
+			$noAnswered = $answers->where('no_answered','>','0')
                 ->count();
             
             $noUnanswered = $answers->where('no_answered',0)
                 ->count();
+			
+			// print_r($answers);
+			// dd($answers);
             
             $data = $category;
-            // $data['answers'] = $answers;
             $data['no_answered'] = $noAnswered;
             $data['no_unanswered'] = $noUnanswered;
 
@@ -54,9 +83,10 @@ trait PointsTrait
         return $result;
     }
 
-    public function sortUnanswered()
+    public function sortUnanswered($data)
     {
-    	$data = array($this->getWithAnswer());
+
+    	$data = array($this->getWithAnswer($data));
 
     	foreach ($data[0] as $key=> $datum) {
     		 $no_answered[$key] = $datum['no_answered'];
@@ -70,11 +100,11 @@ trait PointsTrait
     }
 
      //STEP1
-    public function GetMedian()
+    public function GetMedian($data)
     {
     	$med_col = array();
 
-    	foreach ($this->sortUnanswered() as $key => $datum) 
+    	foreach ($this->sortUnanswered($data) as $key => $datum) 
     	{
     		$no_of_questions = $datum['no_of_questions'];
     		array_push($med_col, $no_of_questions);
@@ -83,14 +113,14 @@ trait PointsTrait
     	return $median = collect($med_col)->median();
     }
 
-    public function PointsPosting() // for posting
+    public function PointsPosting($data) // for posting
     {
-    	$median = $this->GetMedian();
+    	$median = $this->GetMedian($data);
 
     	$higher = 0;
     	$lower = 0;
     	$status = '';
-    	$data = $this->sortUnanswered();
+    	$data = $this->sortUnanswered($data);
 
     	foreach ($data as $key => $datum) 
     	{
@@ -199,16 +229,16 @@ trait PointsTrait
 
    
 
-    public function PointsAnswering() // points for answering 
+    public function PointsAnswering($data) // points for answering 
     {
 
-    	$median = $this->GetMedian();
+    	$median = $this->GetMedian($data);
 
     	$higher = 0;
     	$lower = 0;
     	$status = '';
     	$unanswered = '';
-    	$data = $this->sortUnanswered();
+    	$data = $this->sortUnanswered($data);
 
     	foreach ($data as $key => $datum) 
     	{
@@ -312,13 +342,18 @@ trait PointsTrait
     public function GetPoints($action, $questionType, $categoryType)
     {
 		// dd($data);
-    	if($action === "answer")
-    	{
-    		$data = $this->PointsAnswering();
+    	if($action == "answer")
+    	{	
+			$i = array(
+				'action'=>$action,
+				'type_code'=>$questionType,
+				'cagtegory'=>$categoryType
+			);
+    		$data = $this->PointsAnswering($i);
     	}
     	elseif($action === "post")
     	{
-    		$data = $this->PointsPosting();
+    		$data = $this->PointsPosting(null);
     	}
     	else
     	{
@@ -383,8 +418,18 @@ trait PointsTrait
 		return ($points) > 8 ? 8 : $points;
 	}
 
+	public function getPointsAnswerCodingPerStudent($data) {
+
+		$points = $this->GetPoints('answer',$data['type_code'],$data['category_code']);
+
+		$this->onLoadPointsPerStudents($data);
+
+		return ($points) > 8 ? 8 : $points;
+	}
+
  
 	public function getPointsQuestionPerStudent($data) {
+
 		$points = $this->GetPoints('post',$data['type_code'],$data['category_code']);
 
 		$this->onLoadPointsPerStudents($data);
@@ -394,6 +439,7 @@ trait PointsTrait
 		// -> update(['points'=>$this->GetPoints('post',$data['type_code'],$data['category_code'])]);
 	}
 
+	
 	public function getTotalPointPerCategory($data) {
 		
 		$questionPoints = DB::table('questions')
@@ -416,7 +462,7 @@ trait PointsTrait
 		$result['question_points'] = ($questionPoints) ? $questionPoints->points :0;
 		$result['answer_points'] = ($answerPoints) ? $answerPoints->points : 0;
 		$result['total_points'] = $result['question_points'] + $result['answer_points'];
-
+		
 		return $result;
 	}
 

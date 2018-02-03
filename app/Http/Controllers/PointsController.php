@@ -42,10 +42,14 @@ class PointsController extends Controller
                 ->select(
                     DB::raw(' COALESCE(no_answered,0) as no_answered')
                 )
-                ->leftJoin( DB::raw( '(SELECT question_code, COUNT(question_code) as no_answered from answers group by question_code order by no_answered) as a'), 'a.question_code', '=', 'q.question_code' )
+                ->leftJoin( DB::raw( 
+					'(SELECT question_code, COUNT(question_code) as no_answered 
+					from answers 
+					where is_correct=1
+					group by question_code order by no_answered) as a'), 
+					'a.question_code', '=', 'q.question_code' )
                 ->where('q.category_code',$category['category_code'])
-                ->where('q.is_approved', 1)
-
+				->where('q.is_approved', 1)
                 ->get();
                 
             $noAnswered = $answers->where('no_answered','>','0')

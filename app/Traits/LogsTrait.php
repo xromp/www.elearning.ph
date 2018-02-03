@@ -69,7 +69,8 @@ trait LogsTrait
     public function masteredLogs($data){
         $formData = array(
             'student_id'=>$data['student_id'],
-            'category'=>$data['category']
+            'category'=>$data['category'],
+            'type'=>'FA'
         );
 
         $formData['desc'] = $data['student_id'].' has mastered '.$data['category'];
