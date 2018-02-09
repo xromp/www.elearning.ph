@@ -90,9 +90,15 @@ trait LogsTrait
     }
 
     public function logsForPlan($data) {
+
+        if  ($data['logs_type'] == 'ASKING') {
+            $data['msg'] = $data['student_id'].' has planned before asking question '.$data['question_id'];
+        } elseif ($data['logs_type'] == 'ANSWERING') {
+            $data['msg'] = $data['student_id'].' has planned before answering question '.$data['question_id'];
+        }
         $formData = array(
             'student_id'=>$data['student_id'],
-            'desc'=>$data['student_id'].' has planned before answering question '.$data['question_id'],
+            'desc'=>$data['msg'],
             'type'=>'PA'
         );
         $this->insertLogs($formData);

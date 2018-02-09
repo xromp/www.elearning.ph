@@ -62,8 +62,8 @@
             }; 
         }
 
-        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal', '$window'];
-        function AskQuestionCtrl(QuestionSrvcs, $uibModal, $window){
+        AskQuestionCtrl.$inject = ['QuestionSrvcs', '$uibModal', '$window', '$location'];
+        function AskQuestionCtrl(QuestionSrvcs, $uibModal, $window, $location){
             var vm = this;
 
            
@@ -112,7 +112,15 @@
             vm.submit = function(data) {
                 if (vm.frmQuestion.$valid){
                     var dataCopy = angular.copy(data);
+                    
+                    var referrerUrl = document.referrer;
+                    var i = referrerUrl.split(new $window.URL($location.absUrl()).origin);
+                    var x = i[1].split('/');
+                    var fromUrl = x[1];
 
+                    if (fromUrl == 'stockmarket') {
+                        dataCopy['loggedForPlan'] = true;
+                    }
                     // multiple choices
                     if  (dataCopy.type_code == 'MULTIPLE_CHOICE') {
                         var hasAnswer = false;

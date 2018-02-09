@@ -472,6 +472,7 @@ class QuestionController extends Controller
         $data['student_id'] = $request->session()->get('student_id');
         $data['createdBy'] = $request-> input('createdBy');
         $data['question_code'] = $this->generateQuestionCode($data['category_code'],$data['type_code']);
+        $data['loggedForPlan']= $request-> input('loggedForPlan');
         
         $hasAnswered = DB::table('answers')
             ->where('question_code',$data['question_code'])
@@ -517,6 +518,7 @@ class QuestionController extends Controller
 
                         //sample default values
                         $questionChoices->save();
+                        
                     }
                 } else if($data['type_code'] == 'IDENTIFICATION') {
                     foreach ($data['answer'] as $key => $choices) {
@@ -538,6 +540,15 @@ class QuestionController extends Controller
                     'question_id'=>$question->question_id
                 );
                 $this->workingLogs($logsData);
+
+                if($data['loggedForPlan']) {
+                    $logsData = array(
+                        'student_id'=>$data['student_id'],
+                        'question_id'=>$question->question_id,
+                        'logs_type'=>'ASKING'
+                    );
+                    $this->logsForPlan($logsData);
+                }
             } else {
                 throw new \Exception("Error Processing Request");
             }

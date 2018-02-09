@@ -175,7 +175,8 @@ class AnswerController extends Controller
                 if($data['loggedForPlan']) {
                     $logsData = array(
                         'student_id'=>$data['student_id'],
-                        'question_id'=>$data['question_id']
+                        'question_id'=>$data['question_id'],
+                        'logs_type'=>'ANSWERING'
                     );
                     $this->logsForPlan($logsData);
                 }
