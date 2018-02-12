@@ -77,7 +77,7 @@ Route::post('/api/v1/leaderboard/find','LeaderboardController@Find');
 
 
 //forums
-Route::get('/forums/index','ForumsController@Index');
+Route::get('/forum/index','ForumsController@Index');
 Route::get('/api/v1/forums/list','ForumsController@Forums');
 Route::get('/api/v1/forums/comments','ForumsController@Comments');
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 
-use DB;
 use App\Student;
 
 class ForumsController extends Controller
@@ -35,8 +34,7 @@ class ForumsController extends Controller
         ]);
     }
  
-    public function get(Request $request)
-    {
+    public function get(Request $request) {
         $data = array(
             'typeCode'=>$request->input('typeCode')
         );
@@ -110,11 +108,11 @@ class ForumsController extends Controller
         ]);
     }
 } 
-    public function Comments($forumCode)
-    {
-    	$id = session()->get('student_id');
-    	$comments = DB::table('comments')->where('forum_code', $forumCode)->get();
-    	return $comments;
-    }
+//     public function Comments($forumCode)
+//     {
+//     	$id = session()->get('student_id');
+//     	$comments = DB::table('comments')->where('forum_code', $forumCode)->get();
+//     	return $comments;
+//     }
 
-} 
+// } 

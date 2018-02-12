@@ -10,25 +10,35 @@
 
             var vm = this;
             vm.onLoad = function(){
-<<<<<<< HEAD
-                
-                ForumSrvcs.get().then(function(response){
-=======
+                vm.forumList = [
+                    {title:'1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-',desc:'This is desc',count:2, created_at:'1/1/2017',show_comment:false,
+                        comments:[
+                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment'},
+                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment2'},
+                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment3'},
+                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment4'}
+                        ]
+                    },
+                    {title:'How to one?',count:2, created_at:'1/1/2017'},
+                    {title:'How to one?',count:2, created_at:'1/1/2017'},
+                    {title:'How to one?',count:2, created_at:'1/1/2017'},
+                    {title:'How to one?',count:2, created_at:'1/1/2017'},
+                    {title:'How to one?',count:2, created_at:'1/1/2017'}
+                ];
 
-                ForumSrvcs.ForumList().then(function(response){
->>>>>>> 628070d120e3e80b0a09d8862b95db978984f564
-                    if(response.data.status == 200)
-                    {
-                        vm.forumList = response.data.data;
-                        console.log(response.data);
-                    }
-                }, function() { alert('Bad Request!!!') })
-<<<<<<< HEAD
-=======
-                
->>>>>>> 628070d120e3e80b0a09d8862b95db978984f564
+                // ForumSrvcs.get().then(function(response){
+                //     if(response.data.status == 200)
+                //     {
+                //         vm.forumList = response.data.data;
+                        
+                //         console.log(response.data);
+                //     }
+                // }, function() { alert('Bad Request!!!') })
             }();
 
+            vm.showComment = function(data) {
+                data.show_comment = (data.show_comment) ? false : true;
+            };
             
             $scope.search = function(name)
             {
@@ -60,18 +70,10 @@
         ForumSrvcs.$inject = ['$http'];
         function ForumSrvcs ($http){
             return {
-<<<<<<< HEAD
                 get: function(data) {
                     return $http({
                         method: 'GET',
                         url: '/api/v1/forum/get',
-=======
-                ForumList: function(data) {
-                    return $http({
-                        method: 'GET',
-                        url: '/api/v1/forums/list',
-                        data: null,
->>>>>>> 628070d120e3e80b0a09d8862b95db978984f564
                         headers: {'Content-Type': 'application/json'}
                     })
                 }
