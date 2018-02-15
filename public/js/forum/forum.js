@@ -3,67 +3,116 @@
     angular
         .module('eApp')
         .controller('ForumCtrl', ForumCtrl)
+        .controller('ForumCreateTopicCtrl', ForumCreateTopicCtrl)
+        .controller('ModalInfoInstanceCtrl',ModalInfoInstanceCtrl)
         .factory('ForumSrvcs', ForumSrvcs)
 
         ForumCtrl.$inject = ['$scope', 'ForumSrvcs', '$stateParams', '$window'];
         function ForumCtrl($scope, ForumSrvcs, $stateParams, $window) {
 
             var vm = this;
-            vm.onLoad = function(){
-                vm.forumList = [
-                    {title:'1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-1234567890-',desc:'This is desc',count:2, created_at:'1/1/2017',show_comment:false,
-                        comments:[
-                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment'},
-                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment2'},
-                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment3'},
-                            {name:'Penaflor, Rommel A.', comment:'This is a sample comment4'}
-                        ]
-                    },
-                    {title:'How to one?',count:2, created_at:'1/1/2017'},
-                    {title:'How to one?',count:2, created_at:'1/1/2017'},
-                    {title:'How to one?',count:2, created_at:'1/1/2017'},
-                    {title:'How to one?',count:2, created_at:'1/1/2017'},
-                    {title:'How to one?',count:2, created_at:'1/1/2017'}
-                ];
 
-                // ForumSrvcs.get().then(function(response){
-                //     if(response.data.status == 200)
-                //     {
-                //         vm.forumList = response.data.data;
-                        
-                //         console.log(response.data);
-                //     }
-                // }, function() { alert('Bad Request!!!') })
+            vm.onLoad = function(){
+                var data = {}
+                ForumSrvcs.get(data)
+                .then (function (response) {
+                    if (response.data.status == 200) {
+                        vm.forumList = response.data.data;
+                    }
+                },function(){ alert("Bad Request!")})
+
             }();
 
             vm.showComment = function(data) {
+                angular.forEach(vm.forumList, function(v,k){
+                    v.show_comment= false;
+                });
                 data.show_comment = (data.show_comment) ? false : true;
+                data.comment = '';
             };
             
-            $scope.search = function(name)
-            {
-                ForumSrvcs.FindUsers({fName:name}).then (function (response) {
-                    if(response.data.status == 200 && response.data.data != null)
-                    {
-                        vm.UserData = response.data.data;
-                        console.log(vm.UserData);
-                    }
-                    else
-                    {
-                        alert("No records found!");
-                        ForumSrvcs.Users().then (function (response) {
-                            if(response.data.status == 200)
-                            {
-                                vm.UserData = response.data.data;
+            vm.submitComment = function(data, forumId){
+                if (vm.frmComment.$valid) {
+                    var dataCopy = angular.copy(data);
+                    dataCopy.forumId = forumId;
+
+                    var formData = angular.toJson(dataCopy);
+                    ForumSrvcs.saveComment(formData)
+                    .then(function(response){
+                        if (response.data.status == 200) {
+                            data.comment = '';
+                            ForumSrvcs.get(dataCopy)
+                            .then (function (responseComments) {
+                                if (responseComments.data.status == 200) {
+                                    angular.forEach(vm.forumList, function(v,k){
+                                        if (v.forum_id == dataCopy.forumId) {
+                                            var latest = responseComments.data.data[0];
+                                            v.comments_count = latest.comments_count;
+                                            v.comments = latest.comments;
+                                        }
+                                    })
+                                    
+                                }
+                            },function(){ alert("Bad Request!")})
+                        }
+                    }, function () {
+                        alert('Something went wrong.')
+                    });
+                } else {
+                    vm.frmComment.withError = true;
+                }
+            };
+        }
+
+        ForumCreateTopicCtrl = ['$scope','ForumSrvcs', '$stateParams', '$window' ,'$uibModal']
+        function ForumCreateTopicCtrl($scope, ForumSrvcs, $stateParams, $window, $uibModal) {
+            var vm = this;
+            vm.submit = function(data){
+                if (vm.frmForum.$valid) {
+                    var dataCopy = angular.copy(data);
+
+                    var formData = angular.toJson(dataCopy);
+                    ForumSrvcs.save(formData)
+                    .then(function(response){
+                        var modalInstance = $uibModal.open({
+                            controller:'ModalInfoInstanceCtrl',
+                            templateUrl:'shared.modal.info',
+                            controllerAs: 'vm',
+                            resolve :{
+                              formData: function () {
+                                return {
+                                    title:'Forum Creation',
+                                    message:response.data.message
+                                };
+                              }
                             }
-                        }, function (){ alert('Bad Request!!!') })
-                    }
+                        });
+                        modalInstance.result.then(function (e){
+                            $window.location.href = '/forum/index';                            
+                        }, function () {
+                            alert('Something went wrong.')
+                        });
+                    });
+                } else {
+                    vm.frmForum.withError = true;
+                }
+            };
 
-                }, function (){ alert('Bad Request!!!') })
-            }
+            vm.goBack = function() {
+                $window.location.href = '/forum/index';
+            };
+        }
 
-            vm.routeTo = function(route){
-                $window.location.href = route;
+        ModalInfoInstanceCtrl.$inject = ['$uibModalInstance', 'formData'];
+        function ModalInfoInstanceCtrl ($uibModalInstance, formData) {
+            var vm = this;
+            vm.formData = formData;
+            vm.ok = function() {
+                $uibModalInstance.close();
+            };
+            
+            vm.close = function() {
+                $uibModalInstance.close();
             };
         }
 
@@ -73,7 +122,23 @@
                 get: function(data) {
                     return $http({
                         method: 'GET',
-                        url: '/api/v1/forum/get',
+                        url: '/api/v1/forum/get?forumId='+data['forumId'],
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
+                save: function(data) {
+                    return $http({
+                        method: 'POST',
+                        url: '/api/v1/forum/save',
+                        data: data,
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                },
+                saveComment: function(data) {
+                    return $http({
+                        method: 'POST',
+                        url: '/api/v1/forum/savecomment',
+                        data: data,
                         headers: {'Content-Type': 'application/json'}
                     })
                 }

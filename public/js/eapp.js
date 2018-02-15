@@ -70,6 +70,11 @@
                 controller: 'ForumCtrl as fc',
                 templateUrl: 'forum.view'
             })
+            .state('forum-create-topic', {
+                url: '/forum/createtopic',
+                controller: 'ForumCreateTopicCtrl as ftc',
+                templateUrl: 'forum.create'
+            })
             .state('forum-view', {
                 url: '/forum/:id',
                 controller: 'ForumCtrl as fc',

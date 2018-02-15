@@ -77,9 +77,13 @@ Route::post('/api/v1/leaderboard/find','LeaderboardController@Find');
 
 
 //forums
-Route::get('/forum/index','ForumsController@Index');
-Route::get('/api/v1/forums/list','ForumsController@Forums');
-Route::get('/api/v1/forums/comments','ForumsController@Comments');
+Route::get('/forum/index','ForumController@Index');
+Route::get('/forum/createtopic','ForumController@Index');
+
+Route::post('/api/v1/forum/save','ForumController@save');
+Route::post('/api/v1/forum/savecomment','ForumController@saveComment');
+Route::get('/api/v1/forum/get','ForumController@get');
+Route::get('/api/v1/forum/comments','ForumController@Comments');
 
 //Posted Question API
 Route::get('/api/v1/profile/user','ProfileController@User'); 
