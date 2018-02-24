@@ -643,7 +643,8 @@ class QuestionController extends Controller
             'is_approved' => 0,
             'student_id' => $request->input('student_id'),
             'category_code' => $request->input('category_code'),
-            'type_code' => $request->input('type_code')
+            'type_code' => $request->input('type_code'),
+            'remarks' => $request->input('remarks')
         );
 
         if(!($data['action'] == 'APPROVED'||$data['action'] == 'DECLINED')) {
@@ -686,7 +687,7 @@ class QuestionController extends Controller
             
             DB::table('questions')
                 -> where('question_code',$data['questionCode'])
-                -> update(['is_approved'=>$data['is_approved']]);
+                -> update(['is_approved'=>$data['is_approved'],'approved_remarks'=>$data['remarks']]);
                 
             $message = 'Successfully '.strtolower($data['action'].'.');
 

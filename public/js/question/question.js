@@ -7,6 +7,7 @@
         .controller('AnswerQuestionCtrl',AnswerQuestionCtrl)
         .controller('ModalInfoInstanceCtrl',ModalInfoInstanceCtrl)
         .controller('ModalRateInstanceCtrl',ModalRateInstanceCtrl)
+        .controller('ModalApprovalRemarksInstanceCtrl',ModalApprovalRemarksInstanceCtrl)
         .factory('QuestionSrvcs',QuestionSrvcs)
 
         QuestionCtrl.$inject = ['QuestionSrvcs', '$window'];
@@ -279,24 +280,23 @@
                 }
             }
             
-            vm.action = function(data,actiontype){
+            vm.action = function(data,actiontype, remarks){
                 var formData = angular.copy(data);
                 formData.action = actiontype;
+                formData.remarks = remarks;
 
                 var formDataCopy = angular.toJson(formData);
-                QuestionSrvcs.action(formDataCopy)
-                .then(function(response){
-                    vm.response = response.data.data;
-                    vm.onload();
+
+                if (formData.action == 'DECLINED') {
                     var modalInstance = $uibModal.open({
-                        controller:'ModalInfoInstanceCtrl',
-                        templateUrl:'shared.modal.info',
+                        controller:'ModalApprovalRemarksInstanceCtrl',
+                        templateUrl:'question.approval-remarks',
                         controllerAs: 'vm',
                         resolve :{
                           formData: function () {
                             return {
-                                title:'Questions for approval',
-                                message:response.data.message
+                                title:'Declining Question',
+                                formData:formData
                             };
                           }
                         }
@@ -306,7 +306,31 @@
                     }, function () {
                         alert('Something went wrong.')
                     });
-                },function(error){alert('Something went wrong.')});
+                } else if (formData.action == 'APPROVED') { 
+                    QuestionSrvcs.action(formDataCopy)
+                    .then(function(response){
+                        vm.response = response.data.data;
+                        vm.onload();
+                        var modalInstance = $uibModal.open({
+                            controller:'ModalInfoInstanceCtrl',
+                            templateUrl:'shared.modal.info',
+                            controllerAs: 'vm',
+                            resolve :{
+                              formData: function () {
+                                return {
+                                    title:'Questions for approval',
+                                    message:response.data.message
+                                };
+                              }
+                            }
+                        });
+                        modalInstance.result.then(function (e){
+                            $window.location.href = '/question/view';                            
+                        }, function () {
+                            alert('Something went wrong.')
+                        });
+                    },function(error){alert('Something went wrong.')});       
+                }
             }
 
             vm.decline = function(data){
@@ -374,8 +398,9 @@
                     var formData = angular.toJson(data);
                     QuestionSrvcs.saveAnswer(formData)
                     .then(function(response){
-                        vm.response = response.data;
+                        vm.response = response.data.data;
                         if (vm.response.status == 200){
+                            $uibModalInstance.close();
                             vm.close();
                         }
                     })
@@ -383,6 +408,28 @@
                     return alert('Something went wrong.');
                 }
             }
+        }
+
+        ModalApprovalRemarksInstanceCtrl.$inject = ['$uibModalInstance', 'formData', 'QuestionSrvcs'];
+        function ModalApprovalRemarksInstanceCtrl ($uibModalInstance, formData, QuestionSrvcs) {
+            var vm = this;
+            vm.formData = formData.formData;
+    
+            vm.submit = function(data) {
+                if(data.remarks){
+                    var formDataCopy = angular.copy(vm.formData);
+                    formDataCopy.remarks = data.remarks;
+
+                    QuestionSrvcs.action(formDataCopy)
+                    .then(function(response){
+                        vm.response = response.data;
+                        if (vm.response.status == 200) {
+                            $uibModalInstance.close();
+                            $window.location.href = '/question/view';
+                        }
+                    });
+                }
+            };
         }
 
         QuestionSrvcs.$inject = ['$http'];

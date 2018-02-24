@@ -710,8 +710,7 @@ trait AchievementsTrait
                 GROUP BY forum_id
                 HAVING COUNT(forum_id) >= 5
                 ) as fc"), 
-                'fc.forum_id', '=', 'f.for
-                um_id' )
+                'fc.forum_id', '=', 'f.forum_id' )
             -> where('f.forum_id',$data['forum_id'])
             -> get();   
         

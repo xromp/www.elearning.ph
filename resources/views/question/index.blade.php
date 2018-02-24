@@ -13,6 +13,9 @@
 <script type="text/ng-template" id="question.question-rating-modal">
 	@include('question.question-rating-modal')
 </script>
+<script type="text/ng-template" id="question.approval-remarks">
+	@include('question.approval-remarks')
+</script>
 @endsection
 
 @section('scripts')
