@@ -699,10 +699,11 @@ trait AchievementsTrait
             -> leftJoin( DB::raw( "(SELECT forum_id, COUNT( forum_id ) as comments_count 
                 FROM forums_comments 
                 WHERE student_id <> ".$data['owner_id']."
-                GROUP BY forum_id) as fc"), 
+                GROUP BY forum_id
+                HAVING COUNT(forum_id) >= 5
+                ) as fc"), 
                 'fc.forum_id', '=', 'f.forum_id' )
             -> where('f.forum_id',$data['forum_id'])
-            -> havingRaw('comments_count >= 5')
             -> get();   
         
         $repliesCount = $replies->count();
@@ -757,7 +758,7 @@ trait AchievementsTrait
                 ->select('student_id','student_id',DB::raw('count(student_id) as topicCount'))
                 ->where('student_id',$data['student_id'])
                 ->groupBy('student_id')
-                ->havingRaw('topicCount >= 5')
+                ->havingRaw('count(student_id) >= 5')
                 ->get();
 
         $forumCount = $forum->count();
