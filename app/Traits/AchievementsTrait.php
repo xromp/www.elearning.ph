@@ -388,9 +388,8 @@ trait AchievementsTrait
             -> WHERE('a.is_achieved',true)
             -> WHERE('a.student_id',$data['student_id'])
             -> count();
-        print_r($achievedCount);
-        dd($achievedCount);
-        if ($achievedCount == $rewardsCount) {
+
+            if ($achievedCount == $rewardsCount) {
             $transaction = DB::transaction(function($data) use($data) {
                 
                 $formData = array (
