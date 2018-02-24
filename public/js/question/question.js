@@ -404,7 +404,7 @@
                     var formData = angular.toJson(data);
                     QuestionSrvcs.saveAnswer(formData)
                     .then(function(response){
-                        vm.response = response.data.data;
+                        vm.response = response.data;
                         if (vm.response.status == 200){
                             $uibModalInstance.close();
                             vm.close();

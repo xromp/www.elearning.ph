@@ -9,11 +9,14 @@ use DB;
 use App\Student;
 
 use App\Traits\LogsTrait;
+use App\Traits\PointsTrait;
+
 class LeaderboardController extends Controller
 {
 
 	use AchievementsTrait; // inherit function from achievements trait
     use LogsTrait;
+    use PointsTrait;
    	public function Index(Request $request)
    	{
         $logData = array (

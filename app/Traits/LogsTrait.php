@@ -37,11 +37,13 @@ trait LogsTrait
             }
             // print_r($data);
             // dd(1);
+
             $logs = new Logs;
-                $logs->log_description = $data['desc'];
-                $logs->student_id = $data['student_id'];
-                $logs->type = $data['type_desc'];
-                $logs->save();
+            $logs->log_description = $data['desc'];
+            $logs->student_id = $data['student_id'];
+            $logs->type = $data['type_desc'];
+            $logs->activity_status = ($this->getTotalPointPerStudent($data)['total_points'] >= 100) ? 'A' : 'B';
+            $logs->save();
         });
     }
 
