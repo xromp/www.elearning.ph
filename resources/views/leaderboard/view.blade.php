@@ -43,7 +43,7 @@
             <div class="row">
                 <div class="col-sm-3 blog-main" ng-repeat="student in lbc.students" style="border: 1px solid #ddd;margin:10px;padding:10px;border-radius: 15px;cursor:ponter" ng-click="lbc.routeTo('/profile/'+student.hashedID)"> 
                     <h5> <%student.name%></h5>
-                    <div class="score"> <b> <%student.total_points%></b> </div>
+                    <div class="score"> <b> <%student.total_points | number: 2 %></b> </div>
                     
                     </br>
                     <span ng-repeat="achievement in student.achievementList"> 
