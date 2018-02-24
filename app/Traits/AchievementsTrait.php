@@ -714,10 +714,9 @@ trait AchievementsTrait
             -> where('f.forum_id',$data['forum_id'])
             -> get();   
         
-        $repliesCount = $replies->count();
-        $replies_det = $replies-> first();
+        $replies_det = $replies->first();
         
-        if ($repliesCount){
+        if ($replies_det->comments_count){
             $data['student_id'] = $replies_det->student_id;
 
             $transaction = DB::transaction(function($data) use($data) {
