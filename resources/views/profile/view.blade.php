@@ -5,19 +5,19 @@
     		<img src="{{ url('/') }}/uploads/profile/person-8x.png" style="width:150px;"/> 
     	</div>
         <div class="col-sm-8 blog-main"> 
-            <h2><%pc.UserName%></h2>
+            <h1 style="text-align: center;"><%pc.UserName%></h1>
 
             <div class="row">
                 <div class="col-sm-4 blog-main" style="text-align: center;">
-                   <h1> <%pc.points['total_points'] | number : 2 %> </h1>
+                   <h4> <%pc.points['total_points'] | number : 2 %> </h4>
                    <h5>Total Points</h5>
                 </div>
                 <div class="col-sm-4 blog-main" style="text-align: center;">
-                   <h1> <%pc.points['answer_points'] | number : 2 %> </h1>
+                   <h4> <%pc.points['answer_points'] | number : 2 %> </h4>
                    <h5>Points - Answering</h5>
                 </div>
                 <div class="col-sm-4 blog-main" style="text-align: center;">
-                   <h1> <%pc.points['question_points'] | number : 2 %> </h1>
+                   <h4> <%pc.points['question_points'] | number : 2 %> </h4>
                    <h5>Points - Posting</h5>
                 </div>
             </div>

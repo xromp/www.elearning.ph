@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use App\Account;
 use App\Student;
+use DB;
 
 use Hash;
 
@@ -114,5 +115,28 @@ class AccountController extends Controller
 
     public function bcrypt(){
         echo bcrypt('123');
+    }
+
+    public function hashedPassword()
+    {
+        $students = DB::table('initial_password')->get();
+
+        echo "<table style='border-collapse: collapse;border:1px solid;'>";
+        echo "<tr>";
+            echo "<td style='border: 1px solid black;'> Student ID </td>";
+            echo "<td style='border: 1px solid black;'> Username </td>";
+            echo "<td style='border: 1px solid black;'> Password </td>";
+            echo "<td style='border: 1px solid black;'> Hashed Password </td>";
+          echo "</tr>";
+        foreach($students as $key=>$student)
+        {
+          echo "<tr>";
+            echo "<td style='border: 1px solid black;'>".$student->student_id."</td>";
+            echo "<td style='border: 1px solid black;'>".$student->username."</td>";
+            echo "<td style='border: 1px solid black;'>".$student->password."</td>";
+            echo "<td style='border: 1px solid black;'>".bcrypt($student->password)."</td>";
+          echo "</tr>";
+        }
+        echo "</table>";
     }
 }

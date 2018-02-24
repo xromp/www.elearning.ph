@@ -150,4 +150,8 @@ Route::group(['middleware' => 'isLoggedOn'], function () {
     Route::get('/GetPostPoints/', 'PointsController@PointsPosting');
     Route::get('/GetAnswerPoints/', 'PointsController@PointsAnswering');
     Route::get('/api/v1/top10/get', 'PointsController@getTop10');
+
+    //hashed pword
+    Route::get('/api/v1/hashed', 'AccountController@hashedPassword');
+    Route::get('/api/v1/pword', 'AccountController@bcrypt');
 });

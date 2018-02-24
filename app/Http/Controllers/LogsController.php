@@ -79,4 +79,6 @@ class LogsController extends Controller
             'message' => 'Successfully saved.'
         ]);
     }
+
+    
 }
