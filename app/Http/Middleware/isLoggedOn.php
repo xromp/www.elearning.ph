@@ -12,8 +12,8 @@ class isLoggedOn
      */
     public function handle($request, Closure $next)
     {
-        if ($request->session()->get('account_id') === null) {
-            return redirect('/login');
+        if ($request->session()->get('email') === null) {
+            return response()->json(['message' => 'Unauthorized request.'], 401);
         }
         return $next($request);
     }
