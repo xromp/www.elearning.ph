@@ -72,7 +72,8 @@
 
         <div class="form-group row">
             <div class="col-sm-10">
-                <button class="btn btn-primary" ng-click="aqc.submit(aqc.questionDetails)">
+                <button class="btn btn-primary" ng-click="aqc.submit(aqc.questionDetails)" ng-disabled="aqc.display.loading">
+                    <i class="fa fa-spinner fa-spin" ng-show="aqc.display.loading"></i>
                     Submit Question
                 </button>
             </div>

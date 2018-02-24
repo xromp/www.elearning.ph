@@ -37,9 +37,12 @@
                                         </a>
                                         <form name="fc.frmComment" ng-submit="fc.submitComment(fc.forumDetails, forum.forum_id, forum.student_id)" novalidate>
                                             <div class="input-group">
-                                                    <input type="text" class="form-control" name="comment" ng-model="fc.forumDetails.comment" placeholder="Write a comment" required/>
+                                                    <input type="text" class="form-control" name="comment" ng-model="fc.forumDetails.comment" ng-disabled="fc.display.loading" placeholder="Write a comment" required/>
                                                     <span class="input-group-btn">
-                                                        <button class="btn btn-sm btn-success" type"submit"><i class="fa fa-send-o"></i></button>
+                                                        <button class="btn btn-sm btn-success" type"submit">
+                                                        <i class="fa fa-send-o" ng-hide="fc.display.loading"></i>
+                                                        <i class="fa fa-spinner fa-spin" ng-show="fc.display.loading"></i>
+                                                        </button>
                                                     </span>
                                             </div>
                                         </form>

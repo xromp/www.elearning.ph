@@ -111,6 +111,11 @@
             };
 
             vm.submit = function(data) {
+                vm.display = {
+                    loaded:false,
+                    loading:true
+                };
+
                 if (vm.frmQuestion.$valid){
                     var dataCopy = angular.copy(data);
                     
@@ -162,11 +167,13 @@
                             }
                         });
                         vm.questionDetails = angular.copy(vm.defaultQuestionDet);
+
                         modalInstance.result.then(function (e){
                             $window.location.href = '/question/view';                            
                         }, function () {
                             alert('Something went wrong.')
                         });
+                        vm.display.loading = false;
                     });
                 } else {
                     vm.frmQuestion.withError = true;

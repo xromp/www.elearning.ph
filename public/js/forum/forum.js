@@ -34,6 +34,10 @@
             };
             
             vm.submitComment = function(data, forumId, student_id){
+                vm.display = {
+                    loading:true
+                };
+
                 if (vm.frmComment.$valid) {
                     var dataCopy = angular.copy(data);
                     dataCopy.forumId = forumId;
@@ -57,6 +61,7 @@
                                     
                                 }
                             },function(){ alert("Bad Request!")})
+                            vm.display.loading = false;
                         }
                     }, function () {
                         alert('Something went wrong.')
@@ -71,6 +76,10 @@
         function ForumCreateTopicCtrl($scope, ForumSrvcs, $stateParams, $window, $uibModal) {
             var vm = this;
             vm.submit = function(data){
+                vm.display = {
+                    loading:true
+                };
+
                 if (vm.frmForum.$valid) {
                     var dataCopy = angular.copy(data);
 
@@ -96,6 +105,7 @@
                             }, function () {
                                 alert('Something went wrong.')
                             });
+                            vm.display.loading = false;
                         }
                     });
                 } else {

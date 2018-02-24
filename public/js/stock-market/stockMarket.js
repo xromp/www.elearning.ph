@@ -49,7 +49,7 @@
                                 list: response.data.data
                             }    
                         } else {
-                            return alert('No record(s) found.');
+                            // return alert('No record(s) found.');
                         }
                     },function(error){alert('Something went wrong.')});
 
