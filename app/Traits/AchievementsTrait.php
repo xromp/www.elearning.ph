@@ -948,7 +948,7 @@ trait AchievementsTrait
     }
 
     public function isReaching75PointsAnswering($data){
-        $points = $this->getTotalPointPerCategory($data);
+        $points = $this->getTotalPointPerStudent($data);
         
         if($points['answer_points']>=75){
             $transaction = DB::transaction(function($data) use($data) {
@@ -991,7 +991,7 @@ trait AchievementsTrait
     }
 
     public function isReaching25PointsAsking($data){
-        $points = $this->getTotalPointPerCategory($data);
+        $points = $this->getTotalPointPerStudent($data);
         
         if($points['question_points']>=25){
             $transaction = DB::transaction(function($data) use($data) {
