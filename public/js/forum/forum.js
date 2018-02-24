@@ -25,16 +25,19 @@
 
             vm.showComment = function(data) {
                 angular.forEach(vm.forumList, function(v,k){
-                    v.show_comment= false;
+                    if (v.forum_id != data.forum_id) {
+                        v.show_comment= false;                        
+                    }
                 });
                 data.show_comment = (data.show_comment) ? false : true;
                 data.comment = '';
             };
             
-            vm.submitComment = function(data, forumId){
+            vm.submitComment = function(data, forumId, student_id){
                 if (vm.frmComment.$valid) {
                     var dataCopy = angular.copy(data);
                     dataCopy.forumId = forumId;
+                    dataCopy.student_id = student_id;
 
                     var formData = angular.toJson(dataCopy);
                     ForumSrvcs.saveComment(formData)
@@ -74,24 +77,26 @@
                     var formData = angular.toJson(dataCopy);
                     ForumSrvcs.save(formData)
                     .then(function(response){
-                        var modalInstance = $uibModal.open({
-                            controller:'ModalInfoInstanceCtrl',
-                            templateUrl:'shared.modal.info',
-                            controllerAs: 'vm',
-                            resolve :{
-                              formData: function () {
-                                return {
-                                    title:'Forum Creation',
-                                    message:response.data.message
-                                };
-                              }
-                            }
-                        });
-                        modalInstance.result.then(function (e){
-                            $window.location.href = '/forum/index';                            
-                        }, function () {
-                            alert('Something went wrong.')
-                        });
+                        if (response.data.status == 200) {
+                            var modalInstance = $uibModal.open({
+                                controller:'ModalInfoInstanceCtrl',
+                                templateUrl:'shared.modal.info',
+                                controllerAs: 'vm',
+                                resolve :{
+                                formData: function () {
+                                    return {
+                                        title:'Forum Creation',
+                                        message:response.data.message
+                                    };
+                                }
+                                }
+                            });
+                            modalInstance.result.then(function (e){
+                                $window.location.href = '/forum/index';                            
+                            }, function () {
+                                alert('Something went wrong.')
+                            });
+                        }
                     });
                 } else {
                     vm.frmForum.withError = true;

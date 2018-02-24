@@ -9,11 +9,16 @@ use DB;
 use App\Student;
 use App\Forum;
 use App\Comment;
+
+use App\Traits\PointsTrait;
 use App\Traits\AchievementsTrait;
+use App\Traits\LogsTrait;
 
 class ForumController extends Controller
 {
+    use PointsTrait;
     use AchievementsTrait;
+    use LogsTrait;
     public function Index()
     {
     	// echo "forum index";
@@ -56,8 +61,9 @@ class ForumController extends Controller
                 'f.updated_at'
             )
             -> leftJoin( DB::raw( "(SELECT c.forum_id, COUNT( c.forum_id ) as comment_count FROM forums_comments as c GROUP BY c.forum_id) as c"), 'c.forum_id', '=', 'f.forum_id' )
-            -> leftjoin('students as s','s.student_id','=','f.student_id');
-        
+            -> leftjoin('students as s','s.student_id','=','f.student_id')
+            ->orderByRaw('f.updated_at DESC');
+
         if(!$this->isEmpty($data['forum_id'])){
             $forums = $forums->where('f.forum_id',$data['forum_id']);
         }
@@ -123,6 +129,19 @@ class ForumController extends Controller
                 $forum->student_id = $data['student_id'];
 
                 $forum->save();
+                $logsData = array(
+                    'student_id'=>$data['student_id'],
+                    'forum_id'=>$forum->forum_id,
+                    'logs_type'=>'THREAD'
+                );
+                $this->logsForSocial($logsData);
+                
+                // is posted 5
+                $achForumDet = array(
+                    'student_id'=>$data['student_id']
+                );
+                
+                $this->isPosted5Forum($achForumDet);
 
                 return response()->json([
                     'status' => 200,
@@ -139,7 +158,8 @@ class ForumController extends Controller
         {
             $validator = Validator::make($request->all(),[
                 'comment'=> 'required',
-                'forumId'=> 'required'
+                'forumId'=> 'required',
+                'student_id'=>'required'
             ]);
     
             if ($validator-> fails()) {
@@ -154,6 +174,8 @@ class ForumController extends Controller
             $data = array();
             $data['comment'] = $request-> input('comment');
             $data['forum_id'] = $request-> input('forumId');
+            $data['forum_id'] = $request-> input('forumId');
+            $data['owner_id'] = $request-> input('student_id');
             $data['student_id'] = $self;
             
 
@@ -164,6 +186,19 @@ class ForumController extends Controller
                 $comment->comment = $data['comment'];
 
                 $comment->save();
+                
+                $logsData = array(
+                    'student_id'=>$data['student_id'],
+                    'forum_id'=>$data['forum_id'],
+                    'logs_type'=>'COMMENT'
+                );
+                $this->logsForSocial($logsData);
+                // check if 5 replies
+                $repliesData = array(
+                    'forum_id'=>$data['forum_id'],
+                    'owner_id'=>$data['owner_id']
+                );
+                $this->is5Replies($repliesData);
 
                 return response()->json([
                     'status' => 200,

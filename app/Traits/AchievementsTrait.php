@@ -686,7 +686,125 @@ trait AchievementsTrait
             return $transaction;
         }
     }
+
+    // SOCIAL
+    public function is5Replies($data) {
+        
+		$replies = DB::table('forums as f')
+            -> select(
+                'f.forum_id',
+                'f.student_id',
+                'fc.comments_count',
+                'f.created_at')
+            -> leftJoin( DB::raw( "(SELECT forum_id, COUNT( forum_id ) as comments_count 
+                FROM forums_comments 
+                WHERE student_id <> ".$data['owner_id']."
+                GROUP BY forum_id) as fc"), 
+                'fc.forum_id', '=', 'f.forum_id' )
+            -> where('f.forum_id',$data['forum_id'])
+            -> havingRaw('comments_count >= 5')
+            -> get();   
+        
+        $repliesCount = $replies->count();
+        $replies_det = $replies-> first();
+        
+        if ($repliesCount){
+            $data['student_id'] = $replies_det->student_id;
+
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'SCA-01',
+                    'student_id'=>$data['student_id']
+
+                );
+                $data['achievement_code'] = $formData['code'];
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
     
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
+
+    public function isPosted5Forum($data) {
+        
+		$forum = DB::table('forums as f')
+                ->select('student_id','student_id',DB::raw('count(student_id) as topicCount'))
+                ->where('student_id',$data['student_id'])
+                ->groupBy('student_id')
+                ->havingRaw('topicCount >= 5')
+                ->get();
+
+        $forumCount = $forum->count();
+        $forum_det = $forum-> first();
+        
+        if ($forumCount){
+            $data['student_id'] = $forum_det->student_id;
+
+            $transaction = DB::transaction(function($data) use($data) {
+                
+                $formData = array (
+                    'code'=> 'SCA-02',
+                    'student_id'=>$data['student_id']
+
+                );
+                $data['achievement_code'] = $formData['code'];
+
+                if ($this->isAchivementExists($formData)){
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Achievement Code '.$formData['code'].' has already exists.'
+                    ]);   
+                }
+
+                $achivements = new Achievements;
+                $achivements->achievement_code = $formData['code'];
+                $achivements->student_id = $formData['student_id'];
+                $achivements->is_achieved = true;
+
+                $achivements->save();
+                $this->onLoadAchieved($data);
+    
+                if ($achivements->id){
+    
+                    return response()->json([
+                        'status'=> 200,
+                        'data'=>'',
+                        'message'=>'Sucessfully saved.'
+                    ]);    
+                } else {
+                    throw new \Exception("Error Processing Request");
+                }
+            });
+            return $transaction;
+        }
+    }
 
     public function isAllAchievement($data) {
         

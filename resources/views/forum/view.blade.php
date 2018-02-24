@@ -22,19 +22,20 @@
                                             <p class="card-text" ng-bind="forum.desc"></p>
                                         </div>
                                     <div class="card-footer">
-                                        <small class="text-muted"><time am-time-ago="forum.updated_at"></time></small>
+                                        <small class="text-muted" ng-bind="forum.student_name"></small>
+                                        <small class="text-muted pull-right"><time am-time-ago="forum.updated_at"></time></small>
                                     </div>
                                 </div>
                                 <div class="" style="padding:1% 3%">
                                     <div class="list-group">
-                                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="comment in forum.comments">
+                                        <a class="list-group-item flex-column align-items-start" ng-repeat="comment in forum.comments">
                                             <div class="d-flex w-100 justify-content-between">
                                                 <h6 class="mb-1" ng-bind="comment.student_name"></h6>
                                                 <small class="text-muted"><time am-time-ago="comment.updated_at"></time></small>
                                             </div>
                                             <p class="mb-1" ng-bind="comment.comment"></p>
                                         </a>
-                                        <form name="fc.frmComment" ng-submit="fc.submitComment(fc.forumDetails, forum.forum_id)" novalidate>
+                                        <form name="fc.frmComment" ng-submit="fc.submitComment(fc.forumDetails, forum.forum_id, forum.student_id)" novalidate>
                                             <div class="input-group">
                                                     <input type="text" class="form-control" name="comment" ng-model="fc.forumDetails.comment" placeholder="Write a comment" required/>
                                                     <span class="input-group-btn">

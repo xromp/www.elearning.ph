@@ -358,8 +358,15 @@
             };
 
             vm.rateSubmit = function(data){
-                vm.formData.rating = data.rating;
-                vm.submit(vm.formData);
+                vm.ratingStatus = {};
+
+                vm.formData.rating = (data) ? data.rating:null;
+                if (vm.formData.rating) {
+                    vm.ratingStatus.withError = false;
+                    vm.submit(vm.formData);                    
+                } else {
+                    vm.ratingStatus.withError = true;
+                }
             };
 
             vm.submit = function(data){

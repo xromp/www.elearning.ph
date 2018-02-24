@@ -104,6 +104,21 @@ trait LogsTrait
         $this->insertLogs($formData);
     }
 
+    public function logsForSocial($data) {
+
+        if  ($data['logs_type'] == 'COMMENT') {
+            $data['msg'] = $data['student_id'].' has replied to thread '.$data['forum_id'];
+        } elseif ($data['logs_type'] == 'THREAD') {
+            $data['msg'] = $data['student_id'].' has started a new thread '.$data['forum_id'];
+        }
+        $formData = array(
+            'student_id'=>$data['student_id'],
+            'desc'=>$data['msg'],
+            'type'=>'SA'
+        );
+        $this->insertLogs($formData);
+    }
+
     public function hasBadgeLogs($data){
         $formData = array(
             'student_id'=>$data['student_id'],
