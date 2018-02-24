@@ -304,7 +304,6 @@
                     modalInstance.result.then(function (e){
                         $window.location.href = '/question/view';                            
                     }, function () {
-                        alert('Something went wrong.')
                     });
                 } else if (formData.action == 'APPROVED') { 
                     QuestionSrvcs.action(formDataCopy)
