@@ -121,7 +121,7 @@
                     
                     var referrerUrl = document.referrer;
                     var i = referrerUrl.split(new $window.URL($location.absUrl()).origin);
-                    var x = (i.length==2) ? i[1].split('/') : 'a/a';
+                    var x = (i.length==2) ? i[1].split('/') : ['a','a'];
                     var fromUrl = x[1];
 
                     if (fromUrl == 'stockmarket') {
