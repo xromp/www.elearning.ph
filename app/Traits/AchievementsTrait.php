@@ -369,19 +369,28 @@ trait AchievementsTrait
     }
 
     public function isMasterAllCategory($data){
-        
-        $unAchievedCount = DB::table('achievements as a')
-            -> LEFTJOIN( DB::raw( "(SELECT rewards.achievement_code, rewards.active, entity2 FROM rewards
+        $rewardsCount = DB::table('rewards as r')
+            ->select('achievement_code', 
+                'active', 
+                'entity2')
+            ->where('entity2', 'CATEGORYGROUP')
+            ->where('achievement_code','<>', 'PTP-01')
+            ->where('active','1')
+            ->count();
+
+        $achievedCount = DB::table('achievements as a')
+            -> JOIN( DB::raw( "(SELECT rewards.achievement_code, rewards.active, entity2 FROM rewards
                 WHERE entity2 = 'CATEGORYGROUP' AND
                 rewards.achievement_code <> 'PTP-01' AND
                 active = 1
                 GROUP BY achievement_code, active, entity2) as r"), 
                 'a.achievement_code', '=', 'r.achievement_code' )
-            -> WHERE('a.is_achieved',false)
+            -> WHERE('a.is_achieved',true)
             -> WHERE('a.student_id',$data['student_id'])
             -> count();
-
-        if ($unAchievedCount == 0) {
+        print_r($achievedCount);
+        dd($achievedCount);
+        if ($achievedCount == $rewardsCount) {
             $transaction = DB::transaction(function($data) use($data) {
                 
                 $formData = array (
@@ -702,7 +711,8 @@ trait AchievementsTrait
                 GROUP BY forum_id
                 HAVING COUNT(forum_id) >= 5
                 ) as fc"), 
-                'fc.forum_id', '=', 'f.forum_id' )
+                'fc.forum_id', '=', 'f.for
+                um_id' )
             -> where('f.forum_id',$data['forum_id'])
             -> get();   
         
