@@ -111,12 +111,12 @@
             };
 
             vm.submit = function(data) {
-                vm.display = {
-                    loaded:false,
-                    loading:true
-                };
-
                 if (vm.frmQuestion.$valid){
+                     vm.display = {
+                        loaded:false,
+                        loading:true
+                    };
+                    
                     var dataCopy = angular.copy(data);
                     
                     var referrerUrl = document.referrer;
