@@ -34,11 +34,10 @@
             };
             
             vm.submitComment = function(data, forumId, student_id){
-                vm.display = {
-                    loading:true
-                };
-
                 if (vm.frmComment.$valid) {
+                    vm.display = {
+                        loading:true
+                    };
                     var dataCopy = angular.copy(data);
                     dataCopy.forumId = forumId;
                     dataCopy.student_id = student_id;
