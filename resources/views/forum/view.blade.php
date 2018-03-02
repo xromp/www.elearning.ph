@@ -18,8 +18,8 @@
                             <div class="show-comment" ng-show="forum.show_comment">
                                 <div class="card" ng-click="fc.showComment(forum)">
                                         <div class="card-block">
-                                            <h4 class="card-title" ng-bind="forum.title"></h4>
-                                            <p class="card-text" ng-bind="forum.desc"></p>
+                                            <h4 class="card-title" style="word-break: break-all;" ng-bind="forum.title"></h4>
+                                            <p class="card-text" style="word-break: break-all;" ng-bind="forum.description"></p>
                                         </div>
                                     <div class="card-footer">
                                         <small class="text-muted" ng-bind="forum.student_name"></small>
